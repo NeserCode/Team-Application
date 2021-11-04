@@ -1,9 +1,9 @@
 {
-  "name": "team_beihua",
+  "name": "Team_Application",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "A lot tool in a set which improves effictive power when work in Team_Beihua.",
-  "author": "BigData_NeserCode",
+  "author": "NeserCode",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
