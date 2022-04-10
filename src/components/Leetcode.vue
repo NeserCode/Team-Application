@@ -134,8 +134,8 @@ import Slider from "@/components/Slider";
 import Codemirror from "codemirror-editor-vue3";
 // styles
 import "codemirror-editor-vue3/dist/style.css";
-import "codemirror-editor-vue3/dist/github.css";
-import "codemirror-editor-vue3/dist/solarized.css";
+import "@/assets/codeMirrorStyle/github.css";
+import "@/assets/codeMirrorStyle/solarized.css";
 // functions
 import "codemirror/addon/selection/active-line.js";
 import "codemirror/addon/selection/mark-selection.js";
