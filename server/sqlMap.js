@@ -1,17 +1,36 @@
 var sqlMap = {
-    allUser: {
-        get: "select * from user"
-    },
     user: {
-        add: "insert into user(name,age) values (?,?)",
-        search:{
-            id: "select * from user where id = ?",
-            name: "select * from user where name like ?",
-            age: "select * from user where age = ?",
+        register: {
+            init: {
+                info: "insert into team_user_info(username,password,appKey,userKey) values (?,?,?,?)",
+                detail: "insert into team_user_detail(id) values (?)"
+            },
+        },
+        login: {
+            check: "select * from team_user_info where username = ? and password = ?",
+            update: {
+                all: "update team_user_info set appKey = ? , checkKey = ? where username = ?",
+            },
+            detail: "select * from team_user_detail where id = ?"
+        },
+        detail: {
+            update: {
+                all: 'update team_user_detail set nickname = ?, avatar = ?, introduce = ?, sex = ? where id = ?',
+                nickname: 'update team_user_detail set nickname = ? where id = ?',
+                avatar: 'update team_user_detail set avatar = ? where id = ?',
+                introduce: 'update team_user_detail set introduce = ? where id = ?',
+                sex: 'update team_user_detail set sex = ? where id = ?',
+                access: 'update team_user_detail set access_status = ?, access_team = ?, access_position = ? where id = ?',
+            },
+
+        },
+        checkDay:{
+            check:'insert into team_user_checkday(userid,appKey,checkDay,checkMonth,isSuper) values (?,?,?,?,?)',
+            get:'select * from team_user_checkday where userid = ?'
+        },
+        get: {
+            uid: "select id from team_user_info where username = ?"
         }
     },
-    class: {
-        searchFromName: "select * from class where class_name like %?% ",
-    }
 }
 module.exports = sqlMap;

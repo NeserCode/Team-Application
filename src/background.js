@@ -43,8 +43,10 @@ async function createWindow() {
   function setTray() {
     // 当托盘最小化时，右击有一个菜单显示，这里进设置一个退出的菜单
     let trayMenuTemplate = [{ // 系统托盘图标目录
-      label: 'Option',
-      role: 'fileMenu',
+      label: 'Exit',
+      click: () => {
+        mainWindow.close()
+      },
     }];
     // 创建托盘实例
     const iconPath = nativeImage.createFromPath(path.join(__dirname, '../src/assets/', 'logo.png'))
@@ -52,18 +54,14 @@ async function createWindow() {
     // 图标的上下文菜单
     const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
 
-    // 隐藏主窗口
-    mainWindow.hide();
     // 设置托盘悬浮提示
-    appTray.setToolTip('notePad');
+    appTray.setToolTip('Team');
     // 设置托盘菜单
     appTray.setContextMenu(contextMenu);
     // 单机托盘小图标显示应用
     appTray.on('click', function () {
       // 显示主程序
       mainWindow.show();
-      // 关闭托盘显示
-      appTray.destroy();
     });
   }
 
@@ -74,11 +72,16 @@ async function createWindow() {
     mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
     mainWindow.focus()
     mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+    setTray();
   } else {
     createProtocol('app')
     // Load the index.html when not in development
     mainWindow.loadURL('app://./index.html')
+    setTray();
   }
+  ipcMain.on('open-link-extra', () => {
+    shell.openExternal(url);
+  })
   //接收关闭命令
   ipcMain.on('window-close', function () {
     mainWindow.close()
@@ -97,31 +100,9 @@ async function createWindow() {
   })
   // 主进程监听打开托盘事件
   ipcMain.on('hide-in-bar', () => {
-    setTray();
+    mainWindow.hide()
   })
 
-
-  ipcMain.on('sigShowRightClickMenu', (event) => {
-    // 生成右键菜单
-    const menu = new Menu();
-    menu.append(new MenuItem({ label: 'Hello world' }));
-    menu.append(new MenuItem({ type: 'separator' }));
-    menu.append(new MenuItem({
-      label: 'Baidu',
-      accelerator: 'B',
-      click: () => {
-        shell.openExternal('https://www.baidu.com')
-        mainWindow.webContents.send('log-message', 'Baidu will open in your default tools');
-      }
-    }));
-    menu.append(new MenuItem({
-      label: "刷新",
-      role: 'reload',
-    }));
-
-    const win = BrowserWindow.fromWebContents(event.sender);
-    menu.popup(win);
-  });
   //监听意外窗口化事件
   mainWindow.on('maximize', function () {
     mainWindow.webContents.send('main-window-max');
@@ -129,9 +110,15 @@ async function createWindow() {
   mainWindow.on('unmaximize', function () {
     mainWindow.webContents.send('main-window-unmax');
   })
+  mainWindow.on('close', () => {
+    mainWindow.webContents.send('before-main-window-destory')
+  })
 
   globalShortcut.register('CommandOrControl+Q', () => {
     mainWindow.webContents.openDevTools()
+  })
+  globalShortcut.register('CommandOrControl+M', () => {
+    mainWindow.webContents.reload();
   })
 
   ipcMain.on('setting-always-on-top', () => {
@@ -140,6 +127,7 @@ async function createWindow() {
   ipcMain.on('setting-always-not-top', () => {
     mainWindow.setAlwaysOnTop(false)
   })
+
   //处理颜色模式的变化
   ipcMain.on('color-schemeMode-light', () => {
     nativeTheme.themeSource = 'light'
@@ -153,21 +141,16 @@ async function createWindow() {
 }
 
 function runExec(cmdStr, cmdPath) {
-  // 执行命令行，如果命令不需要路径，或就是项目根目录，则不需要cwd参数：
-  workerProcess = exec(cmdStr, { cwd: cmdPath, windowsHide: true })
-  // 不受child_process默认的缓冲区大小的使用方法，没参数也要写上{}：workerProcess = exec(cmdStr, {})
+  workerProcess = exec(cmdStr, { cwd: cmdPath })
 
-  // 打印正常的后台可执行程序输出
   workerProcess.stdout.on('data', function (data) {
     console.log(data);
   });
 
-  // 打印错误的后台可执行程序输出
   workerProcess.stderr.on('data', function (data) {
     console.log(data);
   });
 
-  // 退出之后的输出
   workerProcess.on('close', function (code) {
     console.log('[Server Exit] ' + code);
   })
@@ -175,8 +158,6 @@ function runExec(cmdStr, cmdPath) {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    //服务清除 taskkill /f /t /im node.exe
-    // runExec(`taskkill /f /t /im node.exe`, path.join(__dirname, '../server'))
     runExec(`pm2 stop appServer`, path.join(__dirname, '../server'))
     console.log(`SERVER EXIT`);
     setTimeout(() => {
@@ -185,10 +166,6 @@ app.on('window-all-closed', () => {
     }, 1000)
   }
 })
-
-// app.on('activate', () => {
-//   if (BrowserWindow.getAllWindows().length === 0) createWindow()
-// })
 
 app.on('ready', function () {
   runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));

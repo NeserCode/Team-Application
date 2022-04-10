@@ -1,19 +1,20 @@
 <template>
   <div class="code">
-    <appCodeEditor :isPreview="true" />
+    <Leetcode />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import appCodeEditor from "@/components/codeEditor.vue";
+import Leetcode from "@/components/Leetcode.vue";
 
 export default {
   name: "Code",
   components: {
-    appCodeEditor,
+    Leetcode,
   },
   props: {},
+  beforeCreate() {},
   mounted() {},
   activated() {},
   data() {
@@ -25,12 +26,12 @@ export default {
 
 <style scoped>
 .code {
-  @apply w-full h-full pt-8;
+  @apply w-full h-full py-4;
 }
 
 @media (prefers-color-scheme: dark) {
   .code {
-    @apply bg-gray-400;
+    @apply bg-gray-800;
   }
 }
 
@@ -38,5 +39,9 @@ export default {
   .code {
     @apply bg-gray-100;
   }
+}
+
+.code::-webkit-scrollbar {
+  display: none;
 }
 </style>

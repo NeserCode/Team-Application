@@ -1,6 +1,6 @@
 {
-  "name": "team_application",
-  "version": "1.0.0",
+  "name": "Team_Application",
+  "version": "v1.0.0",
   "private": false,
   "description": "A lot tool in a set which improves effictive power when work in Team_Beihua.",
   "author": "nesercode",
@@ -19,23 +19,23 @@
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.0",
     "codemirror-editor-vue3": "^0.2.4",
-    "core-js": "^3.19.0",
+    "core-js": "^3.21.1",
     "element-plus": "^1.0.2-beta.28",
     "md5": "^2.3.0",
     "mysql": "^2.18.1",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0"
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.14",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/cli-plugin-babel": "^4.5.17",
+    "@vue/cli-plugin-eslint": "^4.5.17",
+    "@vue/cli-plugin-router": "^4.5.17",
+    "@vue/cli-service": "^4.5.17",
+    "@vue/compiler-sfc": "^3.2.31",
     "axios": "^0.18.0",
     "babel-eslint": "^10.1.0",
     "electron": "13.0.0",
@@ -47,7 +47,7 @@
     "vue-cli-plugin-element": "^1.0.1",
     "vue-cli-plugin-element-plus": "0.0.13",
     "vue-cli-plugin-express": "^1.0.2",
-    "vue-cli-plugin-tailwind": "^2.0.6"
+    "vue-cli-plugin-tailwind": "^2.2.18"
   },
   "eslintConfig": {
     "root": true,

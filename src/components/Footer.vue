@@ -12,6 +12,11 @@
     <div class="footStatusText showArea">
       <span>{{ statusText }}</span>
     </div>
+    <div class="footTime showArea" v-show="currTime.isGetTime">
+      <span class="h">{{ currTime.hour }} 时 </span>
+      <span class="m">{{ currTime.minutes }}</span>
+      <span class="sp"> 分</span>
+    </div>
   </div>
 </template>
 
@@ -41,8 +46,12 @@ export default {
           : "transparent";
     },
   },
+  mounted() {
+    this.initTime();
+  },
   data() {
     return {
+      timer: null,
       statusLightColor: {
         warn: "rgb(240, 128, 76)",
         success: "rgb(27, 190, 68)",
@@ -50,18 +59,35 @@ export default {
         loading: "rgb(199, 233, 77)",
         real: "rgb(199, 233, 77)",
       },
+      currTime: {
+        hour: 25,
+        minutes: 61,
+        seconds: 61,
+        isGetTime: false,
+      },
     };
   },
-  methods: {},
+  methods: {
+    initTime: function () {
+      var t = new Date().toTimeString().substring(0, 8);
+      this.currTime.hour = parseInt(t.substring(0, 2));
+      this.currTime.minutes = parseInt(t.substring(3, 5));
+      this.currTime.seconds = parseInt(t.substring(6, 8));
+      this.timer = setTimeout(() => {
+        this.initTime();
+      });
+      this.currTime.isGetTime = true;
+    },
+  },
 };
 </script>
 
 <style scoped>
 .appViewFoot {
-  @apply border-t box-border fixed bottom-px text-sm z-50 border-gray-400;
+  @apply relative border-t box-border text-sm border-gray-400;
   width: calc(100vw - 2px);
-  height: calc(1.5rem + 1px);
-  line-height: 1.5rem;
+  height: calc(1.5rem - 1px);
+  line-height: calc(1.5rem - 1px);
 }
 .footStatusLight {
   @apply float-left border-r h-full border-gray-400;
@@ -74,7 +100,12 @@ export default {
 }
 .footStatusText {
   @apply relative px-3 overflow-ellipsis whitespace-nowrap overflow-hidden;
-  width: calc(100vw - 8.5rem);
+  width: calc(100vw - 12.5rem);
+}
+.footTime {
+  @apply absolute right-0 w-24 -top-px text-xs text-right px-3;
+  height: calc(1.5rem + 1px);
+  line-height: 1.5rem;
 }
 </style>
 
@@ -82,5 +113,20 @@ export default {
 .footStatusLight .light {
   --status-color: rgb(199, 233, 77);
   background-color: var(--status-color);
+}
+.footTime .sp {
+  animation: secondFlash 1.95s ease-in-out infinite;
+}
+
+@keyframes secondFlash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

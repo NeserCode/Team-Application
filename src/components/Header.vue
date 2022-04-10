@@ -5,42 +5,6 @@
       <span class="titleFromProp">{{ title }}</span>
     </div>
     <div class="headOpArea">
-      <div class="menu option" @click="handleSwitchMenu">
-        <a v-show="!isAppMenuOpen"
-          ><svg
-            t="1634438471581"
-            class="icon"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="3995"
-            :width="headIconSize + 2"
-            :height="headIconSize + 2"
-          >
-            <path
-              d="M806.4 319.2L512 613.6 221.6 323.2 176 368l290.4 290.4L512 704l45.6-45.6 294.4-294.4z"
-              p-id="3996"
-              :fill="headIconFill.normal"
-            ></path></svg
-        ></a>
-        <a v-show="isAppMenuOpen"
-          ><svg
-            t="1634438615544"
-            class="icon"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="4196"
-            :width="headIconSize + 2"
-            :height="headIconSize + 2"
-          >
-            <path
-              d="M852 660L557.6 365.6 512 320l-45.6 45.6L176 656l45.6 44.8L512 410.4l294.4 294.4z"
-              p-id="4197"
-              :fill="headIconFill.normal"
-            ></path></svg
-        ></a>
-      </div>
       <div class="minimize option" @click="handleMinimizeWindow">
         <a
           ><svg
@@ -99,7 +63,7 @@
       </div>
       <div
         class="close option"
-        @click="handleCloseWindow(needs.isSettingCloseDirect)"
+        @click="handleCloseWindow(isSettingCloseDirect)"
       >
         <a
           ><svg
@@ -120,90 +84,38 @@
         ></a>
       </div>
     </div>
-    <appMenu
-      :isMenuShow="isAppMenuOpen"
-      :appMenuContent="appMenuTemplate"
-      @mouseleave="handleMenuMouseEvent"
-    ></appMenu>
   </div>
 </template>
 
 <script>
-import appMenu from "@/components/Menu.vue";
 const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "appViewHead",
   props: {
     title: String,
-    needs: {
-      type: Object,
-      default: () => ({
-        isSettingCloseDirect: false,
-      }),
+    isSettingCloseDirect: {
+      type: Boolean,
+      default: () => false,
     },
-    appMenuTemplate: {
-      type: Array,
-      default: () => [
-        {
-          label: "GetAllUsers",
-          type: "function",
-          symbol: null,
-          isFold: false,
-          func: 'getAllUserFunction',
-          son: [],
-        },
-        {
-          label: null,
-          type: "divider",
-          symbol: null,
-          isFold: false,
-          son: [],
-        },
-        {
-          label: "Window",
-          type: "operate",
-          symbol: "window-max",
-          isFold: true,
-          son: [
-            {
-              label: "Minimize",
-              type: "operate",
-              symbol: "window-min",
-              isFold: false,
-              son: [],
-            },
-            {
-              label: null,
-              type: "divider",
-              symbol: null,
-              isFold: false,
-              son: [],
-            },
-            {
-              label: "Maximize",
-              type: "operate",
-              symbol: "window-max",
-              isFold: false,
-              son: [],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  components: {
-    appMenu,
   },
   beforeCreate() {
-    ipcRenderer.on("main-window-max", () => (this.isAppFullScreen = true));
-    ipcRenderer.on("main-window-unmax", () => (this.isAppFullScreen = false));
-    ipcRenderer.on("log-message", (event, arg) => console.log(arg));
+    ipcRenderer.on("main-window-max", () => {
+      this.isAppFullScreen = true;
+      this.$public.emit("app-full-screen", true);
+    });
+    ipcRenderer.on("main-window-unmax", () => {
+      this.isAppFullScreen = false;
+      this.$public.emit("app-full-screen", false);
+    });
+    // console.log('自动清理已启用');
+    // ipcRenderer.on("before-main-window-destory", () => {
+    //   localStorage.clear();
+    // });
   },
   data() {
     return {
       isAppFullScreen: false,
-      isAppMenuOpen: false,
       headIconFill: {
         normal: "#ccc",
         confirm: "#fff",
@@ -224,19 +136,14 @@ export default {
       if (!isCloseDirect) ipcRenderer.send("hide-in-bar");
       else ipcRenderer.send("window-close");
     },
-    handleSwitchMenu: function () {
-      this.isAppMenuOpen = !this.isAppMenuOpen;
-    },
-    handleMenuMouseEvent: function () {
-      this.isAppMenuOpen = false;
-    },
   },
 };
 </script>
 
 <style scoped>
 .appViewHead {
-  @apply w-full h-8  relative;
+  @apply fixed top-px h-8;
+  width: calc(100% - 2px);
 }
 .headDargArea {
   @apply h-8 absolute left-0 text-center;

@@ -18,6 +18,11 @@ const routes = [
     path: '/setting',
     name: 'Setting',
     component: () => import('../views/Setting.vue')
+  },
+  {
+    path: '/userArea',
+    name: 'UserArea',
+    component: ()=>import('../views/UserArea.vue')
   }
   , { path: '/', redirect: '/home' }
 ]

@@ -1,8 +1,9 @@
 module.exports = {
+  publicPath: './',
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:6000/api/', //要代理的本地api地址，也可以换成线上测试地址
+        target: 'http://localhost:5999/api/',
         changeOrigin: true,//允许跨域
         pathRewrite: { "^/api": "/" }  //将/api开头替换为/
       }
@@ -18,21 +19,7 @@ module.exports = {
         "directories": {
           "output": "./dist_electron" //输出文件路径
         },
-        "asar": true,
-        "dmg": {
-          "contents": [{
-            "x": 410,
-            "y": 150,
-            "type": "link",
-            "path": "/Applications"
-          },
-          {
-            "x": 130,
-            "y": 150,
-            "type": "file"
-          }
-          ]
-        },
+        "asar": false,
         "nsis": {
           "oneClick": false, // 是否一键安装
           "allowElevation": true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。

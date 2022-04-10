@@ -12,6 +12,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/api/user', userApi);
 
 // 监听端口
-app.listen(6000);
+app.listen(5999);
 
-console.log('success listen at port:6000......');
+console.log('success listen at port:5999......');
