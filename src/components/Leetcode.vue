@@ -84,9 +84,16 @@
         >
         <a v-show="questions.codeSnippets"> 提交 </a>
         <a class="logo"> Offered by LeetCode.cn </a>
+        <div class="userInfo" v-if="userStat.status">
+          <span class="detail">
+            已作为 <img class="userAvatar" :src="userStat.avatar" />
+            <span class="username">{{ userStat.username }}</span> 登录
+            LeetCode.cn(zh)</span
+          >
+        </div>
       </div>
     </div>
-    <div class="innerContainer" v-if="questions.content">
+    <div class="innerContainer" v-if="questions.content && isShowQuestion">
       <div class="questionContainer">
         <div class="question">
           <Slider :vertical="true" :horizontal="true">
@@ -177,13 +184,15 @@ export default {
   beforeCreate() {},
   mounted() {
     this.initQuestions();
+  },
+  activated() {
     this.initTheme();
   },
-  activated() {},
   data() {
     return {
       clickable: true,
       isShowList: true,
+      isShowQuestion: true,
       isContentEng: false,
       isAppFullScreen: false,
       inputedCode: null,
@@ -195,6 +204,11 @@ export default {
           status: "",
         },
       ],
+      userStat: {
+        status: null,
+        avatar: null,
+        username: null,
+      },
       langCode: 0,
       questionPage: 1,
       totalPages: 1,
@@ -229,6 +243,7 @@ export default {
         status: "Loading",
         text: "🎈 正在从 Leetcode 获取题目详情...",
       });
+      this.scrollToList();
       setTimeout(() => {
         this.$leetcode.getQuestion(slug).then((response) => {
           this.questions = response.data.data.question;
@@ -315,6 +330,11 @@ export default {
         this.totalPages = parseInt(this.questionSet.total / this.pageLimit) + 1;
         // console.log(this.questionSet);
       });
+      this.$leetcode.getUserStatus().then((response) => {
+        this.userStat.status = response.data.data.userStatus.isSignedIn;
+        this.userStat.avatar = response.data.data.userStatus.avatar;
+        this.userStat.username = response.data.data.userStatus.realName;
+      });
     },
     initTheme: function () {
       setTimeout(() => {
@@ -325,8 +345,7 @@ export default {
     },
     scrollToList: function () {
       this.isShowList = !this.isShowList;
-      this.$refs.leetcode.scrollTop = 0;
-      console.log(this.$refs.leetcode.scrollTop);
+      this.isShowQuestion = !this.isShowList;
     },
   },
 };
@@ -362,17 +381,30 @@ export default {
   @apply font-medium;
 }
 
+.userInfo {
+  @apply mx-4 inline-block;
+}
+.userInfo .userAvatar {
+  @apply inline-block w-8 mx-2;
+}
+.userInfo .detail {
+  @apply inline-block py-4;
+}
+.userInfo .detail .username {
+  @apply font-bold;
+}
+
 .innerContainer {
-  @apply relative w-full h-full float-left;
+  @apply absolute w-full h-full float-left;
 }
 
 .questionContainer {
-  @apply absolute w-full h-full;
-  min-height: 70vh
+  @apply absolute w-1/2 h-full float-left;
+  min-height: 70vh;
 }
 
 .leetcodeContainer .question {
-  @apply relative h-full border border-gray-300 mt-4;
+  @apply absolute flex flex-col w-full items-center h-full border border-gray-300 mt-4;
 }
 
 .leetcodeContainer .topSpan {
@@ -382,7 +414,7 @@ export default {
 }
 
 .leetcodeContainer .question .content {
-  @apply text-base select-text p-4 px-8;
+  @apply inline-block w-auto text-base select-text p-4 mx-auto;
 }
 
 :deep().leetcodeContainer .question .content a[href] {
@@ -393,7 +425,7 @@ export default {
 }
 
 .leetcodeContainer .codeContainer {
-  @apply relative left-1/2 my-4;
+  @apply relative left-1/2 my-4 w-1/2 h-full float-left;
 }
 
 .appCodeEditer {
@@ -421,26 +453,6 @@ export default {
 
 :deep().langOption {
   z-index: 2000;
-}
-
-@media screen and (max-width: 720px) {
-  .questionContainer {
-    @apply w-full h-full float-none;
-    min-height: 70vh;
-  }
-  .codeContainer {
-    @apply hidden;
-  }
-}
-
-@media screen and (min-width: 1280px) {
-  .questionContainer {
-    @apply w-1/2 h-full float-left;
-    min-height: 70vh;
-  }
-  .codeContainer {
-    @apply w-1/2 h-full float-left;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
