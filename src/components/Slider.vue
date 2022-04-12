@@ -321,4 +321,8 @@ export default {
     @apply bg-gray-50;
   }
 }
+
+.scrollContent::-webkit-scrollbar {
+  display: none;
+}
 </style>

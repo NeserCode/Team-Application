@@ -34,7 +34,19 @@ create table team_user_checkDay(
     checkMonth int not null,
     isSuper boolean default false,
     FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
-)
+);
+-- Leetcode提交表
+drop table IF EXISTS team_leetcode_submit;
+create table team_leetcode_submit(
+	id int auto_increment primary key,
+    userid int not null,
+    leetName varchar(60),
+    appKey varchar(60) not null,
+    submitId varchar(30) not null,
+    submitDay int not null,
+    submitMonth int not null,
+    FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
+);
 
 
 

@@ -170,10 +170,6 @@ a {
   }
 }
 
-*::-webkit-scrollbar {
-  display: none;
-}
-
 /* 需要补充 滚动条多余边距的填充 */
 /*
   .hasScreenScrollBar {

@@ -408,7 +408,7 @@ export default {
 }
 
 .leetcodeContainer .topSpan {
-  @apply w-full h-12 mt-4 mb-2 text-center font-semibold;
+  @apply w-full h-12 mt-4 mb-2 text-center font-semibold text-xl;
   line-height: 3rem;
   font-family: "Helvetica_otf", "Canger_xwz";
 }
@@ -429,10 +429,13 @@ export default {
 }
 
 .appCodeEditer {
-  @apply relative w-full mx-auto;
+  @apply relative w-full mx-auto pr-4;
+  max-height: 70vh;
 }
 .codeView {
-  @apply block w-full text-base;
+  @apply block w-full text-base overflow-y-auto;
+  max-height: 70vh;
+  z-index: 2009;
 }
 
 .ctrlContainer {
