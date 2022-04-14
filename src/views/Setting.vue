@@ -2,18 +2,21 @@
   <div class="setting">
     <div class="allSettings">
       <LocalSetting />
+      <LeetcodeSetting />
     </div>
   </div>
 </template>
 
 <script>
 import LocalSetting from "@/components/LocalSetting.vue";
+import LeetcodeSetting from "@/components/LeetcodeSetting.vue";
 
 export default {
   name: "Setting",
   mounted() {},
   components: {
     LocalSetting,
+    LeetcodeSetting,
   },
   data() {
     return {};

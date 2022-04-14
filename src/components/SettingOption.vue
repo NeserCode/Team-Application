@@ -13,7 +13,7 @@
       </div>
       <div class="operateContainer" v-if="opType == 'button'">
         <el-button :disabled="opDisabled" @click="opCallbackFn">{{
-          opBtnValue
+          opBtnText
         }}</el-button>
       </div>
       <div class="operateContainer" v-if="opType == 'touch'">
@@ -27,6 +27,13 @@
           >
         </el-radio-group>
       </div>
+      <div class="operateContainer" v-if="opType == 'input'">
+        <el-tag>{{ opInputBtnText }}</el-tag>
+        <div class="opInput">
+          <el-input v-model="inputTempValue" @input="emitInputPropsToper" />
+          <el-button>{{opBtnText}}</el-button>
+        </div>
+      </div>
       <div class="tipContainer" v-if="opTip">
         <span class="opTip">{{ opTip }}</span>
       </div>
@@ -37,7 +44,9 @@
 <script>
 export default {
   name: "SettingOption",
-  mounted() {},
+  mounted() {
+    this.initOption();
+  },
   props: {
     opTitle: {
       type: String,
@@ -50,16 +59,19 @@ export default {
       type: String,
     },
     opBindValue: {
-      type: Boolean || String || Number,
+      type: [Boolean, String, Number],
+    },
+    opInputBtnText: {
+      type: [Boolean, String, Number],
     },
     opTouchArray: {
       type: Array,
     },
     opTouchValue: {
-      type: String || Number,
+      type: [String, Number],
     },
-    opBtnValue: {
-      type: String || Number,
+    opBtnText: {
+      type: [String, Number],
     },
     opCallbackFn: {
       type: Function,
@@ -68,13 +80,19 @@ export default {
       type: Boolean,
     },
   },
-  model: {
-    props: "opTouchValue",
-  },
   data() {
-    return {};
+    return {
+      inputTempValue: null,
+    };
   },
-  methods: {},
+  methods: {
+    emitInputPropsToper: function () {
+      this.$emit("settingInput", this.inputTempValue);
+    },
+    initOption: function () {
+      if (this.opType == "input") this.inputTempValue = this.opBindValue;
+    },
+  },
 };
 </script>
 
@@ -125,13 +143,13 @@ span.opTip {
 
 @media screen and (max-width: 830px) {
   :deep.el-radio {
-      @apply block my-2;
+    @apply block my-2;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-    :deep.el-radio {
-      @apply text-gray-300;
+  :deep.el-radio {
+    @apply text-gray-300;
   }
 }
 

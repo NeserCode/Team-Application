@@ -82,7 +82,7 @@
             </option>
           </select></a
         >
-        <a v-show="questions.codeSnippets"> 提交 </a>
+        <a v-show="questions.codeSnippets" @click="getQuestionSubmit"> 提交 </a>
         <a class="logo"> Offered by LeetCode.cn </a>
         <div class="userInfo" v-if="userStat.status">
           <span class="detail">
@@ -324,6 +324,18 @@ export default {
     getQuestionContentSwitchEng: function () {
       this.isContentEng = !this.isContentEng;
     },
+    getQuestionSubmit: _debounce(function () {
+      this.$leetcode
+        .getSubmissionID(
+          this.questions.questionId,
+          this.questions.codeSnippets[this.langCode].lang,
+          this.$refs.codeEditor.content,
+          this.questions.titleSlug
+        )
+        .then((response) => {
+          console.log(response);
+        });
+    }),
     initQuestions: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;

@@ -148,11 +148,9 @@ export default {
       }
     },
     handleChangeSettingAction: function () {
-      if (!this.isLoadingFile) {
-        this.$conf.updateLocalConfig(this.settings, (err) => {
-          this.handleChangeSettingProcess(err);
-        });
-      }
+      this.$conf.updateLocalConfig(this.settings, (err) => {
+        this.handleChangeSettingProcess(err);
+      });
     },
   },
 };
