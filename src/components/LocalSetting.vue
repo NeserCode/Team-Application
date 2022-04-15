@@ -1,7 +1,7 @@
 <template>
   <div class="userSetting" id="userSetting">
     <SettingOption
-      opTitle="开发者模式(⚠Beta)"
+      opTitle="开发者模式 | ⚠Beta"
       opType="switch"
       opTip="开启此选项以获得开发者功能权限"
       :opDisabled="true"

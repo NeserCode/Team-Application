@@ -5,8 +5,11 @@
       opType="input"
       opTip="有一说一，这些玩意儿是真他妈的难写"
       opInputBtnText="更改上次填写的Cookie值"
+      opBtnText="更改保存"
+      opInputPlaceholder="Cookie Here"
       :opBindValue="message"
       @settingInput="messageInput"
+      @cookieChange="handleChangeLeetcodeCookie"
     />
   </div>
 </template>
@@ -21,7 +24,7 @@ export default {
   data() {
     return {
       settings: null,
-      message: "Leetcode Cookies Here!",
+      message: "",
     };
   },
   mounted() {
@@ -33,24 +36,42 @@ export default {
     messageInput: function (temp) {
       this.message = temp;
     },
+    handleChangeLeetcodeCookie: function (cookie) {
+      try {
+        var res = this.$leetcode.getLeetCodeSession(cookie),
+          keys = Object.keys(res),
+          vals = Object.values(res);
+      } catch (error) {
+        if (error)
+          this.$public.emit("notice", {
+            msg: "处理Cookie格式时出现了一个错误",
+            type: "error",
+          });
+      }
+
+      this.$leetcode
+        .getCookie("https://leetcode-cn.com/graphql/")
+        .then((res) => {
+          for (let i = 0; i < keys.length; i++) {
+            this.$leetcode.setCookie(
+              "https://leetcode-cn.com/graphql/",
+              keys[i],
+              vals[i]
+            );
+          }
+          console.log(res);
+        });
+    },
     handleChangeSettingProcess: function (err) {
       if (err)
         this.$public.emit("notice", {
-          title: "保存时出现了一个错误",
-          msg: err,
+          msg: "保存时出现了一个错误",
           type: "error",
-          closefunc: () => {
-            this.isClickable = true;
-          },
         });
       else {
         this.$public.emit("notice", {
-          title: "",
           msg: "设置保存成功 正在为您启用设置",
           type: "success",
-          closefunc: () => {
-            this.isClickable = true;
-          },
         });
       }
     },

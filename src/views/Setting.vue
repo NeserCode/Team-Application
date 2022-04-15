@@ -2,6 +2,7 @@
   <div class="setting">
     <div class="allSettings">
       <LocalSetting />
+      <el-divider></el-divider>
       <LeetcodeSetting />
     </div>
   </div>

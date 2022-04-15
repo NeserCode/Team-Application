@@ -186,6 +186,7 @@ export default {
     this.initQuestions();
   },
   activated() {
+    this.initQuestions();
     this.initTheme();
   },
   data() {
@@ -328,14 +329,14 @@ export default {
       this.$leetcode
         .getSubmissionID(
           this.questions.questionId,
-          this.questions.codeSnippets[this.langCode].lang,
+          this.questions.codeSnippets[this.langCode].langSlug,
           this.$refs.codeEditor.content,
           this.questions.titleSlug
         )
         .then((response) => {
           console.log(response);
         });
-    }),
+    },1000),
     initQuestions: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;
@@ -343,6 +344,7 @@ export default {
         // console.log(this.questionSet);
       });
       this.$leetcode.getUserStatus().then((response) => {
+        console.log(response);
         this.userStat.status = response.data.data.userStatus.isSignedIn;
         this.userStat.avatar = response.data.data.userStatus.avatar;
         this.userStat.username = response.data.data.userStatus.realName;

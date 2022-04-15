@@ -28,10 +28,28 @@
         </el-radio-group>
       </div>
       <div class="operateContainer" v-if="opType == 'input'">
-        <el-tag>{{ opInputBtnText }}</el-tag>
-        <div class="opInput">
-          <el-input v-model="inputTempValue" @input="emitInputPropsToper" />
-          <el-button>{{opBtnText}}</el-button>
+        <el-tag v-show="!isInputEdit" @click="toggleInputEdit">{{
+          opInputBtnText
+        }}</el-tag>
+        <div class="opInput" v-show="isInputEdit">
+          <el-input
+            v-model="inputTempValue"
+            :placeholder="opInputPlaceholder"
+            @input="emitInputPropsToper('settingInput', this.inputTempValue)"
+          >
+            <template #append
+              ><el-button
+                @click="
+                  emitInputPropsToper('cookieChange', this.inputTempValue)
+                "
+                >{{ opBtnText }}</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button @click="cancelInputSubmitChange"
+                >取消</el-button
+              ></template
+            >
+          </el-input>
         </div>
       </div>
       <div class="tipContainer" v-if="opTip">
@@ -62,7 +80,10 @@ export default {
       type: [Boolean, String, Number],
     },
     opInputBtnText: {
-      type: [Boolean, String, Number],
+      type: [String, Number],
+    },
+    opInputPlaceholder: {
+      type: [String, Number],
     },
     opTouchArray: {
       type: Array,
@@ -82,15 +103,24 @@ export default {
   },
   data() {
     return {
-      inputTempValue: null,
+      inputTempValue: "",
+      isInputEdit: false,
     };
   },
   methods: {
-    emitInputPropsToper: function () {
-      this.$emit("settingInput", this.inputTempValue);
+    emitInputPropsToper: function (name, value) {
+      this.$emit(name, value);
+    },
+    cancelInputSubmitChange: function () {
+      this.isInputEdit = !this.isInputEdit;
+    },
+    toggleInputEdit: function () {
+      this.isInputEdit = !this.isInputEdit;
     },
     initOption: function () {
-      if (this.opType == "input") this.inputTempValue = this.opBindValue;
+      this.$public.on("opInputEditFinish", () => {
+        this.isInputEdit = false;
+      });
     },
   },
 };
@@ -150,6 +180,9 @@ span.opTip {
 @media (prefers-color-scheme: dark) {
   :deep.el-radio {
     @apply text-gray-300;
+  }
+  :deep.el-tag {
+    @apply bg-gray-600 text-gray-200;
   }
 }
 
