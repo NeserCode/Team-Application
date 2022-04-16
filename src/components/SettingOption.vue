@@ -40,7 +40,10 @@
             <template #append
               ><el-button
                 @click="
-                  emitInputPropsToper('cookieChange', this.inputTempValue)
+                  emitInputPropsToper('cookieChange', {
+                    name: this.opExtraValue,
+                    value: this.inputTempValue,
+                  })
                 "
                 >{{ opBtnText }}</el-button
               >
@@ -99,6 +102,9 @@ export default {
     },
     opDisabled: {
       type: Boolean,
+    },
+    opExtraValue: {
+      type: [String, Array, Boolean, Number, Set, Symbol],
     },
   },
   data() {
@@ -167,7 +173,7 @@ span.opTip {
   @apply float-left;
 }
 
-:deep.el-switch {
+:deep(.el-switch) {
   @apply inline top-1/2 transform -translate-y-1/2;
 }
 
@@ -178,10 +184,10 @@ span.opTip {
 }
 
 @media (prefers-color-scheme: dark) {
-  :deep.el-radio {
+  :deep(.el-radio) {
     @apply text-gray-300;
   }
-  :deep.el-tag {
+  :deep(.el-tag) {
     @apply bg-gray-600 text-gray-200;
   }
 }

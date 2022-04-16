@@ -6,7 +6,7 @@
 
 <script>
 // @ is an alias to /src
-import Leetcode from "@/components/Leetcode.vue";
+import Leetcode from "@/components/Leetcode/index.vue";
 
 export default {
   name: "Code",

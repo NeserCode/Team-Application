@@ -69,7 +69,8 @@ const leetcode = {
         return Axios(config)
     }
     , setCookie: (url, name, value) => {
-        const cookie = { url, name, value }
+        let exp = new Date();
+        const cookie = { url, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
         return new Promise((resolve, reject) => {
             session.defaultSession.cookies.set(cookie)
                 .then(() => {
@@ -101,12 +102,6 @@ const leetcode = {
             session.defaultSession.cookies.remove(url, arr[p].name)
             console.log('CookieRemoved:', arr[p].name, `(${url})`);
         }
-    }
-    , getLeetCodeSession: (cookie) => {
-        let str = cookie.replace(/=/g, `":"`),
-            reStr = str.replace(/; /g, `","`),
-            resString = `[{"${reStr}"}]`
-        return JSON.parse(resString)[0]
     }
     , getSubmissionID: (question_id, lang, typed_code, questionSlug) => {
         session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, (details, callback) => {

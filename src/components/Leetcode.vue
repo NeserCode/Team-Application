@@ -195,16 +195,9 @@ export default {
       isShowList: true,
       isShowQuestion: true,
       isContentEng: false,
-      isAppFullScreen: false,
       inputedCode: null,
       questions: {},
       questionSet: {},
-      questionStatus: [
-        {
-          id: "",
-          status: "",
-        },
-      ],
       userStat: {
         status: null,
         avatar: null,
@@ -234,7 +227,7 @@ export default {
           // 当匹配只有一项的时候是否自动补全
           completeSingle: true,
         },
-        extraKeys: { Ctrl: "autocomplete" }, // 可以用于为编辑器指定额外的键绑定，以及keyMap定义的键绑定
+        // extraKeys: { Ctrl: "autocomplete" }, // 可以用于为编辑器指定额外的键绑定，以及keyMap定义的键绑定
       },
     };
   },
@@ -245,6 +238,16 @@ export default {
         text: "🎈 正在从 Leetcode 获取题目详情...",
       });
       this.scrollToList();
+      this.$leetcode
+        .getCookie("https://leetcode-cn.com/graphql/")
+        .then((data) => {
+          for (let i = 0; i < data.length; i++)
+            this.$leetcode.setCookie(
+              `https://leetcode-cn.com/problems/${slug}/submit/`,
+              data[i].name,
+              data[i].value
+            );
+        });
       setTimeout(() => {
         this.$leetcode.getQuestion(slug).then((response) => {
           this.questions = response.data.data.question;
@@ -336,7 +339,7 @@ export default {
         .then((response) => {
           console.log(response);
         });
-    },1000),
+    }, 1000),
     initQuestions: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;

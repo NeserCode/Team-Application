@@ -1,12 +1,27 @@
 <template>
   <div class="leetcodeSetting" id="leetcodeSetting">
     <SettingOption
-      opTitle="🍔 LeetCode Cookies"
+      opTitle="🍔 Leetcode Cookie"
       opType="input"
-      opTip="有一说一，这些玩意儿是真他妈的难写"
+      opTip="LEETCODE_SESSION"
       opInputBtnText="更改上次填写的Cookie值"
       opBtnText="更改保存"
       opInputPlaceholder="Cookie Here"
+      opExtraValue="LEETCODE_SESSION"
+      :opDisabled="isDisabled"
+      :opBindValue="message"
+      @settingInput="messageInput"
+      @cookieChange="handleChangeLeetcodeCookie"
+    />
+    <SettingOption
+      opTitle=""
+      opType="input"
+      opTip="X-CSRFTOKEN"
+      opExtraValue="x-csrftoken"
+      opInputBtnText="更改上次填写的Cookie值"
+      opBtnText="更改保存"
+      opInputPlaceholder="Cookie Here"
+      :opDisabled="isDisabled"
       :opBindValue="message"
       @settingInput="messageInput"
       @cookieChange="handleChangeLeetcodeCookie"
@@ -24,6 +39,7 @@ export default {
   data() {
     return {
       settings: null,
+      isDisabled: false,
       message: "",
     };
   },
@@ -37,29 +53,17 @@ export default {
       this.message = temp;
     },
     handleChangeLeetcodeCookie: function (cookie) {
-      try {
-        var res = this.$leetcode.getLeetCodeSession(cookie),
-          keys = Object.keys(res),
-          vals = Object.values(res);
-      } catch (error) {
-        if (error)
-          this.$public.emit("notice", {
-            msg: "处理Cookie格式时出现了一个错误",
-            type: "error",
-          });
-      }
-
       this.$leetcode
-        .getCookie("https://leetcode-cn.com/graphql/")
-        .then((res) => {
-          for (let i = 0; i < keys.length; i++) {
-            this.$leetcode.setCookie(
-              "https://leetcode-cn.com/graphql/",
-              keys[i],
-              vals[i]
-            );
-          }
-          console.log(res);
+        .setCookie(
+          "https://leetcode-cn.com/graphql/",
+          cookie.name,
+          cookie.value
+        )
+        .then(() => {
+          this.isDisabled = true;
+          this.settings.userAccount.cookie_leetcode[cookie.name] = cookie.value;
+          this.handleChangeSettingAction();
+          this.$public.emit("opInputEditFinish");
         });
     },
     handleChangeSettingProcess: function (err) {
@@ -67,6 +71,9 @@ export default {
         this.$public.emit("notice", {
           msg: "保存时出现了一个错误",
           type: "error",
+          fn: () => {
+            this.isDisabled = false;
+          },
         });
       else {
         this.$public.emit("notice", {
