@@ -73,6 +73,7 @@ export default {
 .router-link-active.router-link-exact-active {
   @apply px-4 rounded-3xl border;
 }
+
 @media (prefers-color-scheme: dark) {
   .router-link-active.router-link-exact-active {
     @apply bg-gray-600 border-gray-700;
@@ -82,6 +83,16 @@ export default {
 @media (prefers-color-scheme: light) {
   .router-link-active.router-link-exact-active {
     @apply bg-gray-200 border-gray-100;
+  }
+}
+
+@keyframes colorfy {
+  0% {
+    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+  }
+
+  100% {
+    background-image: linear-gradient(120deg, #d4fc79 100%, #96e6a1 0%);
   }
 }
 </style>
