@@ -62,6 +62,20 @@ export default {
   @apply h-16 text-center text-lg py-4 fixed top-8 border-b;
   width: calc(100% - 2px);
 }
+.navigation::before {
+  content: "";
+  @apply absolute left-0 top-0 h-16 w-1/2 opacity-25;
+  background: linear-gradient(to right, orange, green, cyan, lightblue);
+  z-index: -1;
+  animation: colorfy infinite 8s;
+}
+.navigation::after {
+  content: "";
+  @apply absolute left-1/2 top-0 h-16 w-1/2 opacity-25;
+  background: linear-gradient(to left, orange, green, cyan, lightblue);
+  z-index: -1;
+  animation: colorfy infinite 8s;
+}
 .navigation .areaLink {
   @apply font-semibold inline-block mx-2;
 }
@@ -88,11 +102,15 @@ export default {
 
 @keyframes colorfy {
   0% {
-    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+    filter: hue-rotate(0deg);
+  }
+
+  50% {
+    filter: hue-rotate(360deg);
   }
 
   100% {
-    background-image: linear-gradient(120deg, #d4fc79 100%, #96e6a1 0%);
+    filter: hue-rotate(0deg);
   }
 }
 </style>

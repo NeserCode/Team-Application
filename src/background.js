@@ -10,6 +10,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 let workerProcess = null
 //托盘实例
 let appTray = null
+let loadingWindow = null, mainWindow = null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -22,7 +23,7 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 850,
     minWidth: 800,
@@ -65,21 +66,19 @@ async function createWindow() {
     });
   }
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    mainWindow.show()
-    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
-    mainWindow.focus()
-    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
-    setTray();
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    mainWindow.loadURL('app://./index.html')
-    setTray();
-  }
-  ipcMain.on('open-link-extra', () => {
+  // Load the url of the dev server if in development mode
+
+  createProtocol('app')
+  mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+  // path.join(__dirname, '../public/', 'index.html')
+  // mainWindow.show()
+  // mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+  // mainWindow.focus()
+  // mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+  setTray();
+  // Load the index.html when not in development
+
+  ipcMain.on('open-link-extra', (url) => {
     shell.openExternal(url);
   })
   //接收关闭命令
@@ -138,6 +137,41 @@ async function createWindow() {
   ipcMain.on('color-schemeMode-system', () => {
     nativeTheme.themeSource = 'system'
   })
+
+  mainWindow.setMenu(null)
+}
+
+async function createLoadingWindow() {
+  // Create the browser window.
+  loadingWindow = new BrowserWindow({
+    width: 200,
+    height: 200,
+    // alwaysOnTop: true,
+    frame: false,
+    center: true,
+    webPreferences: {
+      // Use pluginOptions.nodeIntegration, leave this alone
+      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+      webSecurity: false,
+    }
+  })
+  loadingWindow.loadFile(path.join(__dirname, '../public/', 'cover.html'))
+  loadingWindow.show()
+  loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
+  loadingWindow.focus()
+  loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
+  createWindow()
+  mainWindow.hide()
+  setTimeout(() => {
+    mainWindow.show()
+    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+    mainWindow.focus()
+    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+    loadingWindow.close()
+  }, 5000);
 }
 
 function runExec(cmdStr, cmdPath) {
@@ -169,7 +203,7 @@ app.on('window-all-closed', () => {
 
 app.on('ready', function () {
   runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));
-  createWindow()
+  createLoadingWindow()
 })
 
 // app.whenReady().then(() => {
