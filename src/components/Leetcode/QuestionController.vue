@@ -17,7 +17,7 @@
           </option>
         </select></a
       >
-      <a v-show="question.codeSnippets" @click="getQuestionubmit"> 提交 </a>
+      <a v-show="question.codeSnippets" @click="getQuestionSubmit"> 提交 </a>
       <a class="logo"> Offered by LeetCode.cn </a>
       <div class="userInfo" v-if="userStat.status">
         <span class="detail">
@@ -78,17 +78,8 @@ export default {
         !this.isContentEng
       );
     },
-    getQuestionubmit: _debounce(function () {
-      this.$leetcode
-        .getSubmissionID(
-          this.question.questionId,
-          this.question.codeSnippets[this.langCode].langSlug,
-          this.$refs.codeEditor.content,
-          this.question.titleSlug
-        )
-        .then((response) => {
-          console.log(response);
-        });
+    getQuestionSubmit: _debounce(function () {
+      this.$public.emit("leetcode-submit-question");
     }, 1000),
     initLeetcodeAccount: function () {
       this.$leetcode.getUserStatus().then((response) => {

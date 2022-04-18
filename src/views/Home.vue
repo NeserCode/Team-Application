@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { _debounce } from "@/plugins/utils.js";
 // @ is an alias to /src
 
 export default {
@@ -99,7 +100,7 @@ export default {
       this.checkDays = days;
       this.getCheckedDay();
     },
-    handleCheckDay: function () {
+    handleCheckDay: _debounce(function () {
       for (let i = 0; i < this.checkedDays.length; i++)
         if (
           this.checkedDays[i].m == this.checkObject.checkMonth &&
@@ -132,7 +133,7 @@ export default {
               if (this.checkObject.isCheck) this.getCheckedDay();
             });
         });
-    },
+    }, 1500),
     getCheckedDay: function () {
       let checkedDays = [],
         checkedObject = [];

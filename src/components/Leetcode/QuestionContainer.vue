@@ -95,7 +95,9 @@ export default {
     });
     this.$public.on("leetcode-update-code-language", (val) => {
       this.langCode = val;
-      // this.cmOptions.mode =
+    });
+    this.$public.on("leetcode-submit-question", () => {
+      this.getQuestionSubmit();
     });
   },
   mounted() {},
@@ -140,6 +142,22 @@ export default {
           this.cmOptions.theme = "solarized-dark";
         else this.cmOptions.theme = "solarized-light";
       }, 10);
+    },
+    getQuestionSubmit: function () {
+      this.$leetcode
+        .getSubmissionID(
+          this.questions.questionId,
+          this.questions.codeSnippets[this.langCode].langSlug,
+          this.$refs.codeEditor.content,
+          this.questions.titleSlug
+        )
+        .then((response) => {
+          console.log(
+            response.status == 200
+              ? `Leetcode SubmitID ${response.data.submission_id}`
+              : response
+          );
+        });
     },
   },
 };
