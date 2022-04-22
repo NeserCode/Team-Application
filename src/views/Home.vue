@@ -15,9 +15,10 @@
           >
           <a
             :class="['message', checkObject.isCheck ? 'checked' : '']"
-            @click="handleCheckDay"
+            @click="handleCheckLoading(), handleCheckDay()"
           >
             {{ checkObject.isCheck ? "已" : "未" }}签到
+            <i class="el-icon-loading" v-show="checkObject.isLoading"></i>
           </a>
         </div>
       </div>
@@ -46,6 +47,7 @@ export default {
         checkMonth: null,
         isSuper: false,
         isCheck: false,
+        isLoading: false,
       },
     };
   },
@@ -110,6 +112,9 @@ export default {
             title: "注意",
             msg: "今日已经签到",
             type: "error",
+            closefunc: () => {
+              this.checkObject.isLoading = false;
+            },
           });
           return 0;
         }
@@ -128,12 +133,16 @@ export default {
               key,
               this.checkObject.isSuper
             )
-            .then((response) => {
-              this.checkObject.isCheck = response.status == 200 ?? false;
+            .then((res) => {
+              this.checkObject.isLoading = false;
+              this.checkObject.isCheck = res.status == 200 ?? false;
               if (this.checkObject.isCheck) this.getCheckedDay();
             });
         });
     }, 1500),
+    handleCheckLoading: function () {
+      this.checkObject.isLoading = true;
+    },
     getCheckedDay: function () {
       let checkedDays = [],
         checkedObject = [];

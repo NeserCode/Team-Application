@@ -113,6 +113,7 @@ export default {
       setTimeout(() => {
         this.$leetcode.getQuestion(slug).then((response) => {
           this.question = response.data.data.question;
+          console.log(response);
           this.$public.emit("leetcode-update-question-detail", this.question);
           this.$public.emit("leetcode-toggle-list-show", !this.isShowList);
           this.$public.emit("update-footer-status-upto-app", {
@@ -187,6 +188,7 @@ export default {
     },
     initQuestionSet: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
+        console.log(response);
         this.questionSet = response.data.data.problemsetQuestionList;
         this.totalPages = parseInt(this.questionSet.total / this.pageLimit) + 1;
       });

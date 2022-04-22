@@ -54,7 +54,11 @@ export default {
       this.isContentEng = val;
     });
   },
-  mounted() {},
+  mounted() {
+    this.$leetcode.getSubumissionStatus(303828593).then((res)=>{
+      console.log(res);
+    })
+  },
   activated() {
     this.initLeetcodeAccount();
   },
@@ -89,7 +93,8 @@ export default {
         console.log(
           response.status == 200
             ? `Leetcode User ${this.userStat.username} Logined`
-            : response
+            : response,
+          response
         );
       });
     },
