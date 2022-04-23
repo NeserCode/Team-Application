@@ -2,29 +2,30 @@
   <div class="questionController">
     <div class="ctrlContainer">
       <a @click="toggleListShow">{{ isShowList ? "隐藏列表" : "显示列表" }}</a>
-      <a v-show="question.codeSnippets" @click="getQuestionContentSwitchEng">{{
-        isContentEng ? "切换至中文" : "Switch to English"
-      }}</a>
-      <a v-show="question.codeSnippets"
-        ><select name="langcode" id="langSelect" v-model="langCode">
+      <a v-show="question.codeSnippets" @click="getQuestionContentSwitchEng">
+        {{
+          isContentEng ? "切换至中文" : "Switch to English"
+        }}
+      </a>
+      <a v-show="question.codeSnippets">
+        <select name="langcode" id="langSelect" v-model="langCode">
           <option
             v-for="(item, index) in question.codeSnippets"
             class="langOption"
             :value="index"
             :key="item.lang"
-          >
-            {{ item.lang }}
-          </option>
-        </select></a
-      >
-      <a v-show="question.codeSnippets" @click="getQuestionSubmit"> 提交 </a>
-      <a class="logo"> Offered by LeetCode.cn </a>
+          >{{ item.lang }}</option>
+        </select>
+      </a>
+      <a v-show="question.codeSnippets" @click="getQuestionSubmit">提交</a>
+      <a class="logo">Offered by LeetCode.cn</a>
       <div class="userInfo" v-if="userStat.status">
         <span class="detail">
-          已作为 <img class="userAvatar" :src="userStat.avatar" />
+          已作为
+          <img class="userAvatar" :src="userStat.avatar" />
           <span class="username">{{ userStat.username }}</span> 登录
-          LeetCode.cn(zh)</span
-        >
+          LeetCode.cn(zh)
+        </span>
       </div>
     </div>
   </div>
@@ -54,11 +55,7 @@ export default {
       this.isContentEng = val;
     });
   },
-  mounted() {
-    this.$leetcode.getSubumissionStatus(303828593).then((res)=>{
-      console.log(res);
-    })
-  },
+  mounted() { },
   activated() {
     this.initLeetcodeAccount();
   },

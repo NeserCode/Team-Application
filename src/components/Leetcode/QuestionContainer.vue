@@ -40,7 +40,7 @@
 
 <script>
 // @ is an alias to /src
-import Slider from "@/components/Slider";
+import Slider from "@/components/Frameworks/Slider/index.vue";
 
 import Codemirror from "codemirror-editor-vue3";
 // styles
@@ -77,7 +77,7 @@ import "codemirror/addon/fold/xml-fold.js";
 import "codemirror/mode/javascript/javascript.js";
 
 export default {
-  name: "Leetcode",
+  name: "LeetcodeContainer",
   components: {
     Codemirror,
     Slider,

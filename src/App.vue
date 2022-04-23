@@ -1,24 +1,18 @@
 <template>
   <div id="AppView">
     <Controller />
-    <appViewHead
-      :isSettingCloseDirect="needs.isSettingCloseDirect"
-      :title="appTitle"
-    ></appViewHead>
+    <appViewHead :isSettingCloseDirect="needs.isSettingCloseDirect" :title="appTitle"></appViewHead>
     <Navigation />
     <AppMainContainer />
-    <appViewFoot
-      :status="statusReal.status"
-      :statusText="statusReal.text"
-    ></appViewFoot>
+    <appViewFoot :status="statusReal.status" :statusText="statusReal.text"></appViewFoot>
   </div>
 </template>
 
 <script>
-import appViewHead from "@/components/Header.vue";
-import AppMainContainer from "@/components/AppMainContainer.vue";
-import Navigation from "@/components/Navigation.vue";
-import appViewFoot from "@/components/Footer.vue";
+import appViewHead from "@/components/Frameworks/Header/index.vue";
+import appViewFoot from "@/components/Frameworks/Footer/index.vue";
+import AppMainContainer from "@/components/Frameworks/Container/index.vue";
+import Navigation from "@/components/Frameworks/Navigation/index.vue";
 import Controller from "@/views/Controller.vue";
 
 const { ipcRenderer } = window.require("electron");

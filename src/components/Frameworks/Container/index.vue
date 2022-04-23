@@ -12,7 +12,7 @@
 
 <script>
 // @ is an alias to /src
-import Slider from "@/components/Slider";
+import Slider from "@/components/Frameworks/Slider/index.vue";
 
 export default {
   name: "AppMainContainer",
