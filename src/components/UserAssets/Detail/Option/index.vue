@@ -5,40 +5,14 @@
         </div>
         <div class="opDetail">
             <div class="operateContainer" v-if="opType == 'tag'">
-                <el-tag :disabled="opDisabled" @click="handleOpCallbackFn">{{ opTagValue }}</el-tag>
+                <el-tag @click="handleOpCallbackFn">{{ opTagValue }}</el-tag>
             </div>
             <div class="operateContainer" v-if="opType == 'tags'">
-                <el-radio-group :model-value="opTouchValue" :disabled="opDisabled">
-                    <el-radio
-                        v-for="item in opTouchArray"
-                        :key="item.id"
-                        :label="item.value"
-                        @click.prevent="item.fn"
-                    >{{ item.choice }}</el-radio>
-                </el-radio-group>
-            </div>
-            <div class="operateContainer" v-if="opType == 'input'">
-                <el-tag v-show="!isInputEdit" @click="toggleInputEdit">{{ opInputBtnText }}</el-tag>
-                <div class="opInput" v-show="isInputEdit">
-                    <el-input
-                        v-model="inputTempValue"
-                        :placeholder="opInputPlaceholder"
-                        @input="emitInputPropsToper('settingInput', this.inputTempValue)"
-                    >
-                        <template #append>
-                            <el-button
-                                @click="
-                                emitInputPropsToper('inputChange', {
-                                    name: this.opExtraValue,
-                                    value: this.inputTempValue,
-                                })
-                                "
-                            >{{ opBtnText }}</el-button>
-                            <el-divider direction="vertical"></el-divider>
-                            <el-button @click="cancelInputSubmitChange">取消</el-button>
-                        </template>
-                    </el-input>
-                </div>
+                <el-tag
+                    v-for="item in opTagArray"
+                    :key="item.id"
+                    @click.prevent="item.fn"
+                >{{ item.value }}</el-tag>
             </div>
             <div class="tipContainer" v-if="opTip">
                 <span class="opTip">{{ opTip }}</span>
@@ -64,26 +38,11 @@ export default {
         opTip: {
             type: String,
         },
-        opBindValue: {
-            type: [Boolean, String, Number],
-        },
         opTagValue: {
             type: [Boolean, String, Number]
         },
-        opInputBtnText: {
-            type: [String, Number],
-        },
-        opInputPlaceholder: {
-            type: [String, Number],
-        },
-        opTouchArray: {
+        opTagArray: {
             type: Array,
-        },
-        opTouchValue: {
-            type: [String, Number],
-        },
-        opBtnText: {
-            type: [String, Number],
         },
         opCallbackFn: {
             type: Function,

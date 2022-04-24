@@ -1,37 +1,30 @@
 <template>
   <div class="navigation">
-    <User @click="handleOpenUserArea" v-show="isLogined" />
+    <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
 
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/home"
-      >圈子</router-link
-    >
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/home">圈子</router-link>
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/code"
-      >代码</router-link
-    >
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/code">代码</router-link>
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/setting"
-      >设置</router-link
-    >
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/setting">设置</router-link>
     <el-divider direction="vertical" v-show="!isLogined"></el-divider>
     <router-link
       class="areaLink"
       v-show="!isLogined"
       :ondragstart="handleKeepDrag"
       to="/userArea"
-      >登录</router-link
-    >
+    >登录</router-link>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import User from "@/components/User.vue";
+import UserAvatar from "@/components/UserAssets/Avatar/index.vue";
 
 export default {
   name: "Navigation",
   components: {
-    User,
+    UserAvatar,
   },
   data() {
     return {
