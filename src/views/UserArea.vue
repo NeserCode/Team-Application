@@ -10,7 +10,7 @@
 
 <script>
 const { ipcRenderer } = window.require("electron");
-import userDetail from "@/components/userDetail.vue";
+import userDetail from "@/components/UserAssets/Detail/index.vue";
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
 
