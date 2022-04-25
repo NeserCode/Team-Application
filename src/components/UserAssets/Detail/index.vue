@@ -1,159 +1,242 @@
 <template>
-    <div class="userDetail">
-        <div class="userInfo">
-            <UserAssets center :isUserImageRound="true" />
-            <userDetailOption
-                opTitle="性别"
-                opType="tag"
-                opTagValue="man"
-                :opDisabled="false"
-                :opCallbackFn="handleLog"
-            />
-            <userDetailOption
-                opTitle="认证"
-                opType="tags"
-                :opDisabled="false"
-                :opTagArray="accessArr"
-            />
-        </div>
-        <el-button class="clearLoginBtn" type="danger" @click="isConfirmOut = true">清除登录状态</el-button>
-        <el-dialog v-model="isConfirmOut" title="注意" width="30%" center>
-            <span>请确认登出当前账号？</span>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="isConfirmOut = false">取消</el-button>
-                    <el-button type="primary" @click="handleSignOut">确定</el-button>
-                </span>
-            </template>
-        </el-dialog>
+  <div class="userDetail">
+    <div class="userInfo">
+      <UserAssets :isUserImageRound="true" />
+      <el-divider>{{ aboutStr }}</el-divider>
+      <UserDetailOption
+        :opTitle="keyObj.title"
+        opType="tag"
+        :opDisabled="keyObj.disabled"
+        :opTagValue="keyObj.text"
+        :opCallbackFn="keyObj.fn"
+      />
+      <UserDetailOption
+        :opTitle="sexObj.title"
+        opType="tag"
+        :opTagValue="sexObj.text"
+        :opDisabled="sexObj.disabled"
+        :opCallbackFn="sexObj.fn"
+        :opExtraValue="radioTemp"
+        opTagEditable="radio"
+        :opRadioArray="sexObj.arr"
+      />
+      <UserDetailOption
+        :opTitle="accessObj.title"
+        opType="tag"
+        :opDisabled="accessObj.disabled"
+        :opTagValue="accessObj.text"
+        :opCallbackFn="accessObj.fn"
+      />
+      <UserDetailOption
+        :opTitle="boundObj.title"
+        opType="tag"
+        :opDisabled="boundObj.disabled"
+        :opTagValue="boundObj.text"
+        :opCallbackFn="boundObj.fn"
+        :opBindValue="boundTemp"
+        opTagEditable="input"
+        :opEmitName="'boundChange'"
+        @emitInput="handleBoundInputTemp"
+        @boundChange="handleBoundChange"
+      />
     </div>
+    <el-button
+      class="clearLoginBtn"
+      type="danger"
+      v-show="!isConfirmOut"
+      @click="handleConfirmOut"
+      >清除登录状态</el-button
+    >
+    <el-button-group class="clearLoginBtn btnGroup" v-show="isConfirmOut">
+      <el-button type="danger" @click="handleSignOut">√ 确认登出</el-button>
+      <el-button type="primary" @click="cancelConfirmOut">× 取消</el-button>
+    </el-button-group>
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import UserAssets from "@/components/UserAssets/index.vue";
-import userDetailOption from "@/components/UserAssets/Detail/Option/index.vue"
+import UserDetailOption from "@/components/UserAssets/Detail/Option/index.vue";
+import { clipboard } from "electron";
+import { _debounce } from "@/plugins/utils";
 
 export default {
-    name: "userDetail",
-    components: { UserAssets, userDetailOption },
-    computed: {
-        accessStatusText() {
-            return `${this.accessOgz.access ? '未' : '已'}认证`
-        }
+  name: "userDetail",
+  components: { UserAssets, UserDetailOption },
+  watch: {
+    accessOgz: {
+      handler() {
+        this.accessObj.text = `${this.accessOgz.access ? "已" : "未"}认证 
+        ${this.accessOgz.ogz} 
+        ${this.accessOgz.position}`;
+      },
+      deep: true,
     },
-    data() {
-        return {
-            isConfirmOut: false,
-            accessOgz: {
-                access: false,
-                ogz: "",
-                position: ""
+  },
+  computed: {
+    aboutStr() {
+      if (this.thisUsername == localStorage.getItem("username"))
+        return "About me";
+      else return `About ${this.thisUsername}`;
+    },
+  },
+  data() {
+    return {
+      isConfirmOut: false,
+      thisUsername: "",
+      boundTemp: "",
+      radioTemp: 0,
+      sexObj: {
+        title: "性别",
+        text: "",
+        disabled: true,
+        fn: () => {
+          this.handleLog("Sex");
+        },
+        arr: [
+          {
+            id: 0,
+            value: 0,
+            choice: "男",
+            fn: () => {
+              this.radioTemp = 0;
+              this.sexObj.text = "男";
+              this.$public.emit("opInputEditFinish");
             },
-            accessArr: [
-                {
-                    id: 1,
-                    value: "nidie",
-                    fn: () => {
-                        this.handleLog('access')
-                    }
-                }
-            ]
-        };
-    },
-    mounted() {
-        this.$public.on("update-main-user-info-upto-app", (res) => {
-            console.log(res);
-        });
-        this.$conf.getConfPromise().then((data) => {
-            console.log(data);
-        });
-    },
-    methods: {
-        handleLog: function (msg) {
-            console.log(msg);
+          },
+          {
+            id: 1,
+            value: 1,
+            choice: "女",
+            fn: () => {
+              this.radioTemp = 1;
+              this.sexObj.text = "女";
+              this.$public.emit("opInputEditFinish");
+            },
+          },
+        ],
+      },
+      accessOgz: {
+        access: false,
+        ogz: "",
+        position: "",
+      },
+      accessObj: {
+        title: "认证",
+        text: "",
+        disabled: false,
+        fn: () => {
+          this.handleLog("Access");
         },
-        handleSignOut: function () {
-            this.$public.emit("clear-user-sign-status");
-            this.isConfirmOut = false
+      },
+      boundObj: {
+        title: "绑定",
+        text: "",
+        disabled: false,
+        fn: () => {
+          this.handleLog("Bound");
         },
+      },
+      keyObj: {
+        title: "密钥",
+        text: "",
+        disabled: false,
+        fn: () => {
+          this.handleClipKey();
+        },
+      },
+    };
+  },
+  mounted() {
+    this.$public.on("update-main-user-info-upto-app", (res) => {
+      console.log(res);
+    });
+    this.$conf.getConfPromise().then((data) => {
+      const { userInfo } = data.data;
+      console.log(userInfo);
+      // 处理认证条目
+      this.accessOgz.access = userInfo.access == 1;
+      if (this.accessOgz.access) {
+        this.accessOgz.ogz = userInfo.orgnization;
+        this.accessOgz.position = userInfo.orPosition;
+      }
+      // 处理性别条目
+      this.sexObj.text =
+        (userInfo.sex == "m" ? "男" : userInfo.sex == "w" ? "女" : null) ??
+        "Unknow";
+      // 处理绑定条目
+      this.boundObj.text = userInfo.bound ?? "Unknow";
+      // 处理键值条目
+      this.keyObj.text = userInfo.key ?? "No Such Key";
+      // 处理用户名
+      this.thisUsername = userInfo.name;
+    });
+  },
+  methods: {
+    handleLog: function (...option) {
+      console.log(option);
     },
+    handleBoundInputTemp: function (val) {
+      this.boundTemp = val;
+    },
+    handleSexRadioTemp: function (val) {
+      this.radioTemp = val;
+    },
+    handleBoundChange: function () {
+      this.$public.emit("opInputEditFinish");
+    },
+    handleClipKey: _debounce(function () {
+      if (this.keyObj.text.length >= 12) {
+        clipboard.writeText(this.keyObj.text);
+        this.$public.emit("notice", {
+          type: "success",
+          msg: "密钥已经复制到剪切板中",
+        });
+      }
+    }, 1500),
+    handleSignOut: function () {
+      this.$public.emit("clear-user-sign-status");
+      this.isConfirmOut = false;
+    },
+    handleConfirmOut: function () {
+      this.isConfirmOut = true;
+    },
+    cancelConfirmOut: function () {
+      this.isConfirmOut = false;
+    },
+  },
 };
 </script>
 
 <style scoped>
 .userDetail {
-    @apply my-0;
-}
-.settingOption {
-    @apply h-16 w-full mx-auto py-4 select-none;
-    line-height: 2rem;
-}
-.preText {
-    @apply block float-left w-48 h-full text-base;
-    text-indent: 5ch;
-    line-height: 2rem;
-}
-.userZone {
-    @apply h-full text-center py-12 relative mb-2;
-}
-.userZone .username {
-    @apply w-48 h-12 block text-center text-lg mx-auto pt-4 transform translate-x-3.5 font-light;
-    font-family: Canger_xwz;
-}
-.userZone .userRename {
-    @apply w-80 h-12 mx-auto pt-4;
-}
-.el-icon-edit {
-    @apply ml-2;
-}
-.renameInput {
-    @apply float-left w-52;
-}
-.renameBtn {
-    @apply float-left mx-2;
-}
-span.realname {
-    @apply block absolute left-1/2 bottom-3 text-gray-500 transform -translate-x-1/2;
-}
-span.realname .text {
-    font-family: Helvetica_otf;
-    letter-spacing: 0.15ch;
-}
-span.introduce {
-    @apply block font-light text-center text-3xl mb-4 px-44;
-    font-family: Canger_zkzdbs;
-}
-.userInfo {
-    @apply mb-8 pb-6;
-}
-.settingOption .submitBtn {
-    @apply block w-24 mx-auto;
-}
-.submitContainer {
-    @apply py-16;
-}
-.boundContainer {
-    @apply h-24;
-}
-.boundItem {
-    @apply block w-full h-12;
+  @apply my-0 h-auto;
 }
 
-.selectable {
-    @apply select-text mx-0.5;
+.userInfo {
+  @apply my-8 mx-auto pb-6 w-3/5;
 }
 
 .clearLoginBtn {
-    @apply block mx-auto my-16;
+  @apply block mx-auto my-16;
+}
+.clearLoginBtn.btnGroup {
+  @apply flex justify-center;
 }
 
 @media (prefers-color-scheme: dark) {
-    .el-tag {
-        @apply bg-gray-700 text-gray-200;
-    }
+  .el-tag {
+    @apply bg-gray-700 text-gray-200;
+  }
+  :deep(.el-divider__text.is-center) {
+    @apply bg-gray-800 text-gray-200;
+  }
 }
 
 @media (prefers-color-scheme: light) {
+  :deep(.el-divider__text.is-center) {
+    @apply bg-gray-100 text-gray-600;
+  }
 }
 </style>

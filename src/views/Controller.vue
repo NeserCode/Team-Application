@@ -49,7 +49,7 @@ export default {
     });
 
     this.$public.on("notice", ({ title, msg, type, closefunc }) => {
-      let duration = 2000,
+      let duration = 1500,
         position = "bottom-right";
 
       this.$notify({

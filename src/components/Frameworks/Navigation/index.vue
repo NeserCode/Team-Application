@@ -1,19 +1,26 @@
 <template>
-  <div class="navigation">
+  <div class="navigation skin">
     <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
 
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/home">圈子</router-link>
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/home"
+      >圈子</router-link
+    >
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/code">代码</router-link>
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/code"
+      >代码</router-link
+    >
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/setting">设置</router-link>
+    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/setting"
+      >设置</router-link
+    >
     <el-divider direction="vertical" v-show="!isLogined"></el-divider>
     <router-link
       class="areaLink"
       v-show="!isLogined"
       :ondragstart="handleKeepDrag"
       to="/userArea"
-    >登录</router-link>
+      >登录</router-link
+    >
   </div>
 </template>
 
@@ -55,19 +62,19 @@ export default {
   @apply h-16 text-center text-lg py-4 fixed top-8 border-b;
   width: calc(100% - 2px);
 }
-.navigation::before {
+.navigation.skin::before {
   content: "";
-  @apply absolute left-0 top-0 h-16 w-1/2 opacity-25;
+  @apply absolute left-0 top-0 h-16 w-1/2 opacity-20;
   background: linear-gradient(to right, orange, green, cyan, lightblue);
   z-index: -1;
-  animation: colorfy infinite 8s;
+  animation: colorfy infinite 12s;
 }
-.navigation::after {
+.navigation.skin::after {
   content: "";
-  @apply absolute left-1/2 top-0 h-16 w-1/2 opacity-25;
+  @apply absolute left-1/2 top-0 h-16 w-1/2 opacity-20;
   background: linear-gradient(to left, orange, green, cyan, lightblue);
   z-index: -1;
-  animation: colorfy infinite 8s;
+  animation: colorfy infinite 12s;
 }
 .navigation .areaLink {
   @apply font-semibold inline-block mx-2;

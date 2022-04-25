@@ -76,6 +76,6 @@ export default {
 
 <style scoped>
 .UserArea {
-  @apply w-full h-full;
+  @apply w-full h-auto;
 }
 </style>

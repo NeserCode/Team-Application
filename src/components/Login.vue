@@ -150,31 +150,37 @@ export default {
         this.handleDisableBtn();
       } else
         this.handleGetIPs().then((ip) => {
-          this.$axios
-            .post(this.App_Host + "/api/user/signin", {
-              username: this.userInput.inputAccount,
-              password: this.$conf.getMd5String(that.userInput.inputPassword),
-              appkey: localStorage.getItem("appkey"),
-              userkey: localStorage.getItem("userkey"),
-              checkkey: this.$conf.getMd5String(ip),
-            })
-            .then((res) => {
-              if (res.data.length == 0)
-                that.handleNoticeProcess(
-                  "😑 用户名或者密码错误或者不存在该用户"
-                );
-              else {
-                this.$public.emit("update-footer-status-upto-app", {
-                  status: "Success",
-                  text: "😁 用户登陆成功",
-                });
-                this.$public.emit("update-main-user-info-upto-app", {
-                  info: res.data.info[0],
-                  detail: res.data.detail[0],
-                });
-                localStorage.setItem("username", res.data.info[0].username);
-                localStorage.setItem("checkKey", this.$conf.getMd5String(ip));
-              }
+          if (ip != "UNKNOW")
+            this.$axios
+              .post(this.App_Host + "/api/user/signin", {
+                username: this.userInput.inputAccount,
+                password: this.$conf.getMd5String(that.userInput.inputPassword),
+                appkey: localStorage.getItem("appkey"),
+                userkey: localStorage.getItem("userkey"),
+                checkkey: this.$conf.getMd5String(ip),
+              })
+              .then((res) => {
+                if (res.data.length == 0)
+                  that.handleNoticeProcess(
+                    "😑 用户名或者密码错误或者不存在该用户"
+                  );
+                else {
+                  this.$public.emit("update-footer-status-upto-app", {
+                    status: "Success",
+                    text: "😁 用户登陆成功",
+                  });
+                  this.$public.emit("update-main-user-info-upto-app", {
+                    info: res.data.info[0],
+                    detail: res.data.detail[0],
+                  });
+                  localStorage.setItem("username", res.data.info[0].username);
+                  localStorage.setItem("checkKey", this.$conf.getMd5String(ip));
+                }
+              });
+          else
+            this.$public.emit("notice", {
+              type: "error",
+              msg: "发生了某些错误，可能是网络被阻塞了，或是网络连接错误",
             });
           this.isUserLogining = false;
         });
@@ -185,7 +191,12 @@ export default {
       return this.$axios
         .get("https://api.ipify.org?format=json")
         .then((res) => {
+          console.log(`本地IP [${res.data.ip}]`);
           return res.data.ip;
+        })
+        .catch((e) => {
+          console.log("Get IP address Error, ", e);
+          if (e) return "UNKNOW";
         });
     },
     handlePwdShow: function () {

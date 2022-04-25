@@ -28,7 +28,7 @@
         </el-radio-group>
       </div>
       <div class="operateContainer" v-if="opType == 'input'">
-        <el-tag v-show="!isInputEdit" @click="toggleInputEdit">{{
+        <el-tag v-show="!isInputEdit" @click="handleInputEdit">{{
           opInputBtnText
         }}</el-tag>
         <div class="opInput" v-show="isInputEdit">
@@ -45,12 +45,10 @@
                     value: this.inputTempValue,
                   })
                 "
-                >{{ opBtnText }}</el-button
+                >{{ opBtnText ?? "确认" }}</el-button
               >
               <el-divider direction="vertical"></el-divider>
-              <el-button @click="cancelInputSubmitChange"
-                >取消</el-button
-              ></template
+              <el-button @click="cancelInputEdit">取消</el-button></template
             >
           </el-input>
         </div>
@@ -117,10 +115,11 @@ export default {
     emitInputPropsToper: function (name, value) {
       this.$emit(name, value);
     },
-    cancelInputSubmitChange: function () {
+    handleInputEdit: function () {
+      this.$public.emit("opInputEditFinish");
       this.isInputEdit = !this.isInputEdit;
     },
-    toggleInputEdit: function () {
+    cancelInputEdit: function () {
       this.isInputEdit = !this.isInputEdit;
     },
     initOption: function () {
@@ -187,7 +186,10 @@ span.opTip {
   :deep(.el-radio) {
     @apply text-gray-300;
   }
-  :deep(.el-tag) {
+  :deep(.el-tag),
+  :deep(.el-button),
+  :deep(.el-input__inner),
+  :deep(.el-input-group__append) {
     @apply bg-gray-600 text-gray-200;
   }
 }

@@ -74,7 +74,9 @@ export default {
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
-      console.log("Content Resized");
+      console.log("Slider Resized");
+      this.$refs.ythumb.style.height = `0px`;
+      this.$refs.xthumb.style.width = `0px`;
       this.initBars();
     });
     this.resizeObserver.observe(this.$refs.content);

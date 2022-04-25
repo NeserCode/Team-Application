@@ -1,10 +1,16 @@
 <template>
   <div id="AppView">
     <Controller />
-    <appViewHead :isSettingCloseDirect="needs.isSettingCloseDirect" :title="appTitle"></appViewHead>
+    <appViewHead
+      :isSettingCloseDirect="needs.isSettingCloseDirect"
+      :title="appTitle"
+    ></appViewHead>
     <Navigation />
     <AppMainContainer />
-    <appViewFoot :status="statusReal.status" :statusText="statusReal.text"></appViewFoot>
+    <appViewFoot
+      :status="statusReal.status"
+      :statusText="statusReal.text"
+    ></appViewFoot>
   </div>
 </template>
 
@@ -14,7 +20,6 @@ import appViewFoot from "@/components/Frameworks/Footer/index.vue";
 import AppMainContainer from "@/components/Frameworks/Container/index.vue";
 import Navigation from "@/components/Frameworks/Navigation/index.vue";
 import Controller from "@/views/Controller.vue";
-
 const { ipcRenderer } = window.require("electron");
 
 export default {
@@ -88,14 +93,14 @@ export default {
 
     initApp: function () {
       this.initSettings();
-      this.$message.info({
-        dangerouslyUseHTMLString: true,
-        message:
-          "Flush => <strong>Ctrl + M</strong><br/><br/>Tools => <strong>Ctrl + Q</strong>",
-        offset: 400,
-        duration: 3000,
-        center: true,
-      });
+      // this.$message.info({
+      //   dangerouslyUseHTMLString: true,
+      //   message:
+      //     "Flush => <strong>Ctrl + M</strong><br/><br/>Tools => <strong>Ctrl + Q</strong>",
+      //   offset: 400,
+      //   duration: 3000,
+      //   center: true,
+      // });
       console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
     },
   },
