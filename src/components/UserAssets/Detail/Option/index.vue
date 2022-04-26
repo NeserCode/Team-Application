@@ -175,7 +175,7 @@ span.opTitle {
 }
 
 span.opTip {
-  @apply inline-block text-gray-400 text-sm;
+  @apply inline-block text-gray-400 text-xs;
 }
 
 .titleContainer,

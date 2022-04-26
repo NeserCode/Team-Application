@@ -161,17 +161,16 @@ async function createLoadingWindow() {
   loadingWindow.loadFile(path.join(__dirname, '../public/', 'cover.html'))
   loadingWindow.show()
   loadingWindow.focus()
-  loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
-  loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
   createWindow()
+  loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
   mainWindow.hide()
   setTimeout(() => {
     mainWindow.show()
     mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
     mainWindow.focus()
-    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
     loadingWindow.close()
-  }, 5000);
+    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+  }, 3000);
 }
 
 function runExec(cmdStr, cmdPath) {

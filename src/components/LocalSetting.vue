@@ -132,7 +132,7 @@ export default {
           title: "保存时出现了一个错误",
           msg: err,
           type: "error",
-          closefunc: () => {
+          fn: () => {
             this.isClickable = true;
           },
         });
@@ -141,7 +141,7 @@ export default {
           title: "",
           msg: "设置保存成功 正在为您启用设置",
           type: "success",
-          closefunc: () => {
+          fn: () => {
             this.isClickable = true;
           },
         });

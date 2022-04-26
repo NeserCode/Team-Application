@@ -74,7 +74,9 @@ export default {
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
-      console.log("Slider Resized");
+      console.log(
+        `Slider(${this.$refs.container.parentNode.parentNode.classList}) Resized`
+      );
       this.$refs.ythumb.style.height = `0px`;
       this.$refs.xthumb.style.width = `0px`;
       this.initBars();

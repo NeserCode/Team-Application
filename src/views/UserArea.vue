@@ -1,8 +1,8 @@
 <template>
   <div class="UserArea">
     <div class="loginArea" v-show="!isUserLogined">
-      <Login v-show="this.loginOrReg" />
-      <Register v-show="!this.loginOrReg" />
+      <Login v-show="this.isSignIn" />
+      <Register v-show="!this.isSignIn" />
     </div>
     <userDetail v-show="isUserLogined" />
   </div>
@@ -11,8 +11,8 @@
 <script>
 const { ipcRenderer } = window.require("electron");
 import userDetail from "@/components/UserAssets/Detail/index.vue";
-import Login from "@/components/Login.vue";
-import Register from "@/components/Register.vue";
+import Login from "@/components/Sign/in/index.vue";
+import Register from "@/components/Sign/up/index.vue";
 
 export default {
   name: "Setting",
@@ -21,8 +21,8 @@ export default {
       this.isUserLogined = true;
     });
     this.$public.on("change-login-or-register-view", (which) => {
-      this.loginOrReg = which;
-      console.log(which);
+      this.isSignIn = which;
+      console.log(`切换至 ${which ? "Sign/in" : "Sign/up"} 界面`);
     });
     this.$public.on("clear-user-sign-status", () => {
       localStorage.removeItem("userkey");
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      loginOrReg: true,
+      isSignIn: true,
       isUserLogined: false,
       appConfigPath: "",
       keys: {

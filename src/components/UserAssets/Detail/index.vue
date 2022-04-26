@@ -38,6 +38,7 @@
         :opEmitName="'boundChange'"
         @emitInput="handleBoundInputTemp"
         @boundChange="handleBoundChange"
+        opTip="目前还只是可以自己编辑的联系方式"
       />
     </div>
     <el-button
@@ -59,7 +60,6 @@
 import UserAssets from "@/components/UserAssets/index.vue";
 import UserDetailOption from "@/components/UserAssets/Detail/Option/index.vue";
 import { clipboard } from "electron";
-import { _debounce } from "@/plugins/utils";
 
 export default {
   name: "userDetail",
@@ -152,9 +152,9 @@ export default {
     this.$public.on("update-main-user-info-upto-app", (res) => {
       console.log(res);
     });
+    // console.log(this.$conf.getUserPath("userData"));
     this.$conf.getConfPromise().then((data) => {
       const { userInfo } = data.data;
-      console.log(userInfo);
       // 处理认证条目
       this.accessOgz.access = userInfo.access == 1;
       if (this.accessOgz.access) {
@@ -186,15 +186,19 @@ export default {
     handleBoundChange: function () {
       this.$public.emit("opInputEditFinish");
     },
-    handleClipKey: _debounce(function () {
+    handleClipKey: function () {
       if (this.keyObj.text.length >= 12) {
+        this.keyObj.disabled = true;
         clipboard.writeText(this.keyObj.text);
         this.$public.emit("notice", {
           type: "success",
           msg: "密钥已经复制到剪切板中",
+          fn: () => {
+            this.keyObj.disabled = false;
+          },
         });
       }
-    }, 1500),
+    },
     handleSignOut: function () {
       this.$public.emit("clear-user-sign-status");
       this.isConfirmOut = false;

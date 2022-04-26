@@ -112,7 +112,7 @@ export default {
             title: "注意",
             msg: "今日已经签到",
             type: "error",
-            closefunc: () => {
+            fn: () => {
               this.checkObject.isLoading = false;
             },
           });

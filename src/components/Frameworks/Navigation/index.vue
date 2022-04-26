@@ -2,15 +2,27 @@
   <div class="navigation skin">
     <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
 
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/home"
+    <router-link
+      class="areaLink"
+      tabindex="-1"
+      :ondragstart="handleKeepDrag"
+      to="/home"
       >圈子</router-link
     >
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/code"
+    <router-link
+      class="areaLink"
+      tabindex="-1"
+      :ondragstart="handleKeepDrag"
+      to="/code"
       >代码</router-link
     >
     <el-divider direction="vertical"></el-divider>
-    <router-link class="areaLink" :ondragstart="handleKeepDrag" to="/setting"
+    <router-link
+      class="areaLink"
+      tabindex="-1"
+      :ondragstart="handleKeepDrag"
+      to="/setting"
       >设置</router-link
     >
     <el-divider direction="vertical" v-show="!isLogined"></el-divider>
@@ -19,7 +31,8 @@
       v-show="!isLogined"
       :ondragstart="handleKeepDrag"
       to="/userArea"
-      >登录</router-link
+      tabindex="-1"
+      >{{ signText }}</router-link
     >
   </div>
 </template>
@@ -36,6 +49,7 @@ export default {
   data() {
     return {
       isLogined: false,
+      signText: "登录",
     };
   },
   mounted() {
@@ -44,6 +58,9 @@ export default {
     });
     this.$public.on("clear-user-sign-status", () => {
       this.isLogined = false;
+    });
+    this.$public.on("change-login-or-register-view", (bool) => {
+      this.signText = bool ? "登录" : "注册";
     });
 
     this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null));

@@ -34,8 +34,7 @@ async function dirExists(dir) {
 
 export default {
   name: "Controller",
-  beforeCreate() {
-  },
+  beforeCreate() {},
   mounted() {
     this.APP_CONFIG_PATH = this.$conf.getPath();
     dirExists(this.APP_CONFIG_PATH);
@@ -48,7 +47,7 @@ export default {
       this.handleCheckKey();
     });
 
-    this.$public.on("notice", ({ title, msg, type, closefunc }) => {
+    this.$public.on("notice", ({ title, msg, type, fn }) => {
       let duration = 1500,
         position = "bottom-right";
 
@@ -58,7 +57,7 @@ export default {
         type: type,
         duration: duration,
         position: position,
-        onClose: closefunc,
+        onClose: fn,
         showClose: false,
         offset: 25,
       });
