@@ -162,14 +162,8 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
-  .userSetting {
-    @apply bg-gray-700;
-  }
 }
 
 @media (prefers-color-scheme: light) {
-  .userSetting {
-    @apply bg-white;
-  }
 }
 </style>

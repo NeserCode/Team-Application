@@ -97,14 +97,8 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
-  .leetcodeSetting {
-    @apply bg-gray-700;
-  }
 }
 
 @media (prefers-color-scheme: light) {
-  .leetcodeSetting {
-    @apply bg-white;
-  }
 }
 </style>

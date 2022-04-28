@@ -47,7 +47,7 @@ export default {
       this.handleCheckKey();
     });
 
-    this.$public.on("notice", ({ title, msg, type, fn }) => {
+    this.$public.on("notice", ({ title, msg, type, time, fn }) => {
       let duration = 1500,
         position = "bottom-right";
 
@@ -55,7 +55,7 @@ export default {
         title: title,
         message: msg,
         type: type,
-        duration: duration,
+        duration: time ?? duration,
         position: position,
         onClose: fn,
         showClose: false,

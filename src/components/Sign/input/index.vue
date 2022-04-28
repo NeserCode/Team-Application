@@ -1,16 +1,20 @@
 <template>
   <div class="signInput">
     <input
+      ref="iBody"
       :type="iType"
       :id="iLable"
       v-model="iTemp"
       @input="handleInput"
+      @keyup="handlePressCaps"
       class="iBody"
       spellcheck="false"
       placeholder=" "
     />
-    <label :for="iLable" class="iLBody">{{ iPreText }}</label>
-    <span class="iTip" v-if="iTip">{{ iTip }}</span>
+    <label ref="iLBody" :for="iLable" class="iLBody"
+      >{{ iPreText }} <span>{{ iCheck ? "√ 合法" : "× 非法" }}</span></label
+    >
+    <span ref="iTip" class="iTip" v-if="iTip">{{ iTip }}</span>
   </div>
 </template>
 
@@ -25,6 +29,10 @@ export default {
     iLable: {
       type: String,
       required: true,
+    },
+    iCheck: {
+      type: Boolean,
+      default: true,
     },
     iPreText: {
       type: String,
@@ -45,12 +53,34 @@ export default {
   data() {
     return {
       iTemp: "",
+      iTimer: null,
+      isCapsUp: false,
     };
   },
   mounted() {},
   methods: {
     handleInput: function () {
       this.$emit("keep-input", this.iTemp);
+    },
+    handleShakeInput: function () {
+      if (this.iTimer) clearTimeout(this.iTimer);
+      this.$refs.iBody.classList.add("shake");
+      this.$refs.iBody.focus();
+      this.iTimer = setTimeout(() => {
+        this.$refs.iBody.classList.remove("shake");
+      }, 400);
+    },
+    handlePressCaps: function (e) {
+      if (e.keyCode == 20)
+        if (!this.isCapsUp) {
+          this.isCapsUp = true;
+          this.$public.emit("notice", {
+            msg: "请注意，您按下了大写锁定",
+            fn: () => {
+              this.isCapsUp = false;
+            },
+          });
+        }
     },
   },
 };
@@ -66,6 +96,13 @@ export default {
 }
 .iLBody {
   @apply absolute inline-block w-auto left-0 top-0 px-2 py-1 text-lg transition-all;
+}
+.iLBody span {
+  @apply inline-block px-3 opacity-0 text-xs;
+}
+
+.iBody.shake {
+  animation: iShake 0.4s ease-in-out;
 }
 
 .iLBody::before {
@@ -95,6 +132,9 @@ input:not(:placeholder-shown):focus + label {
 }
 input:not(:placeholder-shown):not(:focus) + label {
   @apply opacity-100 transform -translate-y-full;
+}
+input:not(:placeholder-shown):focus + .iLBody span {
+  @apply opacity-50;
 }
 @media (prefers-color-scheme: dark) {
   .iLBody {
@@ -135,6 +175,24 @@ input:not(:placeholder-shown):not(:focus) + label {
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes iShake {
+  0% {
+    transform: translateX(.5rem);
+  }
+  25% {
+    transform: translateX(-.5rem);
+  }
+  50% {
+    transform: translateX(.5rem);
+  }
+  75% {
+    transform: translateX(-1rem);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 </style>

@@ -27,7 +27,11 @@
         iLable="upRepeatPassword"
         iPreText="重复密码"
       />
-      <button @click="toggleSignModeToIn">切换到登录</button>
+      <br />
+      <div class="btnContainer">
+        <button @click="toggleSignModeToIn">注册</button>
+        <button @click="toggleSignModeToIn">切换到登录</button>
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +80,7 @@ export default {
 }
 
 .iContainer {
-  @apply relative flex flex-col justify-center items-center w-2/5 h-full mx-auto py-24
+  @apply relative flex flex-col justify-center items-center w-2/5 h-full mx-auto pt-16 pb-12
      mt-32 rounded-2xl shadow;
   min-width: 650px;
 }
@@ -85,15 +89,36 @@ export default {
   @apply w-1/3 inline-block my-8;
 }
 
+.btnContainer {
+  @apply flex w-1/3 justify-between;
+}
+
+button {
+  @apply bg-transparent px-4 py-2 rounded-full transition-colors border border-transparent;
+}
+button:focus {
+  @apply outline-none;
+}
+button:focus::before {
+  content: ">";
+  @apply inline-block pr-1 font-semibold;
+}
+
 @media (prefers-color-scheme: dark) {
   .iContainer {
     @apply bg-gray-900;
+  }
+  button:hover {
+    @apply bg-gray-700 text-gray-200;
   }
 }
 
 @media (prefers-color-scheme: light) {
   .iContainer {
     @apply bg-white;
+  }
+  button:hover {
+    @apply bg-gray-200 text-gray-700;
   }
 }
 </style>
