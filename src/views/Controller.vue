@@ -52,14 +52,18 @@ export default {
         position = "bottom-right";
 
       this.$notify({
-        title: title,
+        title,
         message: msg,
-        type: type,
+        type,
         duration: time ?? duration,
-        position: position,
+        position,
         onClose: fn,
         showClose: false,
         offset: 25,
+      });
+      this.$public.emit("update-footer-status-upto-app", {
+        status: type ?? "Loading",
+        text: msg,
       });
     });
 
@@ -112,14 +116,14 @@ export default {
         JSON.stringify(this.APP_CONFIG),
         (err) => {
           if (err)
-            this.$public.emit("update-footer-status-upto-app", {
-              status: "Error",
-              text: "🤐 文件保存失败 " + err,
+            this.$public.emit("notice", {
+              type: "error",
+              msg: "文件保存失败",
             });
           else
-            this.$public.emit("update-footer-status-upto-app", {
-              status: "Success",
-              text: "😋 文件保存成功",
+            this.$public.emit("notice", {
+              type: "success",
+              msg: "文件保存成功",
             });
         }
       );

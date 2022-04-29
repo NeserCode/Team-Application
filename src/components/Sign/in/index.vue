@@ -130,13 +130,14 @@ export default {
           this.$public.emit("notice", {
             type: "error",
             msg: this.checkText,
-            time: 3000,
+            time: 2200,
             fn: () => {
               this.clickable = true;
             },
           });
         } else {
           this.$conf.getHost().then((h) => {
+            this.clickable = false;
             this.$conf
               .handleUserSignIn({
                 host: this.$conf.getHttpString(h.host),
@@ -148,10 +149,52 @@ export default {
               })
               .then((response) => {
                 const { info, detail } = response.data;
-                console.log(info, detail);
+
+                if (info.userKey.length < 16)
+                  this.$public.emit("notice", {
+                    type: "warn",
+                    msg: "用户键值缺失异常",
+                    fn: () => {
+                      this.clickable = true;
+                    },
+                  });
+                else if (info.appKey.length < 16) {
+                  this.$public.emit("notice", {
+                    type: "warn",
+                    msg: "应用键值缺失异常",
+                    fn: () => {
+                      this.clickable = true;
+                    },
+                  });
+                }
+
+                this.$public.emit("notice", {
+                  type: "success",
+                  msg: `欢迎您，${detail.nickname}`,
+                  time: 3000,
+                  fn: () => {
+                    this.$public.emit("update-main-user-info-upto-app", {
+                      info,
+                      detail,
+                    });
+                    this.signIn.username = "";
+                    this.signIn.password = "";
+                    this.options.isOnlineSignIn = true;
+                    this.options.isShowPassword = false;
+
+                    this.clickable = true;
+                  },
+                });
               })
               .catch((e) => {
                 console.log(e.message);
+                this.$public.emit("notice", {
+                  type: "error",
+                  msg: "登陆错误, 请检查您输入的用户名和密码",
+                  fn: () => {
+                    this.clickable = true;
+                  },
+                });
               });
           });
         }

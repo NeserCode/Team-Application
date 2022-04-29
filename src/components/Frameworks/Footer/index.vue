@@ -35,13 +35,13 @@ export default {
   watch: {
     status() {
       this.statusLightColor.real =
-        this.status == "Loading"
+        this.status == "Loading" || this.status == "loading"
           ? this.statusLightColor.loading
-          : this.status == "Warn"
+          : this.status == "Warn" || this.status == "warn"
           ? this.statusLightColor.warn
-          : this.status == "Error"
+          : this.status == "Error" || this.status == "error"
           ? this.statusLightColor.error
-          : this.status == "Success"
+          : this.status == "Success" || this.status == "success"
           ? this.statusLightColor.success
           : "transparent";
     },

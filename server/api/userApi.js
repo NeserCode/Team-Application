@@ -22,7 +22,7 @@ var jsonWrite = function (result, ret) {
 }
 
 // 用户注册接口 |用户名、密码、appKey、userKey
-// 用户登录接口 |参数：用户名、密码、keys
+// 用户登录接口 |用户名、密码、keys
 
 router.post('/signup', (req, res) => {
     var sql = $sql.user.register;
@@ -62,11 +62,11 @@ router.post('/signin', (req, res) => {
                 if (detailerr) console.log(detailerr)
                 else {
                     console.log("[/signin] detail √ ");
-                    all.detail = detailres
+                    all.detail = detailres[0]
                     res.send(all)
                 }
             })
-            all.info = checkresult
+            all.info = checkresult[0]
         } else res.send(checkresult)
     })
     console.log('----------------------');

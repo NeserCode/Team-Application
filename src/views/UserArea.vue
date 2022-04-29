@@ -16,7 +16,7 @@ import Register from "@/components/Sign/up/index.vue";
 
 export default {
   name: "Setting",
-  mounted() {
+  beforeCreate() {
     this.$public.on("update-main-user-info-upto-app", () => {
       this.isUserLogined = true;
     });
@@ -29,10 +29,16 @@ export default {
       localStorage.removeItem("checkKey");
       this.isUserLogined = false;
     });
+  },
+  mounted() {
     this.$conf.getConfPromise().then((data) => {
       this.settings = data.data;
       this.initComponent();
+      this.isUserLogined =
+        localStorage.getItem("checkKey") == (undefined || null) ? false : true;
     });
+    this.isUserLogined =
+      localStorage.getItem("checkKey") == (undefined || null) ? false : true;
   },
   components: {
     Register,
@@ -67,8 +73,6 @@ export default {
       else if (this.settings.userSetting.colorSchemeMode == "dark")
         ipcRenderer.send("color-schemeMode-dark");
       else ipcRenderer.send("color-schemeMode-system");
-      this.isUserLogined =
-        localStorage.getItem("checkKey") == (undefined || null) ? false : true;
     },
   },
 };

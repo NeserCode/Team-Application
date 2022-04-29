@@ -149,29 +149,52 @@ export default {
     };
   },
   mounted() {
-    this.$public.on("update-main-user-info-upto-app", (res) => {
-      console.log(res);
+    this.$public.on("update-main-user-info-upto-app", ({ info, detail }) => {
+      this.$conf.getConfPromise().then((data) => {
+        let tempSetting = data.data;
+        // User Access
+        tempSetting.userInfo.access = detail.access_status;
+        tempSetting.userInfo.orgnization = detail.access_team;
+        tempSetting.userInfo.orPosition = detail.access_position;
+        // User Sex
+        tempSetting.userInfo.sex = detail.sex;
+        // User Avatar
+        tempSetting.userInfo.avatar = detail.avatar;
+        // User Nickname
+        tempSetting.userInfo.nickname = detail.nickname;
+        // User Introduce
+        tempSetting.userInfo.introduce = detail.introduce;
+        // User Bound
+        tempSetting.userInfo.bound = detail.bound;
+        // User Exp
+        tempSetting.userInfo.exp = detail.exp;
+        // User Name
+        tempSetting.userInfo.name = info.username;
+        // User Key
+        tempSetting.userInfo.key = info.userKey;
+
+        this.$conf
+          .updateLocalConfig(tempSetting, () => {
+            this.initComponent();
+            this.$public.emit("notice", {
+              type: "success",
+              msg: "用户信息同步成功",
+            });
+            localStorage.setItem("checkKey", info.checkKey);
+            localStorage.setItem("userKey", info.userKey);
+            localStorage.setItem("username", info.username);
+          })
+          .catch((e) => {
+            console.log(e.message);
+            this.$public.emit("notice", {
+              type: "error",
+              msg: "用户信息同步失败，您可能需要重新登录",
+            });
+          });
+      });
     });
     // console.log(this.$conf.getUserPath("userData"));
-    this.$conf.getConfPromise().then((data) => {
-      const { userInfo } = data.data;
-      // 处理认证条目
-      this.accessOgz.access = userInfo.access == 1;
-      if (this.accessOgz.access) {
-        this.accessOgz.ogz = userInfo.orgnization;
-        this.accessOgz.position = userInfo.orPosition;
-      }
-      // 处理性别条目
-      this.sexObj.text =
-        (userInfo.sex == "m" ? "男" : userInfo.sex == "w" ? "女" : null) ??
-        "Unknow";
-      // 处理绑定条目
-      this.boundObj.text = userInfo.bound ?? "Unknow";
-      // 处理键值条目
-      this.keyObj.text = userInfo.key ?? "No Such Key";
-      // 处理用户名
-      this.thisUsername = userInfo.name;
-    });
+    this.initComponent();
   },
   methods: {
     handleLog: function (...option) {
@@ -208,6 +231,27 @@ export default {
     },
     cancelConfirmOut: function () {
       this.isConfirmOut = false;
+    },
+    initComponent: function () {
+      this.$conf.getConfPromise().then((data) => {
+        const { userInfo } = data.data;
+        // 处理认证条目
+        this.accessOgz.access = userInfo.access == 1;
+        if (this.accessOgz.access) {
+          this.accessOgz.ogz = userInfo.orgnization;
+          this.accessOgz.position = userInfo.orPosition;
+        }
+        // 处理性别条目
+        this.sexObj.text =
+          (userInfo.sex == "m" ? "男" : userInfo.sex == "w" ? "女" : null) ??
+          "Unknow";
+        // 处理绑定条目
+        this.boundObj.text = userInfo.bound ?? "Unknow";
+        // 处理键值条目
+        this.keyObj.text = userInfo.key ?? "No Such Key";
+        // 处理用户名
+        this.thisUsername = userInfo.name;
+      });
     },
   },
 };
