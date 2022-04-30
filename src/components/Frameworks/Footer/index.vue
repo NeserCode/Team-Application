@@ -14,8 +14,8 @@
     </div>
     <div class="footTime showArea" v-show="currTime.isGetTime">
       <span class="h">{{ currTime.hour }} 时 </span>
-      <span class="m">{{ currTime.minutes }}</span>
-      <span class="sp"> 分</span>
+      <span class="sp">{{ currTime.minutes }}</span>
+      <span> 分</span>
     </div>
   </div>
 </template>

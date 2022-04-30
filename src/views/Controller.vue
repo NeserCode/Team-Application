@@ -67,18 +67,10 @@ export default {
       });
     });
 
-    this.$conf
-      .getConfPromise()
-      .then((data) => {
-        this.APP_CONFIG = data.data;
-        this.initController();
-      })
-      .then(() => {
-        console.log(
-          localStorage.getItem("appkey"),
-          localStorage.getItem("userkey")
-        );
-      });
+    this.$conf.getConfPromise().then((data) => {
+      this.APP_CONFIG = data.data;
+      this.initController();
+    });
   },
   data() {
     return {
@@ -109,8 +101,8 @@ export default {
       this.handleSaveKey();
     },
     handleSaveKey: function () {
-      localStorage.setItem("appkey", this.APP_CONFIG.appInfo.key);
-      localStorage.setItem("userkey", this.APP_CONFIG.userInfo.key);
+      localStorage.setItem("appKey", this.APP_CONFIG.appInfo.key);
+      localStorage.setItem("userKey", this.APP_CONFIG.userInfo.key);
       fs.writeFile(
         this.APP_CONFIG_PATH,
         JSON.stringify(this.APP_CONFIG),
@@ -137,7 +129,7 @@ export default {
     },
     initUser: function () {
       if (localStorage.getItem("checkKey") != (null || undefined))
-        console.log("checkkey exists", localStorage.getItem("checkKey"));
+        console.log(`#checkKey [${localStorage.getItem("checkKey")}]`);
     },
     initController: function () {
       this.handleCheckKey();

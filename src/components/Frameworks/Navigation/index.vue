@@ -1,5 +1,7 @@
 <template>
-  <div class="navigation skin">
+  <div
+    :class="['navigation', getUserStatus() == 'NeserCode' ? 'skin' : 'noskin']"
+  >
     <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
 
     <router-link
@@ -52,7 +54,7 @@ export default {
       signText: "登录",
     };
   },
-  mounted() {
+  beforeCreate() {
     this.$public.on("update-main-user-info-upto-app", () => {
       this.isLogined = true;
     });
@@ -62,7 +64,8 @@ export default {
     this.$public.on("change-login-or-register-view", (bool) => {
       this.signText = bool ? "登录" : "注册";
     });
-
+  },
+  mounted() {
     this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null));
   },
   methods: {
@@ -70,6 +73,7 @@ export default {
       this.$router.push({ path: "/userArea" });
     },
     handleKeepDrag: () => false,
+    getUserStatus: () => localStorage.getItem("username"),
   },
 };
 </script>

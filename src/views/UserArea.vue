@@ -25,8 +25,10 @@ export default {
       console.log(`切换至 ${which ? "Sign/in" : "Sign/up"} 界面`);
     });
     this.$public.on("clear-user-sign-status", () => {
-      localStorage.removeItem("userkey");
+      localStorage.removeItem("userKey");
+      localStorage.removeItem("username");
       localStorage.removeItem("checkKey");
+      localStorage.removeItem("avatar");
       this.isUserLogined = false;
     });
   },

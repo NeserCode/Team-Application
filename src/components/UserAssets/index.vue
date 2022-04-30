@@ -63,8 +63,7 @@ export default {
   },
   data() {
     return {
-      userImage: null,
-      App_Host: "http://localhost:5999",
+      userImage: localStorage.getItem("avatar"),
       inputSrc: "",
       popoverSwitch: false,
       isSrcVaild: false,
@@ -87,23 +86,18 @@ export default {
       localStorage.setItem("avatar", this.userImage);
     });
   },
-  activated() {
-    this.userImage = localStorage.getItem("avatar");
-    console.log(this.userImage);
-  },
+  activated() {},
   methods: {
     keepDragPicture: () => false,
     handleConfirmSrc: function () {
-      if (this.center) {
-        this.isImageLoaded = false;
-        clearTimeout(this.timeCounter[1]);
-        this.timeCounter[1] = setTimeout(() => {
-          this.handleImagePromise(this.inputSrc).then((data) => {
-            this.isImageLoaded = true;
-            this.isSrcVaild = data.type == "load" ? true : false;
-          });
-        }, 800);
-      }
+      this.isImageLoaded = false;
+      clearTimeout(this.timeCounter[1]);
+      this.timeCounter[1] = setTimeout(() => {
+        this.handleImagePromise(this.inputSrc).then((data) => {
+          this.isImageLoaded = true;
+          this.isSrcVaild = data.type == "load" ? true : false;
+        });
+      }, 800);
     },
     handleShowPopover: function () {
       this.timeCounter[0] = setTimeout(() => {
@@ -127,17 +121,19 @@ export default {
       });
     },
     AccessChangeAvatar: function () {
-      this.$conf
-        .updateDBConfig(
-          this.App_Host,
-          "avatar",
-          this.inputSrc,
-          localStorage.getItem("username")
-        )
-        .then(() => {
-          this.handleShowPopover();
-          this.userImage = this.inputSrc;
-        });
+      this.$conf.getHost().then((h) => {
+        this.$conf
+          .updateDBConfig(
+            this.$conf.getHttpString(h.host),
+            "avatar",
+            this.inputSrc,
+            localStorage.getItem("username")
+          )
+          .then(() => {
+            this.handleShowPopover();
+            this.userImage = this.inputSrc;
+          });
+      });
     },
   },
 };

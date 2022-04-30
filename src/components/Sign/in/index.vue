@@ -72,7 +72,10 @@ export default {
             })
             .catch((e) => {
               this.IpAddress = null;
-              this.$public.emit("notice", { msg: e.message });
+              this.$public.emit("notice", {
+                msg: `在线登陆设置错误 ${e.message}`,
+                time: 2000,
+              });
             });
       },
       deep: true,
@@ -143,13 +146,11 @@ export default {
                 host: this.$conf.getHttpString(h.host),
                 username: this.signIn.username,
                 password: this.$conf.getMd5String(this.signIn.password),
-                appkey: localStorage.getItem("appkey"),
-                userkey: localStorage.getItem("userkey"),
+                appkey: localStorage.getItem("appKey"),
                 checkkey: this.$conf.getMd5String(this.IpAddress ?? h.host),
               })
               .then((response) => {
                 const { info, detail } = response.data;
-
                 if (info.userKey.length < 16)
                   this.$public.emit("notice", {
                     type: "warn",

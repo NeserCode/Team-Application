@@ -96,9 +96,9 @@ export default {
   },
   methods: {
     getQuestionContent: _debounce(function (slug) {
-      this.$public.emit("update-footer-status-upto-app", {
-        status: "Loading",
-        text: "🎈 正在从 Leetcode 获取题目详情...",
+      this.$public.emit("notice", {
+        type: "loading",
+        msg: "🎈 正在从 Leetcode 获取题目详情...",
       });
       this.$leetcode
         .getCookie("https://leetcode-cn.com/graphql/")
@@ -116,17 +116,17 @@ export default {
           console.log(response);
           this.$public.emit("leetcode-update-question-detail", this.question);
           this.$public.emit("leetcode-toggle-list-show", !this.isShowList);
-          this.$public.emit("update-footer-status-upto-app", {
-            status: "Success",
-            text: `√ 从 Leetcode 获取题目详情成功 | Slug => ${this.question.title}`,
+          this.$public.emit("notice", {
+            type: "success",
+            msg: `√ 从 Leetcode 获取题目详情成功 | Slug => ${this.question.title}`,
           });
         });
       }, 200);
     }, 1000),
     getQuestionPage: function (...option) {
-      this.$public.emit("update-footer-status-upto-app", {
-        status: "Loading",
-        text: "🎈 正在从 Leetcode 获取题目...",
+      this.$public.emit("notice", {
+        type: "loading",
+        msg: "🎈 正在从 Leetcode 获取题目...",
       });
       if (option[0] == "before")
         this.pageToGo =
@@ -142,9 +142,9 @@ export default {
           closefunc: () => {
             this.pageToGo = null;
             this.clickable = true;
-            this.$public.emit("update-footer-status-upto-app", {
-              status: "Error",
-              text: "× 从 Leetcode 获取题目失败:页号非法",
+            this.$public.emit("notice", {
+              status: "error",
+              msg: "× 从 Leetcode 获取题目失败:页号非法",
             });
           },
         });
@@ -166,9 +166,9 @@ export default {
             this.questionPage = this.pageToGo;
             this.pageToGo = null;
             this.clickable = true;
-            this.$public.emit("update-footer-status-upto-app", {
-              status: "Success",
-              text: "√ 从 Leetcode 获取题目成功",
+            this.$public.emit("notice", {
+              type: "success",
+              msg: "√ 从 Leetcode 获取题目成功",
             });
           });
       } else
@@ -179,9 +179,9 @@ export default {
           closefunc: () => {
             this.pageToGo = null;
             this.clickable = true;
-            this.$public.emit("update-footer-status-upto-app", {
-              status: "Error",
-              text: "× 从 Leetcode 获取题目失败:页号非法",
+            this.$public.emit("notice", {
+              type: "error",
+              msg: "× 从 Leetcode 获取题目失败:页号非法",
             });
           },
         });

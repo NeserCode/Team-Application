@@ -64,6 +64,54 @@ import { clipboard } from "electron";
 export default {
   name: "userDetail",
   components: { UserAssets, UserDetailOption },
+  beforeCreate() {
+    this.$public.on("update-main-user-info-upto-app", ({ info, detail }) => {
+      this.$conf.getConfPromise().then((data) => {
+        let tempSetting = data.data;
+        // User Access
+        tempSetting.userInfo.access = detail.access_status;
+        tempSetting.userInfo.orgnization = detail.access_team;
+        tempSetting.userInfo.orPosition = detail.access_position;
+        // User Sex
+        tempSetting.userInfo.sex = detail.sex;
+        // User Avatar
+        tempSetting.userInfo.avatar = detail.avatar;
+        // User Nickname
+        tempSetting.userInfo.nickname = detail.nickname;
+        // User Introduce
+        tempSetting.userInfo.introduce = detail.introduce;
+        // User Bound
+        tempSetting.userInfo.bound = detail.bound;
+        // User Exp
+        tempSetting.userInfo.exp = detail.exp;
+        // User Name
+        tempSetting.userInfo.name = info.username;
+        // User Key
+        tempSetting.userInfo.key = info.userKey;
+
+        this.$conf
+          .updateLocalConfig(tempSetting, () => {
+            this.initComponent();
+            this.$public.emit("notice", {
+              type: "success",
+              msg: "用户信息同步成功",
+            });
+            localStorage.setItem("checkKey", info.checkKey);
+            localStorage.setItem("userKey", info.userKey);
+            localStorage.setItem("appKey", tempSetting.appInfo.key);
+            localStorage.setItem("username", info.username);
+            this.$public.emit("update-check-day");
+          })
+          .catch((e) => {
+            console.log(e.message);
+            this.$public.emit("notice", {
+              type: "error",
+              msg: "用户信息同步失败，您可能需要重新登录",
+            });
+          });
+      });
+    });
+  },
   watch: {
     accessOgz: {
       handler() {
@@ -149,57 +197,10 @@ export default {
     };
   },
   mounted() {
-    this.$public.on("update-main-user-info-upto-app", ({ info, detail }) => {
-      this.$conf.getConfPromise().then((data) => {
-        let tempSetting = data.data;
-        // User Access
-        tempSetting.userInfo.access = detail.access_status;
-        tempSetting.userInfo.orgnization = detail.access_team;
-        tempSetting.userInfo.orPosition = detail.access_position;
-        // User Sex
-        tempSetting.userInfo.sex = detail.sex;
-        // User Avatar
-        tempSetting.userInfo.avatar = detail.avatar;
-        // User Nickname
-        tempSetting.userInfo.nickname = detail.nickname;
-        // User Introduce
-        tempSetting.userInfo.introduce = detail.introduce;
-        // User Bound
-        tempSetting.userInfo.bound = detail.bound;
-        // User Exp
-        tempSetting.userInfo.exp = detail.exp;
-        // User Name
-        tempSetting.userInfo.name = info.username;
-        // User Key
-        tempSetting.userInfo.key = info.userKey;
-
-        this.$conf
-          .updateLocalConfig(tempSetting, () => {
-            this.initComponent();
-            this.$public.emit("notice", {
-              type: "success",
-              msg: "用户信息同步成功",
-            });
-            localStorage.setItem("checkKey", info.checkKey);
-            localStorage.setItem("userKey", info.userKey);
-            localStorage.setItem("username", info.username);
-          })
-          .catch((e) => {
-            console.log(e.message);
-            this.$public.emit("notice", {
-              type: "error",
-              msg: "用户信息同步失败，您可能需要重新登录",
-            });
-          });
-      });
-    });
     // console.log(this.$conf.getUserPath("userData"));
     this.initComponent();
   },
   methods: {
-    handleLog: function (...option) {
-      console.log(option);
-    },
     handleBoundInputTemp: function (val) {
       this.boundTemp = val;
     },

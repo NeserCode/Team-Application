@@ -73,12 +73,11 @@ const appConfig = {
             return d.data.ip
         })
     },
-    handleUserSignIn: async ({ host, username, password, appkey, userkey, checkkey }) => {
+    handleUserSignIn: async ({ host, username, password, appkey, checkkey }) => {
         return Axios.post(`${host}/api/user/signin`, {
             username,
             password,
             appkey,
-            userkey,
             checkkey,
         })
     }

@@ -2,7 +2,7 @@
   <div class="home">
     <div class="topContainer">
       <div class="checkContainer">
-        <div class="checkDays">
+        <div class="checkDays" v-show="getUserStatus()">
           <span
             :class="[
               'day',
@@ -21,6 +21,9 @@
             <i class="el-icon-loading" v-show="checkObject.isLoading"></i>
           </a>
         </div>
+        <div class="checkDays" v-show="!getUserStatus()">
+          <span class="notSignSpan">用户未登录</span>
+        </div>
       </div>
     </div>
     <div class="mainContainer"></div>
@@ -34,6 +37,11 @@ import { _debounce } from "@/plugins/utils.js";
 
 export default {
   name: "Home",
+  beforeCreate() {
+    this.$public.on("update-check-day", () => {
+      this.initCheckDay();
+    });
+  },
   activated() {},
   mounted() {
     this.initCheckDay();
@@ -146,38 +154,50 @@ export default {
     getCheckedDay: function () {
       let checkedDays = [],
         checkedObject = [];
-      this.$conf.getConfPromise().then((response) => {
-        const { name } = response.data.userInfo;
+
+      if (this.getUserStatus())
         this.$conf
-          .getCheckDay("http://localhost:5999", name)
-          .then((response) => {
-            response.data.forEach((element) => {
-              const { id, checkDay, checkMonth, isSuper } = element;
-              checkedObject.push({
-                id,
-                checkDay,
-                checkMonth,
-                isSuper,
-              });
-              checkedDays.push({ m: checkMonth, d: checkDay });
-            });
-            this.checkedDays = checkedDays;
-            for (let i = 0; i < this.checkedDays.length; i++) {
-              if (
-                this.checkedDays[i].m == this.checkObject.checkMonth &&
-                this.checkedDays[i].d == this.checkObject.checkDay
+          .getHost()
+          .then((h) => {
+            this.$conf
+              .getCheckDay(
+                this.$conf.getHttpString(h.host),
+                localStorage.getItem("username")
               )
-                this.checkObject.isCheck = true;
-              for (let j = 0; j < this.checkDays.length; j++)
-                if (
-                  this.checkDays[j].m == this.checkedDays[i].m &&
-                  this.checkDays[j].d == this.checkedDays[i].d
-                )
-                  this.checkDays[j].isChecked = true;
-            }
+              .then((response) => {
+                response.data.forEach((element) => {
+                  const { id, checkDay, checkMonth, isSuper } = element;
+                  checkedObject.push({
+                    id,
+                    checkDay,
+                    checkMonth,
+                    isSuper,
+                  });
+                  checkedDays.push({ m: checkMonth, d: checkDay });
+                });
+                this.checkedDays = checkedDays;
+                for (let i = 0; i < this.checkedDays.length; i++) {
+                  if (
+                    this.checkedDays[i].m == this.checkObject.checkMonth &&
+                    this.checkedDays[i].d == this.checkObject.checkDay
+                  )
+                    this.checkObject.isCheck = true;
+                  for (let j = 0; j < this.checkDays.length; j++)
+                    if (
+                      this.checkDays[j].m == this.checkedDays[i].m &&
+                      this.checkDays[j].d == this.checkedDays[i].d
+                    )
+                      this.checkDays[j].isChecked = true;
+                }
+              });
+          })
+          .catch((e) => {
+            this.$public.emit("notice", {
+              msg: `获取签到状态失败 ${e.message}`,
+            });
           });
-      });
     },
+    getUserStatus: () => localStorage.getItem("username"),
   },
 };
 </script>
@@ -193,6 +213,10 @@ export default {
 }
 .checkDays {
   @apply text-center relative pl-12;
+}
+.checkDays span.notSignSpan {
+  @apply text-base font-semibold;
+  line-height: 3rem;
 }
 .message {
   @apply absolute inline-block h-12 px-3 text-sm font-bold right-0 transition;
