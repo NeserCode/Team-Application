@@ -100,6 +100,14 @@ export default {
 .iLBody span {
   @apply inline-block px-3 opacity-0 text-xs;
 }
+.iTip {
+  @apply inline-block w-full text-center text-xs opacity-0 pt-2;
+  transition: ease-in-out 0.35s;
+}
+
+input:focus ~ .iTip {
+  @apply font-semibold opacity-50;
+}
 
 .iBody.shake {
   animation: iShake 0.4s ease-in-out;
@@ -180,13 +188,13 @@ input:not(:placeholder-shown):focus + .iLBody span {
 
 @keyframes iShake {
   0% {
-    transform: translateX(.5rem);
+    transform: translateX(0.5rem);
   }
   25% {
-    transform: translateX(-.5rem);
+    transform: translateX(-0.5rem);
   }
   50% {
-    transform: translateX(.5rem);
+    transform: translateX(0.5rem);
   }
   75% {
     transform: translateX(-1rem);

@@ -5,31 +5,57 @@
         ref="iact"
         @keep-input="handleIAccount"
         :iModel="signUp.username"
+        :iCheck="usernameFormat"
         class="iUp"
         iLable="upAccount"
+        iTip="用户身份标识, 长度需要达到三位以上, 不含有汉字与符号"
         iPreText="用户名"
       />
       <SignInput
         ref="ipwd"
         @keep-input="handleIPassword"
         :iModel="signUp.password"
+        :iCheck="passwordFormat"
         class="iUp"
         iType="password"
         iLable="upPassword"
+        iTip="用于身份认证的密码, 长度需要达到八位以上"
         iPreText="密码"
       />
       <SignInput
         ref="irpwd"
         @keep-input="handleIRPassword"
         :iModel="signUp.repeat"
+        :iCheck="passwordReFormat"
         class="iUp"
         iType="password"
         iLable="upRepeatPassword"
+        iTip="重复输入一次上方密码, 不要偷偷复制粘贴哦"
         iPreText="重复密码"
+      />
+      <SignRadio
+        ref="iSex"
+        @keep-change="handleRSex"
+        :rList="sexList"
+        :rModel="signUp.sex"
+        class="rUp"
+        rPreText="性别"
+        rTip="个人信息基本项, 没有非人选项! 按下 Tab 可以使用左右键更换选项"
+      />
+      <SignInput
+        ref="ibd"
+        @keep-input="handleRBound"
+        :iModel="signUp.bound"
+        :iCheck="boundFormat"
+        class="iUp"
+        iType="email"
+        iLable="upBound"
+        iTip="目前还只是可以自己自行修改的联系方式"
+        iPreText="绑定邮箱"
       />
       <br />
       <div class="btnContainer">
-        <button @click="toggleSignModeToIn">注册</button>
+        <button @click="handleSignUp">注册</button>
         <button @click="toggleSignModeToIn">切换到登录</button>
       </div>
     </div>
@@ -38,21 +64,56 @@
 
 <script>
 import SignInput from "@/components/Sign/input/index.vue";
+import SignRadio from "@/components/Sign/radio/index.vue";
 // @ is an alias to /src
 
 export default {
   name: "Register",
-  components: { SignInput },
+  components: { SignInput, SignRadio },
   data() {
     return {
+      sexList: [
+        {
+          id: 1,
+          label: "m",
+          choice: "男",
+        },
+        {
+          id: 2,
+          label: "w",
+          choice: "女",
+        },
+      ],
       signUp: {
         username: "",
         password: "",
         repeat: "",
+        sex: "m",
+        bound: "",
       },
     };
   },
-  computed: {},
+  computed: {
+    usernameFormat() {
+      return (
+        this.signUp.username.length >= 3 &&
+        this.signUp.username == this.signUp.username.replace(/[^\w]/gi, "")
+      );
+    },
+    passwordFormat() {
+      return this.signUp.password.length >= 8;
+    },
+    passwordReFormat() {
+      return this.signUp.password == this.signUp.repeat && this.passwordFormat;
+    },
+    // /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+    boundFormat() {
+      return (
+        this.signUp.bound.length >= 3 &&
+        /^\w+@([a-z0-9]{1,6})(\.[a-z]{2,3})+$/i.test(this.signUp.bound)
+      );
+    },
+  },
   mounted() {},
   methods: {
     handleIAccount: function (s) {
@@ -64,11 +125,20 @@ export default {
     handleIRPassword: function (s) {
       this.signUp.repeat = s;
     },
+    handleRSex: function (o) {
+      this.signUp.sex = o;
+    },
+    handleRBound: function (s) {
+      this.signUp.bound = s;
+    },
     toggleSignModeToIn: function () {
       this.signUp.username = "";
       this.signUp.password = "";
       this.signUp.repeat = "";
       this.$public.emit("change-login-or-register-view", true);
+    },
+    handleSignUp: function () {
+      console.log("sign up");
     },
   },
 };
@@ -87,6 +157,10 @@ export default {
 
 .iUp {
   @apply w-1/3 inline-block my-8;
+}
+
+.rUp {
+  @apply w-1/3 inline-block my-6;
 }
 
 .btnContainer {
