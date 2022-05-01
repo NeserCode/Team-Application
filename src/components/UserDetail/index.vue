@@ -242,7 +242,6 @@ export default {
     initComponent: function () {
       this.$conf.getConfPromise().then((data) => {
         const { userInfo } = data.data;
-        console.log(userInfo);
         // 处理认证条目
         this.accessOgz.access = userInfo.access == 1;
         if (this.accessOgz.access) {

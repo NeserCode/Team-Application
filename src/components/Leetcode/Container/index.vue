@@ -155,8 +155,7 @@ export default {
           console.log(
             response.status == 200
               ? `Leetcode SubmitID ${response.data.submission_id}`
-              : response,
-            response
+              : response
           );
         });
     },

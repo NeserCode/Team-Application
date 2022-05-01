@@ -188,7 +188,6 @@ export default {
     },
     initQuestionSet: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
-        console.log(response);
         this.questionSet = response.data.data.problemsetQuestionList;
         this.totalPages = parseInt(this.questionSet.total / this.pageLimit) + 1;
       });

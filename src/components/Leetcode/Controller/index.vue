@@ -3,9 +3,7 @@
     <div class="ctrlContainer">
       <a @click="toggleListShow">{{ isShowList ? "隐藏列表" : "显示列表" }}</a>
       <a v-show="question.codeSnippets" @click="getQuestionContentSwitchEng">
-        {{
-          isContentEng ? "切换至中文" : "Switch to English"
-        }}
+        {{ isContentEng ? "切换至中文" : "Switch to English" }}
       </a>
       <a v-show="question.codeSnippets">
         <select name="langcode" id="langSelect" v-model="langCode">
@@ -14,7 +12,9 @@
             class="langOption"
             :value="index"
             :key="item.lang"
-          >{{ item.lang }}</option>
+          >
+            {{ item.lang }}
+          </option>
         </select>
       </a>
       <a v-show="question.codeSnippets" @click="getQuestionSubmit">提交</a>
@@ -55,7 +55,7 @@ export default {
       this.isContentEng = val;
     });
   },
-  mounted() { },
+  mounted() {},
   activated() {
     this.initLeetcodeAccount();
   },
@@ -90,8 +90,7 @@ export default {
         console.log(
           response.status == 200
             ? `Leetcode User ${this.userStat.username} Logined`
-            : response,
-          response
+            : response
         );
       });
     },
