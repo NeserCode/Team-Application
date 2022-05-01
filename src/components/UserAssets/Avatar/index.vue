@@ -4,7 +4,7 @@
       <img
         :ondragstart="keepDragPicture"
         :src="userImage"
-        :class="{ Round: isUserImageRound }"
+        :class="{ Round: isUserImageRound, imgBody: true }"
       />
     </el-badge>
   </div>
@@ -37,10 +37,14 @@ export default {
         "https://github.githubassets.com/favicons/favicon.svg";
       localStorage.setItem("avatar", this.userImage);
     });
-    this.$public.on("update-main-user-info-upto-app", (data) => {
+    this.$public.on("update-avatar", (avatar) => {
       this.userImage =
-        data.detail.avatar ??
-        "https://github.githubassets.com/favicons/favicon.svg";
+        avatar ?? "https://github.githubassets.com/favicons/favicon.svg";
+      localStorage.setItem("avatar", this.userImage);
+    });
+    this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+      this.userImage =
+        detail.avatar ?? "https://github.githubassets.com/favicons/favicon.svg";
       localStorage.setItem("avatar", this.userImage);
     });
   },
@@ -59,5 +63,9 @@ export default {
 }
 .userAvatar img.Round {
   @apply rounded-full border border-gray-400;
+}
+
+.imgBody {
+  @apply bg-gray-50;
 }
 </style>

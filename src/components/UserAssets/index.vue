@@ -11,7 +11,7 @@
           @click="handleShowPopover"
           :ondragstart="keepDragPicture"
           :src="userImage"
-          :class="{ Round: isUserImageRound }"
+          :class="{ Round: isUserImageRound, imgBody: true }"
         />
       </template>
       <img
@@ -132,6 +132,13 @@ export default {
           .then(() => {
             this.handleShowPopover();
             this.userImage = this.inputSrc;
+            this.$conf.getConfPromise().then((data) => {
+              let rt = data.data;
+              rt.userInfo.avatar = this.userImage;
+              this.$conf.updateLocalConfig(rt, () => {
+                this.$public.emit("update-avatar", this.userImage);
+              });
+            });
           });
       });
     },
@@ -163,5 +170,9 @@ export default {
 }
 .el-input {
   @apply pr-14;
+}
+
+.imgBody {
+  @apply bg-gray-50;
 }
 </style>

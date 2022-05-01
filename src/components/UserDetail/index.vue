@@ -24,7 +24,7 @@
         :opTitle="accessObj.title"
         opType="tag"
         :opDisabled="accessObj.disabled"
-        :opTagValue="accessObj.text"
+        :opTagValue="accessStr"
         :opCallbackFn="accessObj.fn"
       />
       <UserDetailOption
@@ -58,7 +58,7 @@
 <script>
 // @ is an alias to /src
 import UserAssets from "@/components/UserAssets/index.vue";
-import UserDetailOption from "@/components/UserAssets/Detail/Option/index.vue";
+import UserDetailOption from "@/components/UserDetail/Option/index.vue";
 import { clipboard } from "electron";
 
 export default {
@@ -68,6 +68,7 @@ export default {
     this.$public.on("update-main-user-info-upto-app", ({ info, detail }) => {
       this.$conf.getConfPromise().then((data) => {
         let tempSetting = data.data;
+
         // User Access
         tempSetting.userInfo.access = detail.access_status;
         tempSetting.userInfo.orgnization = detail.access_team;
@@ -128,6 +129,9 @@ export default {
         return "About me";
       else return `About ${this.thisUsername}`;
     },
+    accessStr() {
+      return this.accessOgz.access ? this.accessObj.text : "未认证";
+    },
   },
   data() {
     return {
@@ -139,9 +143,6 @@ export default {
         title: "性别",
         text: "",
         disabled: true,
-        fn: () => {
-          this.handleLog("Sex");
-        },
         arr: [
           {
             id: 0,
@@ -175,16 +176,21 @@ export default {
         text: "",
         disabled: false,
         fn: () => {
-          this.handleLog("Access");
+          if (!this.accessObj.disabled) {
+            this.accessObj.disabled = true;
+            this.$public.emit("notice", {
+              msg: "👀 暂未开启这项功能",
+              fn: () => {
+                this.accessObj.disabled = false;
+              },
+            });
+          }
         },
       },
       boundObj: {
         title: "绑定",
         text: "",
         disabled: false,
-        fn: () => {
-          this.handleLog("Bound");
-        },
       },
       keyObj: {
         title: "密钥",
@@ -236,6 +242,7 @@ export default {
     initComponent: function () {
       this.$conf.getConfPromise().then((data) => {
         const { userInfo } = data.data;
+        console.log(userInfo);
         // 处理认证条目
         this.accessOgz.access = userInfo.access == 1;
         if (this.accessOgz.access) {
@@ -246,6 +253,7 @@ export default {
         this.sexObj.text =
           (userInfo.sex == "m" ? "男" : userInfo.sex == "w" ? "女" : null) ??
           "Unknow";
+        this.radioTemp = userInfo.sex == "w" ? 1 : 0;
         // 处理绑定条目
         this.boundObj.text = userInfo.bound ?? "Unknow";
         // 处理键值条目

@@ -3,7 +3,7 @@ var sqlMap = {
         register: {
             init: {
                 info: "insert into team_user_info(username,password,appKey,userKey) values (?,?,?,?)",
-                detail: "insert into team_user_detail(id) values (?)"
+                detail: "insert into team_user_detail(id,sex,bound) values (?,?,?)"
             },
         },
         login: {

@@ -10,6 +10,7 @@
         class="iIn"
         iLable="inAccount"
         iPreText="用户名"
+        iTip="用户身份标识, 长度需要达到三位以上, 不含有汉字与符号, 大小写不敏感"
       />
       <SignInput
         ref="ipwd"
@@ -21,6 +22,7 @@
         :iType="options.isShowPassword ? 'text' : 'password'"
         iLable="inPassword"
         iPreText="密码"
+        iTip="用于身份认证的密码, 长度需要达到八位以上"
       />
       <br />
       <div class="optContainer">
@@ -31,11 +33,11 @@
       </div>
       <div class="btnContainer">
         <button @click="handleSignin">
-          <span v-show="clickable">登录</span>
-          <i class="el-icon-loading" v-show="!clickable"></i>
+          <span>登录</span> <i class="el-icon-loading" v-show="!clickable"></i>
         </button>
         <button @click="toggleSignModeToUp">切换到注册</button>
       </div>
+      <span :class="['signBar', !clickable ? 'loading' : '']"></span>
     </div>
   </div>
 </template>
@@ -212,7 +214,7 @@ export default {
 
 .iContainer {
   @apply relative flex flex-col justify-center items-center w-1/3 h-full mx-auto pt-16 pb-12
-    mt-32 rounded-2xl shadow;
+    mt-32 rounded-2xl shadow overflow-hidden;
   min-width: 650px;
 }
 
@@ -222,6 +224,13 @@ export default {
 
 .btnContainer {
   @apply flex w-1/3 justify-between;
+}
+
+.signBar {
+  @apply absolute bottom-0 rounded-full inline-block bg-blue-400 w-full h-1.5 transition-all;
+}
+.signBar.loading {
+  animation: loading infinite 1.5s ease-in-out;
 }
 
 .optContainer {
@@ -257,6 +266,30 @@ button:focus::before {
   }
   button:hover {
     @apply bg-gray-200 text-gray-700;
+  }
+}
+
+@keyframes loading {
+  0% {
+    @apply bg-blue-400 w-full opacity-100 bottom-0 h-1.5;
+  }
+  5% {
+    @apply bg-blue-400 w-1.5 opacity-0 bottom-4;
+  }
+  50% {
+    @apply bg-blue-400 w-1.5 h-1.5 opacity-100;
+  }
+  60% {
+    @apply bg-blue-400 w-1.5 h-px opacity-100 bottom-0;
+  }
+  65% {
+    @apply bg-blue-900 h-px;
+  }
+  90% {
+    @apply bg-blue-400 h-px;
+  }
+  100% {
+    @apply bg-blue-400 h-1.5;
   }
 }
 </style>

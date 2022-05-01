@@ -9,8 +9,8 @@ import crypto from "crypto"
 const appConfig = {
     getPath: () => {
         return path.join(__dirname, "../../../../../../", "src/user/appConfig.json")
-    },
-    getHost: async () => {
+    }
+    , getHost: async () => {
         return appConfig.getConfPromise().then((res) => {
             const { appInfo } = res.data
             return {
@@ -24,61 +24,63 @@ const appConfig = {
                 message: e.message
             }
         })
-    },
+    }
     // getUserPath: (str) => {
     //     return app.getPath(str)
     // },
-    getPathPromise: async () => {
+    , getPathPromise: async () => {
         return new Promise((resolve) => {
             resolve({
                 data: path.join(__dirname, "../../../../../../", "src/user/appConfig.json"),
                 status: 200
             })
         }).then((resolve) => { return resolve })
-    },
-    getConfPromise: async () => {
+    }
+    , getConfPromise: async () => {
         return Axios.get(appConfig.getPath())
-    },
-    getRandomKey: (length) => {
+    }
+    , getRandomKey: (length) => {
         return crypto
             .randomBytes(Math.ceil(length / 2))
             .toString("hex")
             .slice(0, length)
-    },
-    getMd5String: (string) => {
+    }
+    , getMd5String: (string) => {
         return crypto.createHash("md5").update(string).digest("hex")
-    },
-    updateLocalConfig: async (obj, callback) => {
+    }
+    , updateLocalConfig: async (obj, callback) => {
         return fs.writeFile(appConfig.getPath(), JSON.stringify(obj), callback)
-    },
-    updateDBConfig: async (host, key, value, username) => {
+    }
+    , updateDBConfig: async (host, key, value, username) => {
         if (key != 'all') return Axios.post(`${host}/api/user/detail/update/${key}`, {
             username,
             key: value
         })
-    },
-    updateCheckDay: async (host, username, month, checkDay, appKey, isSuper) => {
+    }
+    , updateCheckDay: async (host, username, month, checkDay, appKey, isSuper) => {
         return Axios.post(`${host}/api/user/checkDay/check`, {
             username, month, checkDay, appKey, isSuper
         })
-    },
-    getCheckDay: async (host, username) => {
+    }
+    , getCheckDay: async (host, username) => {
         return Axios.post(`${host}/api/user/checkDay/get`, {
             username
         })
-    },
-    getLocalIP: async () => {
+    }
+    , getLocalIP: async () => {
         //https://api.ipify.org?format=json
         return Axios.get("https://api.ipify.org?format=json").then((d) => {
             return d.data.ip
         })
-    },
-    handleUserSignIn: async ({ host, username, password, appkey, checkkey }) => {
+    }
+    , handleUserSignIn: async ({ host, username, password, appkey, checkkey }) => {
         return Axios.post(`${host}/api/user/signin`, {
-            username,
-            password,
-            appkey,
-            checkkey,
+            username, password, appkey, checkkey,
+        })
+    }
+    , handleUserSignUp: async ({ host, username, password, appkey, userkey, sex, bound }) => {
+        return Axios.post(`${host}/api/user/signup`, {
+            username, password, appkey, userkey, sex, bound
         })
     }
     , getHttpString: (s) => `http://${s}`

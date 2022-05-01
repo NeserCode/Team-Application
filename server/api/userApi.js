@@ -37,7 +37,7 @@ router.post('/signup', (req, res) => {
             jsonWrite(res, result);
             conn.query($sql.user.get.uid, params.username, (err, idresult) => {
                 if (err) jsonWrite(res, { message: err.sqlMessage, errorCode: err.errno })
-                else conn.query(sql.init.detail, idresult[0].id, (err) => {
+                else conn.query(sql.init.detail, [idresult[0].id, params.sex, params.bound], (err) => {
                     if (err) jsonWrite(res, { message: err.sqlMessage, errorCode: err.errno })
                 })
             })
