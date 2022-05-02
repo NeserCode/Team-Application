@@ -77,6 +77,9 @@ export default {
               this.$public.emit("notice", {
                 msg: `在线登陆设置错误 ${e.message}`,
                 time: 2000,
+                fn: () => {
+                  this.options.isOnlineSignIn = false;
+                },
               });
             });
       },
@@ -102,7 +105,7 @@ export default {
         password: "",
       },
       options: {
-        isOnlineSignIn: true,
+        isOnlineSignIn: false,
         isShowPassword: false,
       },
       checkText: "",
@@ -182,7 +185,7 @@ export default {
                     });
                     this.signIn.username = "";
                     this.signIn.password = "";
-                    this.options.isOnlineSignIn = true;
+                    this.options.isOnlineSignIn = false;
                     this.options.isShowPassword = false;
 
                     this.clickable = true;

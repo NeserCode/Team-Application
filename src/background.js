@@ -43,7 +43,20 @@ async function createWindow() {
 
   function setTray() {
     // 当托盘最小化时，右击有一个菜单显示，这里进设置一个退出的菜单
-    let trayMenuTemplate = [{ // 系统托盘图标目录
+    // 系统托盘图标目录
+    let trayMenuTemplate = [{
+      label: 'Force Flash',
+      accelerator: 'Ctrl+Alt+M',
+      click: () => {
+        mainWindow.webContents.reload();
+      },
+    }, { type: 'separator' }, {
+      label: 'Dev Tools',
+      accelerator: 'Ctrl+Alt+Q',
+      click: () => {
+        mainWindow.webContents.openDevTools();
+      },
+    }, {
       label: 'Exit',
       click: () => {
         mainWindow.close()

@@ -7,12 +7,14 @@
       :visible="popoverSwitch"
     >
       <template #reference>
-        <img
-          @click="handleShowPopover"
-          :ondragstart="keepDragPicture"
-          :src="userImage"
-          :class="{ Round: isUserImageRound, imgBody: true }"
-        />
+        <div :class="{ Round: isUserImageRound, avatarSkin: true }">
+          <img
+            @click="handleShowPopover"
+            :ondragstart="keepDragPicture"
+            :src="userImage"
+            :class="{ Round: isUserImageRound, imgBody: true }"
+          />
+        </div>
       </template>
       <img
         class="preImage"
@@ -93,10 +95,15 @@ export default {
       this.isImageLoaded = false;
       clearTimeout(this.timeCounter[1]);
       this.timeCounter[1] = setTimeout(() => {
-        this.handleImagePromise(this.inputSrc).then((data) => {
-          this.isImageLoaded = true;
-          this.isSrcVaild = data.type == "load" ? true : false;
-        });
+        this.handleImagePromise(this.inputSrc)
+          .then((data) => {
+            this.isImageLoaded = true;
+            this.isSrcVaild = data.type == "load" ? true : false;
+          })
+          .catch((e) => {
+            this.isImageLoaded = true;
+            this.isSrcVaild = !(e.type == "error");
+          });
       }, 800);
     },
     handleShowPopover: function () {
@@ -109,11 +116,11 @@ export default {
       this.clickable = false;
     },
     handleImagePromise: function (imgurl) {
-      return new Promise(function (resolve) {
+      return new Promise(function (resolve, reject) {
         var ImgObj = new Image();
         ImgObj.src = imgurl;
         ImgObj.onerror = function (err) {
-          resolve(err);
+          reject(err);
         };
         ImgObj.onload = function (res) {
           resolve(res);
@@ -148,16 +155,14 @@ export default {
 
 <style scoped>
 .userAssets {
-  @apply w-12 h-12 p-2 fixed right-2 transform -translate-y-2;
-}
-.userAssets img.Round {
-  @apply rounded-full border border-gray-400;
-}
-.userAssets {
-  @apply relative text-center w-full h-40 transform-none;
+  @apply flex justify-center items-center;
 }
 .userAssets img {
-  @apply text-center inline-block w-36 h-36;
+  @apply rounded-full border border-gray-400 w-32 h-32;
+  animation: unblur 1.5s linear infinite;
+}
+.userAssets img.Round {
+  @apply rounded-full;
 }
 .preImage {
   @apply w-40 block mx-auto mb-4;
@@ -172,7 +177,60 @@ export default {
   @apply pr-14;
 }
 
+.avatarSkin {
+  @apply w-36 p-2;
+  animation: blur 1.5s linear infinite;
+}
+.avatarSkin.Round::before {
+  @apply absolute rounded-full top-0 left-0 w-36 h-36 pointer-events-none;
+  content: " ";
+  background: linear-gradient(red 2%, rgba(0, 0, 0, 0) 2%);
+}
+.avatarSkin.Round::after {
+  @apply absolute rounded-full bottom-0 right-0 w-36 h-36 pointer-events-none;
+  content: " ";
+  background: linear-gradient(rgba(255, 255, 255, 0) 98%, blue 2%);
+}
+.avatarSkin.Round {
+  @apply rounded-full;
+}
 .imgBody {
   @apply bg-gray-50;
+}
+
+@keyframes blur {
+  0% {
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(210deg);
+  }
+  100% {
+    transform: rotate(390deg);
+  }
+}
+
+@keyframes shiftblur {
+  0% {
+    transform: rotate(150deg);
+  }
+  50% {
+    transform: rotate(330deg);
+  }
+  100% {
+    transform: rotate(150deg);
+  }
+}
+
+@keyframes unblur {
+  0% {
+    transform: rotate(-30deg);
+  }
+  50% {
+    transform: rotate(-210deg);
+  }
+  100% {
+    transform: rotate(-390deg);
+  }
 }
 </style>

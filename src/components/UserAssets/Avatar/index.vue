@@ -1,11 +1,13 @@
 <template>
   <div class="userAvatar">
     <el-badge :is-dot="isUserImageDot">
-      <img
-        :ondragstart="keepDragPicture"
-        :src="userImage"
-        :class="{ Round: isUserImageRound, imgBody: true }"
-      />
+      <div :class="{ Round: isUserImageRound, avatarSkin: true }">
+        <img
+          :ondragstart="keepDragPicture"
+          :src="userImage"
+          :class="{ Round: isUserImageRound, imgBody: true }"
+        />
+      </div>
     </el-badge>
   </div>
 </template>
@@ -22,7 +24,7 @@ export default {
     },
     isUserImageDot: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   data() {
@@ -59,13 +61,59 @@ export default {
 
 <style scoped>
 .userAvatar {
-  @apply w-11 h-11 absolute right-2 top-2.5 transform;
+  @apply w-11 h-11 absolute right-4;
+}
+.userAvatar img {
+  @apply rounded-full border border-gray-400 w-10 h-10;
+  animation: unblur 1.5s linear infinite;
 }
 .userAvatar img.Round {
-  @apply rounded-full border border-gray-400;
+  @apply rounded-full;
+}
+
+.avatarSkin {
+  @apply relative p-1;
+  animation: blur 1.5s linear infinite;
+}
+.avatarSkin.Round::before {
+  @apply absolute rounded-full top-0 left-0 w-12 h-12;
+  content: " ";
+  background: linear-gradient(red 2%, rgba(0, 0, 0, 0) 2%);
+}
+.avatarSkin.Round::after {
+  @apply absolute rounded-full bottom-0 right-0 w-12 h-12;
+  content: " ";
+  background: linear-gradient(rgba(255, 255, 255, 0) 98%, blue 2%);
+}
+.avatarSkin.Round {
+  @apply rounded-full;
 }
 
 .imgBody {
   @apply bg-gray-50;
+}
+
+@keyframes blur {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes unblur {
+  0% {
+    transform: rotate(-0deg);
+  }
+  50% {
+    transform: rotate(-180deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 </style>

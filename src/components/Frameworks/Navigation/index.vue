@@ -80,7 +80,7 @@ export default {
 
 <style scoped>
 .navigation {
-  @apply h-16 text-center text-lg py-4 fixed top-8 border-b;
+  @apply flex justify-center items-center h-16 text-center text-lg fixed top-8 border-b;
   width: calc(100% - 2px);
 }
 .navigation.skin::before {

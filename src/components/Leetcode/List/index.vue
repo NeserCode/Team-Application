@@ -124,10 +124,6 @@ export default {
       }, 200);
     }, 1000),
     getQuestionPage: function (...option) {
-      this.$public.emit("notice", {
-        type: "loading",
-        msg: "🎈 正在从 Leetcode 获取题目...",
-      });
       if (option[0] == "before")
         this.pageToGo =
           parseInt(this.questionPage) == 1
@@ -154,6 +150,10 @@ export default {
         this.pageToGo != null &&
         this.clickable
       ) {
+        this.$public.emit("notice", {
+          type: "loading",
+          msg: "🎈 正在从 Leetcode 获取题目...",
+        });
         this.clickable = false;
         this.$leetcode
           .getQuestionSet(
