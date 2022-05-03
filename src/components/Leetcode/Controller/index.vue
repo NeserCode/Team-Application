@@ -78,11 +78,25 @@ export default {
         "leetcode-toggle-english-translated",
         !this.isContentEng
       );
+      if (this.isContentEng)
+        this.$public.emit("notice", {
+          type: "loading",
+          msg: "🎈 Switching Question Content in English...",
+        });
+      else
+        this.$public.emit("notice", {
+          type: "loading",
+          msg: "🎈 正在将题目内容切换为中文...",
+        });
     },
     getQuestionSubmit: _debounce(function () {
       this.$public.emit("leetcode-submit-question");
     }, 1000),
     initLeetcodeAccount: function () {
+      this.$public.emit("notice", {
+        type: "loading",
+        msg: `🕹 正在尝试以设置身份登录`,
+      });
       this.$leetcode.getUserStatus().then((response) => {
         this.userStat.status = response.data.data.userStatus.isSignedIn;
         this.userStat.avatar = response.data.data.userStatus.avatar;
@@ -92,6 +106,10 @@ export default {
             ? `Leetcode User ${this.userStat.username} Logined`
             : response
         );
+        this.$public.emit("notice", {
+          type: "success",
+          msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
+        });
       });
     },
     toggleListShow: function () {

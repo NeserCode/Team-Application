@@ -63,6 +63,11 @@ export default {
     //this.getMonthDays(T.getFullYear(), T.getMonth(), 0) 某月天数
     getMonthDays: (year, month) => new Date(year, month, 0).getDate(),
     initCheckDay: function () {
+      this.checkObject.checkDay = null;
+      this.checkObject.checkMonth = null;
+      this.checkObject.isSuper = false;
+      this.checkObject.isCheck = false;
+
       let T = new Date();
       this.checkObject.checkMonth = T.getMonth();
       this.checkObject.checkDay = T.getDate();

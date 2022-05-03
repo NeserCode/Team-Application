@@ -113,12 +113,11 @@ export default {
       setTimeout(() => {
         this.$leetcode.getQuestion(slug).then((response) => {
           this.question = response.data.data.question;
-          console.log(response);
           this.$public.emit("leetcode-update-question-detail", this.question);
           this.$public.emit("leetcode-toggle-list-show", !this.isShowList);
           this.$public.emit("notice", {
             type: "success",
-            msg: `√ 从 Leetcode 获取题目详情成功 | Slug => ${this.question.title}`,
+            msg: `✔ 从 Leetcode 获取题目详情成功 -${this.question.title}`,
           });
         });
       }, 200);
@@ -132,15 +131,14 @@ export default {
       if (option[0] == "next") this.pageToGo = parseInt(this.questionPage) + 1;
       if (this.pageToGo <= 0)
         this.$public.emit("notice", {
-          title: "注意",
-          msg: "没有那一页或者已经在该页",
+          msg: "❌ 没有那一页或者已经在该页",
           type: "error",
           closefunc: () => {
             this.pageToGo = null;
             this.clickable = true;
             this.$public.emit("notice", {
               status: "error",
-              msg: "× 从 Leetcode 获取题目失败:页号非法",
+              msg: "❌ 从 Leetcode 获取题目失败:页号非法",
             });
           },
         });
@@ -168,20 +166,19 @@ export default {
             this.clickable = true;
             this.$public.emit("notice", {
               type: "success",
-              msg: "√ 从 Leetcode 获取题目成功",
+              msg: "✔ 从 Leetcode 获取题目成功",
             });
           });
       } else
         this.$public.emit("notice", {
-          title: "注意",
-          msg: "没有那一页或者已经在该页",
+          msg: "❌ 没有那一页或者已经在该页",
           type: "error",
           closefunc: () => {
             this.pageToGo = null;
             this.clickable = true;
             this.$public.emit("notice", {
               type: "error",
-              msg: "× 从 Leetcode 获取题目失败:页号非法",
+              msg: "❌ 从 Leetcode 获取题目失败:页号非法",
             });
           },
         });

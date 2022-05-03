@@ -64,7 +64,7 @@ export default {
   @apply w-11 h-11 absolute right-4;
 }
 .userAvatar img {
-  @apply rounded-full border border-gray-400 w-10 h-10;
+  @apply rounded-full border border-gray-400 w-9 h-9;
   animation: unblur 1.5s linear infinite;
 }
 .userAvatar img.Round {

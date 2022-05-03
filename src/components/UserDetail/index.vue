@@ -2,13 +2,16 @@
   <div class="userDetail">
     <div class="userInfo">
       <UserAssets :isUserImageRound="true" />
+      <Namespace />
       <el-divider>{{ aboutStr }}</el-divider>
       <UserDetailOption
+        v-if="isMe"
         :opTitle="keyObj.title"
         opType="tag"
         :opDisabled="keyObj.disabled"
         :opTagValue="keyObj.text"
         :opCallbackFn="keyObj.fn"
+        opTip="与用户身份互相关联 用于二次验证用户身份"
       />
       <UserDetailOption
         :opTitle="sexObj.title"
@@ -26,6 +29,7 @@
         :opDisabled="accessObj.disabled"
         :opTagValue="accessStr"
         :opCallbackFn="accessObj.fn"
+        opTip="已记录的用户身份认证结果 用于决定管理某些功能或是某些信息"
       />
       <UserDetailOption
         :opTitle="boundObj.title"
@@ -58,12 +62,13 @@
 <script>
 // @ is an alias to /src
 import UserAssets from "@/components/UserAssets/index.vue";
+import Namespace from "@/components/UserAssets/Namespace/index.vue";
 import UserDetailOption from "@/components/UserDetail/Option/index.vue";
 import { clipboard } from "electron";
 
 export default {
   name: "userDetail",
-  components: { UserAssets, UserDetailOption },
+  components: { UserAssets, UserDetailOption, Namespace },
   beforeCreate() {
     this.$public.on("update-main-user-info-upto-app", ({ info, detail }) => {
       this.$conf.getConfPromise().then((data) => {
@@ -102,6 +107,7 @@ export default {
             localStorage.setItem("appKey", tempSetting.appInfo.key);
             localStorage.setItem("username", info.username);
             this.$public.emit("update-check-day");
+            this.$public.emit("update-username");
           })
           .catch((e) => {
             console.log(e.message);
@@ -124,6 +130,9 @@ export default {
     },
   },
   computed: {
+    isMe() {
+      return this.thisUsername == localStorage.getItem("username");
+    },
     aboutStr() {
       if (this.thisUsername == localStorage.getItem("username"))
         return "About me";

@@ -74,6 +74,11 @@ export default {
       clickable: true,
     };
   },
+  watch: {
+    "$route.name"() {
+      this.popoverSwitch = false;
+    },
+  },
   mounted() {
     this.$public.on("app-mounted", (setting) => {
       this.userImage =

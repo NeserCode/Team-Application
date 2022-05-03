@@ -54,7 +54,7 @@ export default {
       this.$notify({
         title,
         message: msg,
-        type,
+        type: type == "loading" ? "info" : type,
         duration: time ?? duration,
         position,
         onClose: fn,
