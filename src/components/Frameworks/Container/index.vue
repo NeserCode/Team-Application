@@ -57,7 +57,8 @@ export default {
 }
 
 .pageHeader {
-  @apply flex w-full px-6 py-4;
+  @apply flex h-14 w-full px-6 py-4 sticky top-0;
+  z-index: 2010;
 }
 :deep(.el-page-header__content) {
   @apply text-sm leading-6 font-medium;
@@ -67,11 +68,17 @@ export default {
   :deep(.el-page-header__content) {
     @apply text-gray-200;
   }
+  .pageHeader {
+    @apply bg-gray-800;
+  }
 }
 
 @media (prefers-color-scheme: light) {
   :deep(.el-page-header__content) {
     @apply text-gray-800;
+  }
+  .pageHeader {
+    @apply bg-gray-100;
   }
 }
 </style>
