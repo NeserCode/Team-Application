@@ -163,11 +163,11 @@ export default {
   @apply flex justify-center items-center;
 }
 .userAssets img {
-  @apply rounded-full border border-gray-400 w-32 h-32;
-  animation: unblur 1.5s linear infinite;
+  @apply border border-gray-400 w-32 h-32;
 }
 .userAssets img.Round {
   @apply rounded-full;
+  animation: unblur 1.5s linear infinite;
 }
 .preImage {
   @apply w-40 block mx-auto mb-4;
@@ -182,8 +182,8 @@ export default {
   @apply pr-14;
 }
 
-.avatarSkin {
-  @apply w-36 p-2;
+.avatarSkin.Round {
+  @apply w-36 p-2 rounded-full;
   animation: blur 1.5s linear infinite;
 }
 .avatarSkin.Round::before {
@@ -195,9 +195,6 @@ export default {
   @apply absolute rounded-full bottom-0 right-0 w-36 h-36 pointer-events-none;
   content: " ";
   background: linear-gradient(rgba(255, 255, 255, 0) 98%, blue 2%);
-}
-.avatarSkin.Round {
-  @apply rounded-full;
 }
 .imgBody {
   @apply bg-gray-50;

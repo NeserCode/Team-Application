@@ -2,12 +2,6 @@
   <div
     :class="['navigation', getUserStatus() == 'NeserCode' ? 'skin' : 'noskin']"
   >
-    <el-page-header
-      class="pageHeader"
-      v-show="retPath"
-      :content="headerText"
-      @back="handleGoBack"
-    />
     <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
 
     <router-link
@@ -54,23 +48,11 @@ export default {
   components: {
     UserAvatar,
   },
-  watch: {
-    "$route.name"(v, ov) {
-      this.retPath = ov;
-      this.nPath = v;
-    },
-  },
-  computed: {
-    headerText() {
-      return `${this.retPath} > ${this.nPath}`;
-    },
-  },
+
   data() {
     return {
       isLogined: false,
       signText: "登录",
-      retPath: null,
-      nPath: null,
     };
   },
   beforeCreate() {
@@ -93,9 +75,6 @@ export default {
     },
     handleKeepDrag: () => false,
     getUserStatus: () => localStorage.getItem("username"),
-    handleGoBack: function () {
-      this.$router.push(this.retPath);
-    },
   },
 };
 </script>
@@ -129,13 +108,6 @@ export default {
 
 .router-link-active.router-link-exact-active {
   @apply px-4 rounded-3xl border;
-}
-
-.pageHeader {
-  @apply absolute left-4;
-}
-:deep(.el-page-header__content) {
-  @apply inline-block text-sm leading-6 font-medium;
 }
 
 @media (prefers-color-scheme: dark) {

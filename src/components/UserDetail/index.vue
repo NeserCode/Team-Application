@@ -1,7 +1,7 @@
 <template>
   <div class="userDetail">
     <div class="userInfo">
-      <UserAssets :isUserImageRound="true" />
+      <UserAssets />
       <Namespace />
       <el-divider>{{ aboutStr }}</el-divider>
       <UserDetailOption

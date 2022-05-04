@@ -97,20 +97,28 @@ export default {
         type: "loading",
         msg: `🕹 正在尝试以设置身份登录`,
       });
-      this.$leetcode.getUserStatus().then((response) => {
-        this.userStat.status = response.data.data.userStatus.isSignedIn;
-        this.userStat.avatar = response.data.data.userStatus.avatar;
-        this.userStat.username = response.data.data.userStatus.realName;
-        console.log(
-          response.status == 200
-            ? `Leetcode User ${this.userStat.username} Logined`
-            : response
-        );
-        this.$public.emit("notice", {
-          type: "success",
-          msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
+      this.$leetcode
+        .getUserStatus()
+        .then((response) => {
+          this.userStat.status = response.data.data.userStatus.isSignedIn;
+          this.userStat.avatar = response.data.data.userStatus.avatar;
+          this.userStat.username = response.data.data.userStatus.realName;
+          console.log(
+            response.status == 200
+              ? `Leetcode User ${this.userStat.username} Logined`
+              : response
+          );
+          this.$public.emit("notice", {
+            type: "success",
+            msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
+          });
+        })
+        .catch((e) => {
+          this.$public.emit("notice", {
+            type: "error",
+            msg: `❌ 网络故障 登入失败 ${e.message}`,
+          });
         });
-      });
     },
     toggleListShow: function () {
       this.$public.emit("leetcode-toggle-list-show", !this.isShowList);
