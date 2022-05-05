@@ -85,9 +85,12 @@ const appConfig = {
     }
     , getHttpString: (s) => `http://${s}`
     , addLeetcodeSubmission: ({ host, leetname, username, appkey, submitid, submitday, submitmonth }) => {
-        return Axios.post(`${host}/api/leetcode/add`, {
+        return Axios.post(`${host}/api/user/leetcode/add`, {
             leetname, username, appkey, submitid, submitday, submitmonth
         })
+    }
+    , getLeetcodeSubmission: ({ host, username }) => {
+        return Axios.post(`${host}/api/user/leetcode/get`, { username })
     }
 }
 

@@ -3,6 +3,7 @@
     <QuestionList />
     <QuestionController />
     <QuestionContainer :question="leetQuestion" />
+    <QuestionTable />
   </div>
 </template>
 
@@ -10,10 +11,16 @@
 import QuestionList from "@/components/Leetcode/List/index.vue";
 import QuestionController from "@/components/Leetcode/Controller/index.vue";
 import QuestionContainer from "@/components/Leetcode/Container/index.vue";
+import QuestionTable from "@/components/Leetcode/Table/index.vue";
 
 export default {
   name: "LeetCode",
-  components: { QuestionList, QuestionController, QuestionContainer },
+  components: {
+    QuestionList,
+    QuestionController,
+    QuestionContainer,
+    QuestionTable,
+  },
   data() {
     return {
       leetQuestion: null,

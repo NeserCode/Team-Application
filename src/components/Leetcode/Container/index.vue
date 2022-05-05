@@ -156,10 +156,13 @@ export default {
           await this.$leetcode
             .getSubmissionStatus(`${submission_id}`)
             .then((result) => {
-              console.log(result);
+              const { submissionDetail } = result.data.data;
+              console.log(submissionDetail);
             })
             .catch((e) => {
-              console.log(e.message);
+              this.$public.emit("notice", {
+                msg: `获取提交返回数据失败 ${e.message}`,
+              });
             });
         })
         .catch((e) => {
