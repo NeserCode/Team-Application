@@ -24,9 +24,15 @@ var sqlMap = {
             },
 
         },
-        checkDay:{
-            check:'insert into team_user_checkday(userid,appKey,checkDay,checkMonth,isSuper) values (?,?,?,?,?)',
-            get:'select * from team_user_checkday where userid = ?'
+        leetcode: {
+            add: {
+                submission: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,submitDay,submitMonth) values (?,?,?,?,?,?)'
+            },
+            get: 'select * from team_leetcode_submit where userid = ?'
+        },
+        checkDay: {
+            check: 'insert into team_user_checkday(userid,appKey,checkDay,checkMonth,isSuper) values (?,?,?,?,?)',
+            get: 'select * from team_user_checkday where userid = ?'
         },
         get: {
             uid: "select id from team_user_info where username = ?"

@@ -182,4 +182,38 @@ router.post('/checkDay/get', (req, res) => {
     })
 })
 
+// 用户leetcode提交id | username,leetName,appKey,submitId,submitDay,submitMonth
+
+router.post('/leetcode/add', (req, res) => {
+    let sql = $sql.user.leetcode.add
+    let params = req.body
+
+    conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
+        if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
+        else conn.query(sql, [idresult[0].id, params.leetname, params.appkey, params.submitid, params.submitday, params.submitmonth], (err, reslut) => {
+            if (err) res.send(err)
+            else {
+                console.log(`[${params.username} uid_${idresult[0].id} add submission √]`);
+                res.send(reslut)
+            }
+        })
+    })
+})
+
+router.post('/leetcode/get', (req, res) => {
+    let sql = $sql.user.leetcode.get
+    let params = req.body
+    conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
+        if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
+        else conn.query(sql, [idresult[0].id], (err, reslut) => {
+            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            else {
+                console.log(`[${params.username} uid_${idresult[0].id} get submissions √]`);
+                res.send(reslut)
+            }
+        })
+    })
+})
+
+
 module.exports = router

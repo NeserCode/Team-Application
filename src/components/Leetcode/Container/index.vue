@@ -151,12 +151,19 @@ export default {
           this.$refs.codeEditor.content,
           this.questions.titleSlug
         )
-        .then((response) => {
-          console.log(
-            response.status == 200
-              ? `Leetcode SubmitID ${response.data.submission_id}`
-              : response
-          );
+        .then(async (response) => {
+          const { submission_id } = response.data;
+          await this.$leetcode
+            .getSubmissionStatus(`${submission_id}`)
+            .then((result) => {
+              console.log(result);
+            })
+            .catch((e) => {
+              console.log(e.message);
+            });
+        })
+        .catch((e) => {
+          console.log(e);
         });
     },
   },
