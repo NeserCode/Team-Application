@@ -17,6 +17,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
     "body-parser": "^1.20.0",
@@ -60,6 +61,9 @@
     ],
     "parserOptions": {
       "parser": "babel-eslint"
+    },
+    "rules": {
+      "vue/no-v-model-argument": "off"
     }
   },
   "browserslist": [

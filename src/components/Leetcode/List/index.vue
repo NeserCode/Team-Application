@@ -1,71 +1,78 @@
 <template>
   <div class="questionList" v-show="isShowList">
-    <div
-      class="questionListItem"
-      v-for="item in questionSet.questions"
-      :key="item.frontendQuestionId"
+    <el-table
+      :data="questionSet.questions"
+      table-layout="fixed"
+      border
+      class="questionTable"
+      empty-text="努力获取数据中"
     >
-      <span class="status">
-        <el-icon
-          v-if="item.status == 'AC'"
-          class="el-icon-check"
-          title="Accept"
-        ></el-icon>
-        <el-icon
-          v-else-if="item.status == 'TRIED'"
-          class="el-icon-view"
-          title="Tried"
-        ></el-icon>
-        <el-icon
-          v-else-if="item.status == 'NOT_STARTED'"
-          class="el-icon-null"
-          title="Not_Started"
-        ></el-icon>
-      </span>
-      <el-divider direction="vertical"></el-divider>
-      <span class="id">{{ item.frontendQuestionId }}</span>
-      <el-divider direction="vertical"></el-divider>
-      <a
-        class="title"
-        href="javascript:void(0)"
-        @click="getQuestionContent(item.titleSlug)"
-        >{{ item.title }}</a
-      >
-    </div>
-    <div class="pageSet">
-      <el-button
-        class="before btn"
-        :disabled="!clickable"
-        @click="getQuestionPage('before')"
-        ><i class="el-icon-d-arrow-left"></i
-      ></el-button>
-      <el-button class="more btn">当前&nbsp;{{ questionPage }}</el-button>
-      <el-button
-        class="next btn"
-        :disabled="!clickable"
-        @click="getQuestionPage('next')"
-        ><i class="el-icon-d-arrow-right"></i
-      ></el-button>
-      <el-input
-        class="input"
-        v-model="pageToGo"
-        @keyup.enter="getQuestionPage"
-        :disabled="!clickable"
-        :placeholder="'共' + totalPages + '页' + ',快速跳转'"
-      >
-        <template #append>
-          <el-button @click="getQuestionPage" :disabled="!clickable">
-            <i class="el-icon-right"></i>
-          </el-button>
+      <el-table-column prop="status" label="状态" width="60" align="center">
+        <template #default="scope">
+          <el-icon
+            v-if="scope.row.status == 'AC'"
+            class="el-icon-check"
+            title="Accept"
+          ></el-icon>
+          <el-icon
+            v-else-if="scope.row.status == 'TRIED'"
+            class="el-icon-view"
+            title="Tried"
+          ></el-icon>
+          <el-icon
+            v-else-if="scope.row.status == 'NOT_STARTED'"
+            class="el-icon-minus"
+            title="Not_Started"
+          ></el-icon>
         </template>
-      </el-input>
-    </div>
+      </el-table-column>
+      <el-table-column prop="isFavor" label="收藏" width="60" align="center">
+        <template #default="scope">
+          <el-icon v-if="scope.row.isFavor" title="已收藏"
+            ><star-filled
+          /></el-icon>
+          <el-icon v-else title="收藏"><star /></el-icon>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="frontendQuestionId"
+        label="题目ID"
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column prop="title" label="题目">
+        <template #default="scope">
+          <span class="title">{{ scope.row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="difficulty" label="难度" sortable>
+        <template #default="scope">
+          <el-tag type="success">{{ scope.row.difficulty }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="titleSlug" label="操作">
+        <template #default="scope"
+          ><el-button @click="getQuestionContent(scope.row.titleSlug)">
+            Do
+          </el-button></template
+        >
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      v-model:currentPage="questionPage"
+      v-model:page-size="pageLimit"
+      :total="questionSet.total"
+      background
+      @page-size="handlePageSetChange"
+      @current-change="getQuestionPage"
+      layout="prev, pager, next, jumper"
+    />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import { _debounce } from "@/plugins/utils";
+import { _debounce, _throttle } from "@/plugins/utils";
 
 export default {
   name: "QuestionList",
@@ -90,7 +97,6 @@ export default {
       questionSet: {},
       questionPage: 1,
       totalPages: 1,
-      pageToGo: null,
       pageLimit: 25,
     };
   },
@@ -122,32 +128,16 @@ export default {
         });
       }, 200);
     }, 1000),
-    getQuestionPage: function (...option) {
-      if (option[0] == "before")
-        this.pageToGo =
-          parseInt(this.questionPage) == 1
-            ? 1
-            : parseInt(this.questionPage) - 1;
-      if (option[0] == "next") this.pageToGo = parseInt(this.questionPage) + 1;
-      if (this.pageToGo <= 0)
+    getQuestionPage: _throttle(function (val) {
+      if (val <= 0)
         this.$public.emit("notice", {
-          msg: "❌ 没有那一页或者已经在该页",
+          msg: "❌ 从 Leetcode 获取题目失败:页号非法",
           type: "error",
           closefunc: () => {
-            this.pageToGo = null;
             this.clickable = true;
-            this.$public.emit("notice", {
-              status: "error",
-              msg: "❌ 从 Leetcode 获取题目失败:页号非法",
-            });
           },
         });
-      else if (
-        this.pageToGo != this.questionPage &&
-        this.pageToGo <= this.totalPages &&
-        this.pageToGo != null &&
-        this.clickable
-      ) {
+      else if (val <= this.totalPages && val != null && this.clickable) {
         this.$public.emit("notice", {
           type: "loading",
           msg: "🎈 正在从 Leetcode 获取题目...",
@@ -156,13 +146,12 @@ export default {
         this.$leetcode
           .getQuestionSet(
             "", //目录名选项
-            (this.pageToGo - 1) * this.pageLimit,
+            (val - 1) * this.pageLimit,
             this.pageLimit
           )
           .then((response) => {
             this.questionSet = response.data.data.problemsetQuestionList;
-            this.questionPage = this.pageToGo;
-            this.pageToGo = null;
+            this.questionPage = val;
             this.clickable = true;
             this.$public.emit("notice", {
               type: "success",
@@ -171,21 +160,20 @@ export default {
           });
       } else
         this.$public.emit("notice", {
-          msg: "❌ 没有那一页或者已经在该页",
+          msg: "❌ 从 Leetcode 获取题目失败:页号非法",
           type: "error",
           closefunc: () => {
-            this.pageToGo = null;
             this.clickable = true;
-            this.$public.emit("notice", {
-              type: "error",
-              msg: "❌ 从 Leetcode 获取题目失败:页号非法",
-            });
           },
         });
+    }, 120),
+    handlePageSetChange: function (val) {
+      console.log(val);
     },
     initQuestionSet: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;
+        console.log(this.questionSet);
         this.totalPages = parseInt(this.questionSet.total / this.pageLimit) + 1;
       });
     },
@@ -193,9 +181,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .questionList {
-  @apply border border-gray-500 my-2 mx-12 p-12 px-12;
+  @apply border border-gray-500 my-2 mx-12;
 }
 
 .questionList .pageSet {
@@ -219,12 +207,43 @@ export default {
   @apply font-medium;
 }
 
+.el-pagination {
+  @apply inline-block w-full text-center py-8;
+}
+
 @media (prefers-color-scheme: dark) {
   .questionList {
-    @apply bg-gray-900;
+    @apply bg-gray-800;
   }
   :deep(.el-input__inner) {
     @apply bg-gray-800 border border-gray-100;
+  }
+  :deep(.el-table tr) {
+    @apply bg-gray-800 text-gray-300 text-base;
+  }
+  :deep(.el-table th) {
+    @apply bg-gray-800;
+  }
+  :deep(.el-table--enable-row-hover .el-table__body tr:hover > td) {
+    @apply bg-gray-700;
+  }
+  :deep(.el-pagination button.btn-next),
+  :deep(.el-pagination button.btn-prev),
+  :deep(.el-pager li.number),
+  :deep(.el-pager li.more) {
+    @apply bg-transparent text-gray-300 text-base;
+  }
+  :deep(.el-pagination span:not([class*="suffix"])) {
+    @apply text-base;
+  }
+  :deep(.el-pagination .el-input__inner) {
+    @apply bg-gray-800 text-gray-400;
+  }
+  :deep(.el-table__empty-block) {
+    background: #16203c;
+  }
+  :deep(.el-table__empty-text) {
+    color: #ccc;
   }
 }
 
