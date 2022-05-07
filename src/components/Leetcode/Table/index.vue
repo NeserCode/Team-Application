@@ -1,5 +1,11 @@
 <template>
   <div class="table">
+    <el-steps :space="200" :active="2" finish-status="success" align-center>
+      <el-step title="分析内容" />
+      <el-step title="等待响应" />
+      <el-step title="分析响应" />
+    </el-steps>
+    <el-divider></el-divider>
     <el-table
       :data="idList"
       border
@@ -11,7 +17,6 @@
       <el-table-column prop="submitDay" label="日" sortable />
       <el-table-column prop="submitId" label="提交ID" />
     </el-table>
-    <el-divider></el-divider>
   </div>
 </template>
 
@@ -32,9 +37,7 @@ export default {
     this.$public.on("leetcode-toggle-english-translated", (val) => {
       this.isContentEng = val;
     });
-    this.$public.on("leetcode-update-code-language", (val) => {
-      this.langCode = val;
-    });
+    this.$public.on("leetcode-submit-question", () => {});
   },
   mounted() {
     // this.addSubmission("NeserCode", "15412315", "23", "4");
@@ -49,7 +52,6 @@ export default {
       isContentEng: false,
       inputedCode: null,
       questions: {},
-      langCode: 0,
     };
   },
   methods: {
@@ -103,7 +105,7 @@ export default {
 
 <style scoped lang="postcss">
 .table {
-  @apply w-full;
+  @apply relative w-full;
 }
 
 .subitable {

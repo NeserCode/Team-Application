@@ -80,12 +80,12 @@ export default {
       );
       if (this.isContentEng)
         this.$public.emit("notice", {
-          type: "loading",
+          type: "success",
           msg: "🎈 Switching Question Content in English...",
         });
       else
         this.$public.emit("notice", {
-          type: "loading",
+          type: "success",
           msg: "🎈 正在将题目内容切换为中文...",
         });
     },

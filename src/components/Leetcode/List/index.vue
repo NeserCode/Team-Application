@@ -28,10 +28,12 @@
       </el-table-column>
       <el-table-column prop="isFavor" label="收藏" width="60" align="center">
         <template #default="scope">
-          <el-icon v-if="scope.row.isFavor" title="已收藏"
-            ><star-filled
-          /></el-icon>
-          <el-icon v-else title="收藏"><star /></el-icon>
+          <el-icon v-if="scope.row.isFavor" title="已收藏">
+            <star-filled />
+          </el-icon>
+          <el-icon v-else title="收藏">
+            <star />
+          </el-icon>
         </template>
       </el-table-column>
       <el-table-column
@@ -47,15 +49,24 @@
       </el-table-column>
       <el-table-column prop="difficulty" label="难度" sortable>
         <template #default="scope">
-          <el-tag type="success">{{ scope.row.difficulty }}</el-tag>
+          <el-tag
+            :type="
+              scope.row.difficulty == 'EASY'
+                ? 'success'
+                : scope.row.difficulty == 'MEDIUM'
+                ? ''
+                : 'danger'
+            "
+            >{{ scope.row.difficulty }}</el-tag
+          >
         </template>
       </el-table-column>
       <el-table-column prop="titleSlug" label="操作">
-        <template #default="scope"
-          ><el-button @click="getQuestionContent(scope.row.titleSlug)">
+        <template #default="scope">
+          <el-button @click="getQuestionContent(scope.row.titleSlug)">
             Do
-          </el-button></template
-        >
+          </el-button>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -97,7 +108,7 @@ export default {
       questionSet: {},
       questionPage: 1,
       totalPages: 1,
-      pageLimit: 25,
+      pageLimit: 10,
     };
   },
   methods: {
@@ -173,7 +184,6 @@ export default {
     initQuestionSet: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;
-        console.log(this.questionSet);
         this.totalPages = parseInt(this.questionSet.total / this.pageLimit) + 1;
       });
     },
@@ -211,37 +221,53 @@ export default {
   @apply inline-block w-full text-center py-8;
 }
 
+:deep(.el-pagination button.btn-next),
+:deep(.el-pagination button.btn-prev),
+:deep(.el-pager li.number),
+:deep(.el-pager li.more) {
+  @apply bg-transparent text-base;
+}
+
 @media (prefers-color-scheme: dark) {
   .questionList {
     @apply bg-gray-800;
   }
+
   :deep(.el-input__inner) {
     @apply bg-gray-800 border border-gray-100;
   }
+
   :deep(.el-table tr) {
     @apply bg-gray-800 text-gray-300 text-base;
   }
+
   :deep(.el-table th) {
     @apply bg-gray-800;
   }
+
   :deep(.el-table--enable-row-hover .el-table__body tr:hover > td) {
     @apply bg-gray-700;
   }
+
   :deep(.el-pagination button.btn-next),
   :deep(.el-pagination button.btn-prev),
   :deep(.el-pager li.number),
   :deep(.el-pager li.more) {
-    @apply bg-transparent text-gray-300 text-base;
+    @apply text-gray-300;
   }
+
   :deep(.el-pagination span:not([class*="suffix"])) {
     @apply text-base;
   }
+
   :deep(.el-pagination .el-input__inner) {
     @apply bg-gray-800 text-gray-400;
   }
+
   :deep(.el-table__empty-block) {
     background: #16203c;
   }
+
   :deep(.el-table__empty-text) {
     color: #ccc;
   }

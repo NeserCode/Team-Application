@@ -175,7 +175,7 @@ export default {
 
 <style scoped>
 .innerContainer {
-  @apply absolute w-full h-full float-left;
+  @apply w-full h-full float-left;
 }
 
 .questionContainer {
