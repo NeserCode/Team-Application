@@ -1,21 +1,31 @@
 <template>
   <div class="table">
-    <el-steps :space="200" :active="2" finish-status="success" align-center>
-      <el-step title="分析内容" />
-      <el-step title="等待响应" />
-      <el-step title="分析响应" />
+    <el-steps :space="200" :active="0" finish-status="success" align-center>
+      <el-step title="分析内容"
+        ><template #icon>
+          <el-icon><Loading /></el-icon> </template
+      ></el-step>
+      <el-step title="等待响应"
+        ><template #icon>
+          <el-icon><Loading /></el-icon> </template
+      ></el-step>
+      <el-step title="分析响应"
+        ><template #icon>
+          <el-icon><Loading /></el-icon> </template
+      ></el-step>
     </el-steps>
     <el-divider></el-divider>
     <el-table
       :data="idList"
       border
-      :default-sort="{ order: 'descending' }"
-      table-layout="fixed"
+      :default-sort="{ order: sortByCount }"
+      table-layout="auto"
       class="subitable"
     >
-      <el-table-column prop="submitMonth" label="月" sortable />
-      <el-table-column prop="submitDay" label="日" sortable />
-      <el-table-column prop="submitId" label="提交ID" />
+      <el-table-column prop="submitMonth" label="月" sortable align="center" />
+      <el-table-column prop="submitDay" label="日" sortable align="center" />
+      <el-table-column prop="leetName" label="提交名" sortable align="center" />
+      <el-table-column prop="submitId" label="提交ID" align="center" />
     </el-table>
   </div>
 </template>
@@ -25,7 +35,6 @@
 
 export default {
   name: "LeetcodeTable",
-  components: {},
   props: {},
   beforeCreate() {
     this.$public.on("leetcode-toggle-list-show", (val) => {
@@ -55,6 +64,9 @@ export default {
     };
   },
   methods: {
+    sortByCount: function (a, b) {
+      return b - a;
+    },
     addSubmission: function (leetname, submitid, submitday, submitmonth) {
       this.$conf
         .getHost()
@@ -105,7 +117,11 @@ export default {
 
 <style scoped lang="postcss">
 .table {
-  @apply relative w-full;
+  @apply relative w-full text-center;
+}
+
+.el-steps {
+  @apply justify-center;
 }
 
 .subitable {

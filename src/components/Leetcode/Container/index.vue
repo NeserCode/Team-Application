@@ -173,7 +173,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .innerContainer {
   @apply w-full h-full float-left;
 }

@@ -63,13 +63,17 @@
       </el-table-column>
       <el-table-column prop="titleSlug" label="操作">
         <template #default="scope">
-          <el-button @click="getQuestionContent(scope.row.titleSlug)">
-            Do
+          <el-button
+            @click="getQuestionContent(scope.row.titleSlug)"
+            type="primary"
+          >
+            解题
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
+      v-if="questionSet.total"
       v-model:currentPage="questionPage"
       v-model:page-size="pageLimit"
       :total="questionSet.total"
@@ -219,6 +223,9 @@ export default {
 
 .el-pagination {
   @apply inline-block w-full text-center py-8;
+}
+.el-tag {
+  @apply bg-transparent;
 }
 
 :deep(.el-pagination button.btn-next),
