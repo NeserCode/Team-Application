@@ -87,7 +87,7 @@ const leetcode = {
         })
 
         var config = {
-            method: 'post',
+            method: 'options',
             url: `https://leetcode-cn.com/problems/${questionSlug}/submit/`,
             data: {
                 question_id: question_id,

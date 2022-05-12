@@ -17,17 +17,12 @@
         </template>
       </el-table-column> </el-table
     ><el-divider></el-divider>
-    <el-descriptions class="submitInfo" title="User Info" border>
-      <el-descriptions-item label="Username">kooriookami</el-descriptions-item>
-      <el-descriptions-item label="Telephone">18100000000</el-descriptions-item>
-      <el-descriptions-item label="Place">Suzhou</el-descriptions-item>
-      <el-descriptions-item label="Remarks">
-        <el-tag size="small">School</el-tag>
-      </el-descriptions-item>
-      <el-descriptions-item label="Address"
-        >No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu
-        Province</el-descriptions-item
-      >
+    <el-descriptions class="submitInfo" title="提交详情" border>
+      <el-descriptions-item label="提交ID">1</el-descriptions-item>
+      <el-descriptions-item label="提交状态">1</el-descriptions-item>
+      <el-descriptions-item label="Place">1</el-descriptions-item>
+      <el-descriptions-item label="Remarks">1 </el-descriptions-item>
+      <el-descriptions-item label="Address">1</el-descriptions-item>
     </el-descriptions>
   </div>
 </template>
@@ -39,17 +34,28 @@ export default {
   name: "LeetcodeTable",
   props: {},
   beforeCreate() {
-    this.$public.on("leetcode-toggle-list-show", (val) => {
-      this.isShowQuestion = !val;
-    });
     this.$public.on("leetcode-update-question-detail", (obj) => {
       this.questions = obj;
     });
-    this.$public.on("leetcode-toggle-english-translated", (val) => {
-      this.isContentEng = val;
+    this.$public.on("leetcode-user-sign-in", (name) => {
+      this.leetname = name;
     });
-    this.$public.on("leetcode-submit-question", () => {
-      // this.addSubmission("NeserCode", "15412315", "23", "4");
+    // this.$public.on("leetcode-submit-back-id", (id) => {
+    //   this.addSubmission(this.leetname, id, "23", "4");
+    // });
+    this.$public.on("leetcode-submit-back-id", async (id) => {
+      console.log(id);
+      // await this.$leetcode
+      //   .getSubmissionStatus(`${id}`)
+      //   .then((result) => {
+      //     const { submissionDetail } = result.data.data;
+      //     console.log(submissionDetail);
+      //   })
+      //   .catch((e) => {
+      //     this.$public.emit("notice", {
+      //       msg: `获取提交返回数据失败 ${e.message}`,
+      //     });
+      //   });
     });
   },
   mounted() {
@@ -59,10 +65,7 @@ export default {
   data() {
     return {
       idList: null,
-      isShowList: true,
-      isShowQuestion: true,
-      isContentEng: false,
-      inputedCode: null,
+      leetname: "游客",
       questions: {},
     };
   },

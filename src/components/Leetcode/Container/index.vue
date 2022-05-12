@@ -160,17 +160,9 @@ export default {
           this.questions.titleSlug
         )
         .then(async (response) => {
+          console.log(response);
           const { submission_id } = response.data;
-          // await this.$leetcode
-          //   .getSubmissionStatus(`${submission_id}`)
-          //   .then((result) => {
-          //     const { submissionDetail } = result.data.data;
-          //   })
-          //   .catch((e) => {
-          //     this.$public.emit("notice", {
-          //       msg: `获取提交返回数据失败 ${e.message}`,
-          //     });
-          //   });
+          this.$public.emit("leetcode-submit-back-id", submission_id);
         })
         .catch((e) => {
           console.log(e);
