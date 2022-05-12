@@ -1,20 +1,5 @@
 <template>
   <div class="table">
-    <el-steps :space="200" :active="0" finish-status="success" align-center>
-      <el-step title="分析内容"
-        ><template #icon>
-          <el-icon><Loading /></el-icon> </template
-      ></el-step>
-      <el-step title="等待响应"
-        ><template #icon>
-          <el-icon><Loading /></el-icon> </template
-      ></el-step>
-      <el-step title="分析响应"
-        ><template #icon>
-          <el-icon><Loading /></el-icon> </template
-      ></el-step>
-    </el-steps>
-    <el-divider></el-divider>
     <el-table
       :data="idList"
       border
@@ -26,7 +11,24 @@
       <el-table-column prop="submitDay" label="日" sortable align="center" />
       <el-table-column prop="leetName" label="提交名" sortable align="center" />
       <el-table-column prop="submitId" label="提交ID" align="center" />
-    </el-table>
+      <el-table-column label="操作" align="center">
+        <template #default>
+          <el-button type="primary">查看</el-button>
+        </template>
+      </el-table-column> </el-table
+    ><el-divider></el-divider>
+    <el-descriptions class="submitInfo" title="User Info" border>
+      <el-descriptions-item label="Username">kooriookami</el-descriptions-item>
+      <el-descriptions-item label="Telephone">18100000000</el-descriptions-item>
+      <el-descriptions-item label="Place">Suzhou</el-descriptions-item>
+      <el-descriptions-item label="Remarks">
+        <el-tag size="small">School</el-tag>
+      </el-descriptions-item>
+      <el-descriptions-item label="Address"
+        >No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu
+        Province</el-descriptions-item
+      >
+    </el-descriptions>
   </div>
 </template>
 
@@ -46,10 +48,11 @@ export default {
     this.$public.on("leetcode-toggle-english-translated", (val) => {
       this.isContentEng = val;
     });
-    this.$public.on("leetcode-submit-question", () => {});
+    this.$public.on("leetcode-submit-question", () => {
+      // this.addSubmission("NeserCode", "15412315", "23", "4");
+    });
   },
   mounted() {
-    // this.addSubmission("NeserCode", "15412315", "23", "4");
     this.initSubmission();
   },
   activated() {},
@@ -128,6 +131,10 @@ export default {
   @apply w-2/3 mx-auto;
 }
 
+.submitInfo {
+  @apply w-2/3 mx-auto;
+}
+
 @media (prefers-color-scheme: dark) {
   :deep(.el-table tr) {
     @apply bg-gray-800 text-gray-300 text-base;
@@ -137,6 +144,13 @@ export default {
   }
   :deep(.el-table--enable-row-hover .el-table__body tr:hover > td) {
     @apply bg-gray-700;
+  }
+  :deep(.el-descriptions__body),
+  :deep(.el-descriptions__label) {
+    @apply bg-transparent;
+  }
+  :deep(.el-descriptions__title) {
+    @apply text-gray-300;
   }
 }
 

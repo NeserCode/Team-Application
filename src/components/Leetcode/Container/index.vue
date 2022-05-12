@@ -14,12 +14,7 @@
             <el-divider direction="vertical"></el-divider
             ><span class="difficulty">{{ questions.difficulty }}</span>
           </div>
-          <div
-            class="content"
-            v-html="
-              isContentEng ? questions.content : questions.translatedContent
-            "
-          ></div>
+          <div class="content" v-html="questionContent"></div>
         </Slider>
       </div>
     </div>
@@ -89,6 +84,7 @@ export default {
     });
     this.$public.on("leetcode-update-question-detail", (obj) => {
       this.questions = obj;
+      console.log(this.questions);
     });
     this.$public.on("leetcode-toggle-english-translated", (val) => {
       this.isContentEng = val;
@@ -103,6 +99,18 @@ export default {
   mounted() {},
   activated() {
     this.initTheme();
+  },
+  computed: {
+    questionContent() {
+      return (
+        (this.isContentEng
+          ? this.questions.content +
+            "<br/><p><b>Sample Example InputCase:</b></p>"
+          : this.questions.translatedContent +
+            "<br/><p><b>测试用例例如:</b></p>") +
+        this.questions.exampleTestcases
+      );
+    },
   },
   data() {
     return {
@@ -153,17 +161,16 @@ export default {
         )
         .then(async (response) => {
           const { submission_id } = response.data;
-          await this.$leetcode
-            .getSubmissionStatus(`${submission_id}`)
-            .then((result) => {
-              const { submissionDetail } = result.data.data;
-              console.log(submissionDetail);
-            })
-            .catch((e) => {
-              this.$public.emit("notice", {
-                msg: `获取提交返回数据失败 ${e.message}`,
-              });
-            });
+          // await this.$leetcode
+          //   .getSubmissionStatus(`${submission_id}`)
+          //   .then((result) => {
+          //     const { submissionDetail } = result.data.data;
+          //   })
+          //   .catch((e) => {
+          //     this.$public.emit("notice", {
+          //       msg: `获取提交返回数据失败 ${e.message}`,
+          //     });
+          //   });
         })
         .catch((e) => {
           console.log(e);
@@ -216,7 +223,6 @@ export default {
 .codeView {
   @apply block w-full text-base overflow-y-auto;
   max-height: 70vh;
-  z-index: 2009;
 }
 
 @media (prefers-color-scheme: dark) {
