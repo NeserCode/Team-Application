@@ -25,7 +25,7 @@ var sqlMap = {
 
         },
         leetcode: {
-            add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,submitDay,submitMonth) values (?,?,?,?,?,?)',
+            add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,timestamp) values (?,?,?,?,?)',
             get: 'select * from team_leetcode_submit where userid = ?'
         },
         checkDay: {

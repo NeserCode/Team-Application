@@ -190,7 +190,7 @@ router.post('/leetcode/add', (req, res) => {
 
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
-        else conn.query(sql, [idresult[0].id, params.leetname, params.appkey, params.submitid, params.submitday, params.submitmonth], (err, reslut) => {
+        else conn.query(sql, [idresult[0].id, params.leetname, params.appkey, params.submitid, params.timestamp], (err, reslut) => {
             if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} add submission √]`);

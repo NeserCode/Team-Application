@@ -62,22 +62,20 @@ export default {
       //       msg: `获取提交返回数据失败 ${e.message}`,
       //     });
       //   });
-      await this.$leetcode
-        .getSubmissionStatusOnsubmit(`${id}`)
-        .then((result) => {
-          console.log(result);
-          // const { submissionDetail } = result.data.data;
-          // console.log(submissionDetail);
-          // this.$public.emit("notice", {
-          //   msg: `🐱‍🚀 题解状态 ${submissionDetail.statusDisplay}`,
-          //   time: 8000,
-          // });
-        })
-        .catch((e) => {
-          this.$public.emit("notice", {
-            msg: `获取提交返回数据失败 ${e.message}`,
+      setTimeout(async () => {
+        await this.$leetcode
+          .getSubmissionStatusOnsubmit(`${id}`)
+          .then((result) => {
+            this.$public.emit("notice", {
+              msg: `获取提交状态 ${result.data.state}`,
+            });
+          })
+          .catch((e) => {
+            this.$public.emit("notice", {
+              msg: `获取提交返回数据失败 ${e.message}`,
+            });
           });
-        });
+      }, 8000);
     });
   },
   mounted() {
