@@ -80,15 +80,30 @@ const leetcode = {
             console.log('CookieRemoved:', arr[p].name, `(${url})`);
         }
     }
+    , setBeforeSubmit: async (questionSlug, callback) => {
+        session.defaultSession.cookies.get({ url: 'https://leetcode-cn.com/graphql/' }).then((cookies) => {
+                    cookies.forEach( async(item) => {
+                        const { name, value } = item
+                        let exp = new Date();
+                        let realcookie = { url:`https://leetcode.cn/problems/${questionSlug}/submit/`, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
+                        await session.defaultSession.cookies.set(realcookie)
+                    })
+            callback()
+            })
+    }
     , getSubmissionID: async (question_id, lang, typed_code, questionSlug) => {
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, (details, callback) => {
-            details.requestHeaders['Referer'] = `https://leetcode-cn.com/problems/${questionSlug}/submissions/`
+        // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, (details, callback) => {
+        //     details.requestHeaders['Referer'] = `https://leetcode-cn.com/problems/${questionSlug}/submissions/`
+        //     callback({ cancel: false, requestHeaders: details.requestHeaders })
+        // })
+        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode.cn/problems/*'] }, (details, callback) => {
+            details.requestHeaders['Referer'] = `https://leetcode.cn/problems/${questionSlug}/submissions/`
             callback({ cancel: false, requestHeaders: details.requestHeaders })
         })
 
         var config = {
-            method: 'options',
-            url: `https://leetcode-cn.com/problems/${questionSlug}/submit/`,
+            method: 'POST',
+            url: `https://leetcode.cn/problems/${questionSlug}/submit/`,
             data: {
                 question_id: question_id,
                 lang: lang,
@@ -98,10 +113,21 @@ const leetcode = {
                 questionSlug: questionSlug
             }
         };
+        
         const res = await Axios(config);
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, null);
+        // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, null);
+        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode.cn/problems/*'] }, null);
         return res;
 
+    }
+    , getSubmissionStatusOnsubmit: async (submissionID) => {
+        var config = {
+            method: 'get',
+            url: `https://leetcode-cn.com/submissions/detail/${submissionID}/check/`,
+        };
+
+        const res = await Axios(config);
+        return res;
     }
     , getSubmissionStatus: async (submissionID) => {
         session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, (details, callback) => {

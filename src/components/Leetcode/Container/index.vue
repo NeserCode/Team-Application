@@ -152,21 +152,22 @@ export default {
       }, 10);
     },
     getQuestionSubmit: function () {
-      this.$leetcode
-        .getSubmissionID(
-          this.questions.questionId,
-          this.questions.codeSnippets[this.langCode].langSlug,
-          this.$refs.codeEditor.content,
-          this.questions.titleSlug
-        )
-        .then(async (response) => {
-          console.log(response);
-          const { submission_id } = response.data;
-          this.$public.emit("leetcode-submit-back-id", submission_id);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      this.$leetcode.setBeforeSubmit(this.questions.titleSlug, () => {
+        this.$leetcode
+          .getSubmissionID(
+            this.questions.questionId,
+            this.questions.codeSnippets[this.langCode].langSlug,
+            this.$refs.codeEditor.content,
+            this.questions.titleSlug
+          )
+          .then(async (response) => {
+            const { submission_id } = response.data;
+            this.$public.emit("leetcode-submit-back-id", submission_id);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      });
     },
   },
 };
