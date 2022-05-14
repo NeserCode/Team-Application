@@ -24,7 +24,7 @@
             @mouseenter="handleBarFlash($event)"
           ></span>
         </div>
-        <slot></slot>
+        <div ref="realContent"><slot></slot></div>
       </div>
     </div>
   </div>
@@ -75,13 +75,13 @@ export default {
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
       console.log(
-        `Slider(${this.$refs.container.parentNode.parentNode.classList}) Resized`
+        `Slider(${this.$refs.ythumb.nextElementSibling.lastElementChild.classList}) Resized`
       );
       this.$refs.ythumb.style.height = `0px`;
       this.$refs.xthumb.style.width = `0px`;
       this.initBars();
     });
-    this.resizeObserver.observe(this.$refs.content);
+    this.resizeObserver.observe(this.$refs.ythumb.nextElementSibling);
   },
   activated() {
     this.initBars();
@@ -268,7 +268,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="postcss">
 .slider {
   @apply relative top-0 left-0 w-full h-full;
 }

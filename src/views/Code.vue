@@ -26,7 +26,7 @@ export default {
 
 <style scoped>
 .code {
-  @apply w-full h-full py-4;
+  @apply w-full h-auto py-4;
 }
 
 @media (prefers-color-scheme: dark) {

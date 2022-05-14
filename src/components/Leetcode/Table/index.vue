@@ -1,5 +1,6 @@
 <template>
   <div class="table">
+    <span>提交查询</span>
     <el-table
       :data="idList"
       border
@@ -7,22 +8,60 @@
       table-layout="auto"
       class="subitable"
     >
-      <el-table-column prop="submitMonth" label="月" sortable align="center" />
-      <el-table-column prop="submitDay" label="日" sortable align="center" />
+      <el-table-column prop="timeStamp" label="时间" sortable align="center">
+        <template #default="scope">
+          <el-tag>{{
+            new Date(parseInt(scope.row.timeStamp)).toLocaleString()
+          }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="leetName" label="提交名" sortable align="center" />
       <el-table-column prop="submitId" label="提交ID" align="center" />
       <el-table-column label="操作" align="center">
-        <template #default>
-          <el-button type="primary">查看</el-button>
+        <template #default="scope">
+          <el-button
+            type="primary"
+            @click="getSubmissionDetail(scope.row.submitId)"
+            >查看</el-button
+          >
         </template>
-      </el-table-column> </el-table
-    ><el-divider></el-divider>
-    <el-descriptions class="submitInfo" title="提交详情" border>
-      <el-descriptions-item label="提交ID">1</el-descriptions-item>
-      <el-descriptions-item label="提交状态">1</el-descriptions-item>
-      <el-descriptions-item label="Place">1</el-descriptions-item>
-      <el-descriptions-item label="Remarks">1 </el-descriptions-item>
-      <el-descriptions-item label="Address">1</el-descriptions-item>
+      </el-table-column>
+    </el-table>
+    <el-descriptions class="submitInfo" border v-if="submissionDetail.question">
+      <el-descriptions-item label="题目ID">{{
+        submissionDetail.question.questionId
+      }}</el-descriptions-item>
+      <el-descriptions-item label="题目名">{{
+        submissionDetail.question.title
+      }}</el-descriptions-item>
+      <el-descriptions-item label="翻译名">{{
+        submissionDetail.question.translatedTitle
+      }}</el-descriptions-item>
+
+      <el-descriptions-item label="提交ID">{{
+        submissionDetail.id
+      }}</el-descriptions-item>
+      <el-descriptions-item label="提交状态/语言">{{
+        submissionDetail.statusDisplay + " / " + submissionDetail.lang
+      }}</el-descriptions-item>
+      <el-descriptions-item label="时间戳">{{
+        submissionDetail.timestamp
+      }}</el-descriptions-item>
+
+      <el-descriptions-item label="终止测试用例"
+        >{{ submissionDetail.outputDetail.lastTestcase }}
+      </el-descriptions-item>
+      <el-descriptions-item label="已通过测试用例个数"
+        >{{ submissionDetail.passedTestCaseCnt }}
+      </el-descriptions-item>
+      <el-descriptions-item label="运行时间"
+        >{{ submissionDetail.runtime }}
+      </el-descriptions-item>
+      <el-descriptions-item label="代码">
+        <pre><code>{{
+        `${submissionDetail.code}`
+      }}</code></pre>
+      </el-descriptions-item>
     </el-descriptions>
   </div>
 </template>
@@ -40,42 +79,8 @@ export default {
     this.$public.on("leetcode-user-sign-in", (name) => {
       this.leetname = name;
     });
-    // this.$public.on("leetcode-submit-back-id", (id) => {
-    //   this.addSubmission(this.leetname, id, "23", "4");
-    // });
-    this.$public.on("leetcode-submit-back-id", async (id) => {
-      this.$public.emit("notice", {
-        msg: `🐱‍👤 正在为您查询本次提交结果 ${id}`,
-      });
-      // await this.$leetcode
-      //   .getSubmissionStatus(`${id}`)
-      //   .then((result) => {
-      //     const { submissionDetail } = result.data.data;
-      //     console.log(submissionDetail);
-      //     this.$public.emit("notice", {
-      //       msg: `🐱‍🚀 题解状态 ${submissionDetail.statusDisplay}`,
-      //       time: 8000,
-      //     });
-      //   })
-      //   .catch((e) => {
-      //     this.$public.emit("notice", {
-      //       msg: `获取提交返回数据失败 ${e.message}`,
-      //     });
-      //   });
-      setTimeout(async () => {
-        await this.$leetcode
-          .getSubmissionStatusOnsubmit(`${id}`)
-          .then((result) => {
-            this.$public.emit("notice", {
-              msg: `获取提交状态 ${result.data.state}`,
-            });
-          })
-          .catch((e) => {
-            this.$public.emit("notice", {
-              msg: `获取提交返回数据失败 ${e.message}`,
-            });
-          });
-      }, 8000);
+    this.$public.on("leetcode-submit-back-id", (id) => {
+      this.afterIdSubmission(id);
     });
   },
   mounted() {
@@ -87,13 +92,14 @@ export default {
       idList: null,
       leetname: "游客",
       questions: {},
+      submissionDetail: {},
     };
   },
   methods: {
     sortByCount: function (a, b) {
       return b - a;
     },
-    addSubmission: function (leetname, submitid, submitday, submitmonth) {
+    addSubmission: function (leetname, submitid, timestamp) {
       this.$conf
         .getHost()
         .then((h) => {
@@ -104,8 +110,7 @@ export default {
               username: localStorage.getItem("username"),
               appkey: localStorage.getItem("appKey"),
               submitid,
-              submitday,
-              submitmonth,
+              timestamp,
             })
             .catch((e) => {
               this.$public.emit("notice", {
@@ -119,23 +124,68 @@ export default {
           });
         });
     },
-    initSubmission: function () {
-      this.$conf
-        .getHost()
-        .then((h) => {
-          this.$conf
-            .getLeetcodeSubmission({
-              host: this.$conf.getHttpString(h.host),
-              username: localStorage.getItem("username"),
-            })
-            .then((res) => {
-              this.idList = res.data;
-              console.log(this.idList);
+    afterIdSubmission: function (id) {
+      this.$public.emit("notice", {
+        msg: `🐱‍👤 正在为您查询本次提交 ID[${id}]`,
+        time: 8000,
+      });
+      setTimeout(async () => {
+        await this.$leetcode
+          .getSubmissionStatusOnsubmit(`${id}`)
+          .then((result) => {
+            console.log(result.data);
+            const { status_msg, task_finish_time } = result.data;
+            this.$public.emit("notice", {
+              msg: `获取提交状态 ${status_msg} 详细信息请于查询处查询本次提交`,
+              time: 5000,
+              fn: () => {
+                this.addSubmission(this.leetname, id, task_finish_time);
+                this.$public.emit("notice", {
+                  msg: `提交本地录入 ${id}`,
+                  time: 5000,
+                  fn: () => {
+                    this.initSubmission();
+                  },
+                });
+              },
             });
+          })
+          .catch((e) => {
+            this.$public.emit("notice", {
+              msg: `获取提交返回数据失败 ${e.message} 本次提交将不被录入本地`,
+              time: 5000,
+            });
+          });
+      }, 8000);
+    },
+    getSubmissionDetail: async function (id) {
+      await this.$leetcode
+        .getSubmissionStatus(`${id}`)
+        .then((result) => {
+          const { submissionDetail } = result.data.data;
+          console.log(submissionDetail);
+          this.submissionDetail = submissionDetail;
         })
         .catch((e) => {
-          console.log(e);
+          this.$public.emit("notice", {
+            msg: `获取提交返回数据失败 ${e.message}`,
+          });
         });
+    },
+    initSubmission: function () {
+      this.$conf.getHost().then((h) => {
+        this.$conf
+          .getLeetcodeSubmission({
+            host: this.$conf.getHttpString(h.host),
+            username: localStorage.getItem("username"),
+          })
+          .then((res) => {
+            this.idList = res.data;
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      });
     },
   },
 };
@@ -143,7 +193,7 @@ export default {
 
 <style scoped lang="postcss">
 .table {
-  @apply relative w-full text-center;
+  @apply w-full text-center;
 }
 
 .el-steps {
@@ -156,6 +206,10 @@ export default {
 
 .submitInfo {
   @apply w-2/3 mx-auto;
+}
+
+:deep(.el-descriptions__content) {
+  @apply whitespace-pre;
 }
 
 @media (prefers-color-scheme: dark) {

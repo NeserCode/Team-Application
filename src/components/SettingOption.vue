@@ -131,9 +131,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .settingOption {
-  @apply relative inline-block mx-auto w-full h-full;
+  @apply relative inline-block mx-auto w-full h-full border-l-2;
+  transition: all ease-in-out 0.2s;
 }
 
 .titleContainer {
@@ -183,6 +184,12 @@ span.opTip {
 }
 
 @media (prefers-color-scheme: dark) {
+  .settingOption {
+    @apply border-gray-700;
+  }
+  .settingOption:hover {
+    @apply border-blue-300;
+  }
   :deep(.el-radio) {
     @apply text-gray-300;
   }
@@ -195,5 +202,8 @@ span.opTip {
 }
 
 @media (prefers-color-scheme: light) {
+  .settingOption:hover {
+    @apply border-green-300;
+  }
 }
 </style>

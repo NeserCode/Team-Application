@@ -10,16 +10,6 @@ var $sql = require('../sqlMap')
 var conn = mysql.createConnection(models.mysql)
 
 conn.connect()
-var jsonWrite = function (result, ret) {
-    if (typeof ret === 'undefined') {
-        result.json({
-            code: '-1',
-            msg: '操作失败'
-        })
-    } else {
-        result.json(ret)
-    }
-}
 
 // 用户注册接口 |用户名、密码、appKey、userKey
 // 用户登录接口 |用户名、密码、keys
@@ -29,16 +19,14 @@ router.post('/signup', (req, res) => {
     var params = req.body;
     console.log('[/signup] => ', params);
     conn.query(sql.init.info, [params.username, params.password, params.appkey, params.userkey], (err, result) => {
-        if (err) {
-            jsonWrite(res, { message: err.sqlMessage, errorCode: err.errno })
-        }
+        if (err) res.send(err)
         if (result) {
             console.log("[/signup] √ =>", result)
             jsonWrite(res, result);
             conn.query($sql.user.get.uid, params.username, (err, idresult) => {
-                if (err) jsonWrite(res, { message: err.sqlMessage, errorCode: err.errno })
+                if (err) res.send(err)
                 else conn.query(sql.init.detail, [idresult[0].id, params.sex, params.bound], (err) => {
-                    if (err) jsonWrite(res, { message: err.sqlMessage, errorCode: err.errno })
+                    if (err) res.send(err)
                 })
             })
         }
@@ -51,15 +39,15 @@ router.post('/signin', (req, res) => {
     let all = { info: {}, detail: {} }
     console.log('[/signin] => ', params);
     conn.query(sql.check, [params.username, params.password], (checkerr, checkresult) => {
-        if (checkerr) console.log(checkerr)
+        if (checkerr) res.send(checkerr)
         else if (checkresult.length) {
             console.log("[/signin] check √ => update allkey");
             conn.query(sql.update.all, [params.appkey, params.checkkey, params.username], (updateerr) => {
-                if (updateerr) console.log(updateerr);
+                if (updateerr) res.send(updateerr)
                 else console.log("[/signin] update allkey √ => detail");
             })
             conn.query(sql.detail, checkresult[0].id, (detailerr, detailres) => {
-                if (detailerr) console.log(detailerr)
+                if (detailerr) res.send(detailerr)
                 else {
                     console.log("[/signin] detail √ ");
                     all.detail = detailres[0]
@@ -80,7 +68,7 @@ router.post('/detail/update/all', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql.all, [params.nickname, params.avatar, params.introduce, params.sex, idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} update all √]`);
                 res.send(reslut)
@@ -95,7 +83,7 @@ router.post('/detail/update/nickname', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql, [params.key, idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} update nickname √]`);
                 res.send(reslut)
@@ -110,7 +98,7 @@ router.post('/detail/update/avatar', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql, [params.key, idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} update avatar √]`);
                 res.send(reslut)
@@ -125,7 +113,7 @@ router.post('/detail/update/introduce', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql, [params.key, idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} update introduce √]`);
                 res.send(reslut)
@@ -140,7 +128,7 @@ router.post('/detail/update/sex', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql, [params.key, idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} update sex √]`);
                 res.send(reslut)
@@ -173,7 +161,7 @@ router.post('/checkDay/get', (req, res) => {
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
         else conn.query(sql, [idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} check get √]`);
                 res.send(reslut)
@@ -182,7 +170,7 @@ router.post('/checkDay/get', (req, res) => {
     })
 })
 
-// 用户leetcode提交id | username,leetName,appKey,submitId,submitDay,submitMonth
+// 用户leetcode提交id | username,leetName,a ppKey,submitId,submitDay,submitMonth
 
 router.post('/leetcode/add', (req, res) => {
     let sql = $sql.user.leetcode.add
@@ -205,8 +193,8 @@ router.post('/leetcode/get', (req, res) => {
     let params = req.body
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) jsonWrite({ message: iderr.sqlMessage, errorCode: iderr.errno })
-        else conn.query(sql, [idresult[0].id], (err, reslut) => {
-            if (err) jsonWrite({ message: err.sqlMessage, errorCode: err.errno })
+        else conn.query(sql, [idresult[0].id, params.offset, params.limit], (err, reslut) => {
+            if (err) res.send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} get submissions √]`);
                 res.send(reslut)

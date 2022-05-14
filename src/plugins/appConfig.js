@@ -84,13 +84,23 @@ const appConfig = {
         })
     }
     , getHttpString: (s) => `http://${s}`
-    , addLeetcodeSubmission: ({ host, leetname, username, appkey, submitid, submitday, submitmonth }) => {
+    , addLeetcodeSubmission: ({ host, leetname, username, appkey, submitid, timestamp }) => {
         return Axios.post(`${host}/api/user/leetcode/add`, {
-            leetname, username, appkey, submitid, submitday, submitmonth
+            leetname, username, appkey, submitid, timestamp
         })
     }
-    , getLeetcodeSubmission: ({ host, username }) => {
-        return Axios.post(`${host}/api/user/leetcode/get`, { username })
+    , getLeetcodeSubmission: ({ host, username, offset, limit }) => {
+        return Axios.post(`${host}/api/user/leetcode/get`, { username, offset: offset ?? 0, limit: limit ?? 10 })
+    }
+    , encodeHtml: (str) => {
+        var encodedStr = "";
+        if (str == "") return encodedStr;
+        else {
+            for (var i = 0; i < str.length; i++) {
+                encodedStr += "&#" + str.substring(i, i + 1).charCodeAt().toString(10) + ";";
+            }
+        }
+        return encodedStr;
     }
 }
 
