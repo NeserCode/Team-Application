@@ -1,6 +1,6 @@
 <template>
   <div class="table">
-    <span>提交查询</span>
+    <el-divider></el-divider>
     <el-table
       :data="idList"
       border
@@ -27,37 +27,42 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-descriptions class="submitInfo" border v-if="submissionDetail.question">
-      <el-descriptions-item label="题目ID">{{
+    <el-descriptions
+      class="submitInfo"
+      border
+      v-if="submissionDetail.question"
+      size="small"
+    >
+      <el-descriptions-item label="题目ID" label-align="center">{{
         submissionDetail.question.questionId
       }}</el-descriptions-item>
-      <el-descriptions-item label="题目名">{{
+      <el-descriptions-item label="题目名" label-align="center">{{
         submissionDetail.question.title
       }}</el-descriptions-item>
-      <el-descriptions-item label="翻译名">{{
+      <el-descriptions-item label="翻译名" label-align="center">{{
         submissionDetail.question.translatedTitle
       }}</el-descriptions-item>
 
-      <el-descriptions-item label="提交ID">{{
+      <el-descriptions-item label="提交ID" label-align="center">{{
         submissionDetail.id
       }}</el-descriptions-item>
-      <el-descriptions-item label="提交状态/语言">{{
+      <el-descriptions-item label="提交状态/语言" label-align="center">{{
         submissionDetail.statusDisplay + " / " + submissionDetail.lang
       }}</el-descriptions-item>
-      <el-descriptions-item label="时间戳">{{
+      <el-descriptions-item label="时间戳" label-align="center">{{
         submissionDetail.timestamp
       }}</el-descriptions-item>
 
-      <el-descriptions-item label="终止测试用例"
+      <el-descriptions-item label="终止测试用例" label-align="center"
         >{{ submissionDetail.outputDetail.lastTestcase }}
       </el-descriptions-item>
-      <el-descriptions-item label="已通过测试用例个数"
+      <el-descriptions-item label="已通过测试用例个数" label-align="center"
         >{{ submissionDetail.passedTestCaseCnt }}
       </el-descriptions-item>
-      <el-descriptions-item label="运行时间"
+      <el-descriptions-item label="运行时间" label-align="center"
         >{{ submissionDetail.runtime }}
       </el-descriptions-item>
-      <el-descriptions-item label="代码">
+      <el-descriptions-item label="代码" label-align="center">
         <pre><code>{{
         `${submissionDetail.code}`
       }}</code></pre>
@@ -196,8 +201,8 @@ export default {
   @apply w-full text-center;
 }
 
-.el-steps {
-  @apply justify-center;
+.el-tag {
+  @apply bg-transparent;
 }
 
 .subitable {
@@ -226,7 +231,10 @@ export default {
   :deep(.el-descriptions__label) {
     @apply bg-transparent;
   }
-  :deep(.el-descriptions__title) {
+  :deep(.el-descriptions__label) {
+    @apply text-gray-200;
+  }
+  :deep(.el-descriptions__content) {
     @apply text-gray-300;
   }
 }

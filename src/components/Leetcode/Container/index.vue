@@ -179,13 +179,13 @@ export default {
 }
 
 .questionContainer {
-  @apply absolute w-1/2 h-full float-left;
+  @apply relative w-1/2 h-full float-left;
   min-height: 50vh;
   max-height: 70vh;
 }
 
 .question {
-  @apply absolute flex flex-col w-full items-center h-full border border-gray-300 mt-4;
+  @apply absolute flex flex-col w-full items-center h-full border border-gray-300;
 }
 
 .topSpan {
@@ -206,7 +206,7 @@ export default {
 }
 
 .codeContainer {
-  @apply relative left-1/2 my-4 w-1/2 h-full float-left;
+  @apply relative w-1/2 h-full float-left;
 }
 
 .appCodeEditer {
