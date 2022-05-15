@@ -148,6 +148,9 @@ a {
   .UserArea {
     @apply bg-gray-800;
   }
+  :deep(.el-divider__text) {
+    @apply bg-gray-800 text-gray-200;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -166,6 +169,9 @@ a {
   .AppMainContainer,
   .UserArea {
     @apply bg-gray-100;
+  }
+  :deep(.el-divider__text) {
+    @apply bg-gray-200 text-gray-800;
   }
 }
 

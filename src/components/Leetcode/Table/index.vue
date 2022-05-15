@@ -204,21 +204,22 @@ export default {
     }, 500),
     initSubmission: function () {
       this.$conf.getHost().then((h) => {
-        this.$conf
-          .getLeetcodeSubmission({
-            host: this.$conf.getHttpString(h.host),
-            username: localStorage.getItem("username"),
-          })
-          .then((res) => {
-            this.idList = res.data;
-            this.$public.emit("notice", {
-              msg: "✔ 获取提交列表",
-              type: "success",
+        if (localStorage.getItem("username"))
+          this.$conf
+            .getLeetcodeSubmission({
+              host: this.$conf.getHttpString(h.host),
+              username: localStorage.getItem("username"),
+            })
+            .then((res) => {
+              this.idList = res.data;
+              this.$public.emit("notice", {
+                msg: "✔ 获取提交列表",
+                type: "success",
+              });
+            })
+            .catch((e) => {
+              console.log(e);
             });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
       });
     },
   },

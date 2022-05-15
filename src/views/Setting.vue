@@ -2,15 +2,15 @@
   <div class="setting">
     <div class="allSettings">
       <LocalSetting />
-      <el-divider></el-divider>
+      <el-divider>Leetcode Setting</el-divider>
       <LeetcodeSetting />
     </div>
   </div>
 </template>
 
 <script>
-import LocalSetting from "@/components/LocalSetting.vue";
-import LeetcodeSetting from "@/components/LeetcodeSetting.vue";
+import LocalSetting from "@/components/Setting/local/index.vue";
+import LeetcodeSetting from "@/components/Setting/leetcode/index.vue";
 
 export default {
   name: "Setting",
@@ -26,7 +26,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .setting {
   @apply w-full;
 }
@@ -38,11 +38,17 @@ export default {
   .setting {
     @apply bg-gray-800;
   }
+  :deep(.el-divider__text) {
+    @apply bg-gray-800 text-gray-200;
+  }
 }
 
 @media (prefers-color-scheme: light) {
   .setting {
     @apply bg-gray-100;
+  }
+  :deep(.el-divider__text) {
+    @apply bg-gray-100 text-gray-700;
   }
 }
 </style>

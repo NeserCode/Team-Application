@@ -1,28 +1,19 @@
 <template>
   <div class="UserArea">
-    <div class="loginArea" v-show="!isUserLogined">
-      <Login v-show="this.isSignIn" />
-      <Register v-show="!this.isSignIn" />
-    </div>
+    <Sign v-show="!isUserLogined" />
     <userDetail v-show="isUserLogined" />
   </div>
 </template>
 
 <script>
-const { ipcRenderer } = window.require("electron");
 import userDetail from "@/components/UserDetail/index.vue";
-import Login from "@/components/Sign/in/index.vue";
-import Register from "@/components/Sign/up/index.vue";
+import Sign from "@/components/Sign/index.vue";
 
 export default {
   name: "Setting",
   beforeCreate() {
     this.$public.on("update-main-user-info-upto-app", () => {
       this.isUserLogined = true;
-    });
-    this.$public.on("change-login-or-register-view", (which) => {
-      this.isSignIn = which;
-      console.log(`切换至 ${which ? "Sign/in" : "Sign/up"} 界面`);
     });
     this.$public.on("clear-user-sign-status", () => {
       localStorage.removeItem("userKey");
@@ -33,50 +24,19 @@ export default {
     });
   },
   mounted() {
-    this.$conf.getConfPromise().then((data) => {
-      this.settings = data.data;
-      this.initComponent();
-      this.isUserLogined =
-        localStorage.getItem("checkKey") == (undefined || null) ? false : true;
-    });
     this.isUserLogined =
       localStorage.getItem("checkKey") == (undefined || null) ? false : true;
   },
   components: {
-    Register,
-    Login,
+    Sign,
     userDetail,
   },
   data() {
     return {
-      isSignIn: true,
       isUserLogined: false,
-      appConfigPath: "",
-      keys: {
-        appkey: "",
-        userkey: "",
-      },
-      settings: {},
     };
   },
-  methods: {
-    initComponent: function () {
-      //判定并实际操作主进程
-      if (this.settings.userSetting.alwaysOnTop)
-        ipcRenderer.send("setting-always-on-top");
-      else ipcRenderer.send("setting-always-not-top");
-
-      if (this.settings.userSetting.alwaysCloseDirect)
-        this.$public.emit("update-header-need-close-direct", true);
-      else this.$public.emit("update-header-need-close-direct", false);
-
-      if (this.settings.userSetting.colorSchemeMode == "light")
-        ipcRenderer.send("color-schemeMode-light");
-      else if (this.settings.userSetting.colorSchemeMode == "dark")
-        ipcRenderer.send("color-schemeMode-dark");
-      else ipcRenderer.send("color-schemeMode-system");
-    },
-  },
+  methods: {},
 };
 </script>
 

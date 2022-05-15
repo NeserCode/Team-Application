@@ -1,7 +1,7 @@
 <template>
-  <div class="leetcodeSetting" id="leetcodeSetting">
+  <div class="leetcodeSetting">
     <SettingOption
-      opTitle="🍔 Leetcode Cookie"
+      opTitle="Leetcode_Session Cookie项"
       opType="input"
       opTip="LEETCODE_SESSION"
       opInputBtnText="更改上次填写的Cookie值"
@@ -14,7 +14,7 @@
       @cookieChange="handleChangeLeetcodeCookie"
     />
     <SettingOption
-      opTitle=""
+      opTitle="X-CsrfToken Cookie项"
       opType="input"
       opTip="X-CSRFTOKEN"
       opExtraValue="x-csrftoken"
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import SettingOption from "@/components/SettingOption.vue";
+import SettingOption from "@/components/Setting/option/index.vue";
 // const { ipcRenderer } = window.require("electron");
 
 export default {
