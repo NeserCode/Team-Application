@@ -84,7 +84,6 @@ export default {
     });
     this.$public.on("leetcode-update-question-detail", (obj) => {
       this.questions = obj;
-      console.log(this.questions);
     });
     this.$public.on("leetcode-toggle-english-translated", (val) => {
       this.isContentEng = val;
@@ -139,7 +138,7 @@ export default {
           // 当匹配只有一项的时候是否自动补全
           completeSingle: true,
         },
-        // extraKeys: { Ctrl: "autocomplete" }, // 可以用于为编辑器指定额外的键绑定，以及keyMap定义的键绑定
+        extraKeys: { Ctrl: "autocomplete" }, // 可以用于为编辑器指定额外的键绑定，以及keyMap定义的键绑定
       },
     };
   },
@@ -180,7 +179,7 @@ export default {
 
 .questionContainer {
   @apply relative w-1/2 h-full float-left;
-  min-height: 50vh;
+  min-height: 70vh;
   max-height: 70vh;
 }
 
@@ -195,7 +194,7 @@ export default {
 }
 
 .question .content {
-  @apply inline-block w-auto text-base select-text p-4 mx-auto;
+  @apply inline-block w-full h-full text-base select-text p-4 mx-auto;
 }
 
 :deep(.question .content a[href]) {

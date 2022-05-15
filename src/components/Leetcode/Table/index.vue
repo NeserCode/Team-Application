@@ -1,13 +1,13 @@
 <template>
   <div class="table">
-    <el-divider></el-divider>
+    <el-divider>Search</el-divider>
     <div class="tipContainer">
       <span class="tip">
         <el-icon><InfoFilled /></el-icon>&nbsp; 仅显示用户于本地存储的最近的 10
         条记录
       </span>
       <span class="op">
-        <el-icon><Refresh /></el-icon>
+        <el-icon @click="researchSubmission"><Refresh /></el-icon>
       </span>
     </div>
     <el-table
@@ -82,6 +82,7 @@
 
 <script>
 // @ is an alias to /src
+import { _debounce } from "@/plugins/utils";
 
 export default {
   name: "LeetcodeTable",
@@ -193,6 +194,14 @@ export default {
           });
         });
     },
+    researchSubmission: _debounce(function () {
+      this.$public.emit("notice", {
+        msg: "重新获取提交列表",
+        fn: () => {
+          this.initSubmission();
+        },
+      });
+    }, 500),
     initSubmission: function () {
       this.$conf.getHost().then((h) => {
         this.$conf
@@ -202,6 +211,10 @@ export default {
           })
           .then((res) => {
             this.idList = res.data;
+            this.$public.emit("notice", {
+              msg: "✔ 获取提交列表",
+              type: "success",
+            });
           })
           .catch((e) => {
             console.log(e);
@@ -234,7 +247,10 @@ export default {
 }
 
 .tipContainer {
-  @apply flex justify-between w-2/3 mx-auto text-left p-2 leading-5;
+  @apply flex justify-between w-2/3 mx-auto text-left p-2;
+}
+.tipContainer .el-icon {
+  @apply inline-block mx-2;
 }
 .tipContainer .tip {
   @apply flex justify-center items-center opacity-50 font-semibold text-xs;
@@ -262,6 +278,9 @@ export default {
   }
   :deep(.el-descriptions__content) {
     @apply text-gray-300;
+  }
+  :deep(.el-divider__text) {
+    @apply bg-gray-800 text-gray-200;
   }
 }
 
