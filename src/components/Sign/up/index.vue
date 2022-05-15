@@ -241,7 +241,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .register {
   @apply w-full h-full pb-12;
 }

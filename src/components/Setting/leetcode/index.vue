@@ -91,7 +91,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .leetcodeSetting {
   @apply p-8;
 }

@@ -144,7 +144,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .userDetailOption {
   @apply relative inline-block mx-auto w-full h-full;
 }

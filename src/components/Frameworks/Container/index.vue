@@ -49,7 +49,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .AppMainContainer {
   margin-top: calc(6rem - 1px);
   width: calc(100vw - 2px);

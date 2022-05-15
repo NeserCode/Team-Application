@@ -59,7 +59,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .userAvatar {
   @apply w-11 h-11 absolute right-4;
 }

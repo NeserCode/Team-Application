@@ -274,7 +274,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .userDetail {
   @apply my-0 h-auto;
 }

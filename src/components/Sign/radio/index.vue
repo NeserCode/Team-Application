@@ -55,7 +55,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .signRadio {
   @apply relative w-full h-full text-right pl-2 pr-4;
 }

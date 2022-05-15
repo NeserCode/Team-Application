@@ -157,7 +157,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .userSetting {
   @apply p-8;
 }

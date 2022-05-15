@@ -82,7 +82,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .appViewFoot {
   @apply relative border-t box-border text-sm border-gray-400;
   width: calc(100vw - 2px);

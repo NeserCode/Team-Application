@@ -107,13 +107,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 #AppView {
   @apply relative w-full h-full min-w-full min-h-full overflow-hidden select-none border box-border;
 }
 </style>
 
-<style>
+<style lang="postcss">
 .appViewHead,
 .appViewFoot,
 .navigation {
@@ -169,9 +169,6 @@ a {
   .AppMainContainer,
   .UserArea {
     @apply bg-gray-100;
-  }
-  :deep(.el-divider__text) {
-    @apply bg-gray-200 text-gray-800;
   }
 }
 

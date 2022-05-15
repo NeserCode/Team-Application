@@ -211,7 +211,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 /* width changeable */
 .checkContainer {
   @apply w-full h-full;

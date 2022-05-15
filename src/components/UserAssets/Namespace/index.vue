@@ -240,7 +240,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .nameSpace {
   @apply flex flex-col justify-center items-center relative w-full py-4 mt-2;
 }

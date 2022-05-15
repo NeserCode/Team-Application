@@ -86,7 +86,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .signInput {
   @apply relative w-full h-full;
 }

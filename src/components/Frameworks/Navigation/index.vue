@@ -79,7 +79,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .navigation {
   @apply flex justify-center items-center h-16 text-center text-lg fixed top-8 border-b;
   width: calc(100% - 2px);

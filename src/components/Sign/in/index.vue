@@ -210,7 +210,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .login {
   @apply w-full h-full;
 }

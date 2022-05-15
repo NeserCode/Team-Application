@@ -63,7 +63,10 @@
           </svg>
         </a>
       </div>
-      <div class="close option" @click="handleCloseWindow(isSettingCloseDirect)">
+      <div
+        class="close option"
+        @click="handleCloseWindow(isSettingCloseDirect)"
+      >
         <a>
           <svg
             t="1634297261959"
@@ -140,7 +143,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .appViewHead {
   @apply fixed top-px h-8;
   width: calc(100% - 2px);

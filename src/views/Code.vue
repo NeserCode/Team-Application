@@ -24,7 +24,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .code {
   @apply w-full h-auto py-4;
 }

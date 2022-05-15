@@ -128,7 +128,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .ctrlContainer {
   @apply w-full mt-4 px-12 py-4;
 }

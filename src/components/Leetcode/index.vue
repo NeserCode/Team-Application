@@ -30,7 +30,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="postcss">
 .leetcode {
   @apply w-full h-full;
 }
