@@ -1,6 +1,15 @@
 <template>
   <div class="table">
     <el-divider></el-divider>
+    <div class="tipContainer">
+      <span class="tip">
+        <el-icon><InfoFilled /></el-icon>&nbsp; 仅显示用户于本地存储的最近的 10
+        条记录
+      </span>
+      <span class="op">
+        <el-icon><Refresh /></el-icon>
+      </span>
+    </div>
     <el-table
       :data="idList"
       border
@@ -86,6 +95,13 @@ export default {
     });
     this.$public.on("leetcode-submit-back-id", (id) => {
       this.afterIdSubmission(id);
+    });
+    this.$public.on("update-username", () => {
+      this.initSubmission();
+    });
+    this.$public.on("clear-user-sign-status", () => {
+      this.idList = null;
+      this.submissionDetail = {};
     });
   },
   mounted() {
@@ -215,6 +231,16 @@ export default {
 
 :deep(.el-descriptions__content) {
   @apply whitespace-pre;
+}
+
+.tipContainer {
+  @apply flex justify-between w-2/3 mx-auto text-left p-2 leading-5;
+}
+.tipContainer .tip {
+  @apply flex justify-center items-center opacity-50 font-semibold text-xs;
+}
+.tipContainer .op {
+  @apply inline-block;
 }
 
 @media (prefers-color-scheme: dark) {
