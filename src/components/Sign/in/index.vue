@@ -212,7 +212,7 @@ export default {
 
 <style scoped lang="postcss">
 .login {
-  @apply w-full h-full;
+  @apply w-full h-auto;
 }
 
 .iContainer {

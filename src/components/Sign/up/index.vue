@@ -243,7 +243,7 @@ export default {
 
 <style scoped lang="postcss">
 .register {
-  @apply w-full h-full pb-12;
+  @apply w-full h-auto pb-12;
 }
 
 .iContainer {

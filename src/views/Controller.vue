@@ -3,42 +3,10 @@
 </template>
 
 <script>
-const fs = require("fs");
-const path = require("path");
-
-async function dirExists(dir) {
-  function getStat(path) {
-    return new Promise((resolve) => {
-      fs.stat(path, (err, stats) => {
-        if (err) resolve(false);
-        else resolve(stats);
-      });
-    });
-  }
-  function mkdir(dir) {
-    return new Promise((resolve) => {
-      fs.mkdir(dir, (err) => {
-        if (err) resolve(false);
-        else resolve(true);
-      });
-    });
-  }
-  let isExists = await getStat(dir);
-  if (isExists && isExists.isDirectory()) return true;
-  else if (isExists) return "File Exists";
-
-  let tempDir = path.parse(dir).dir;
-  let status = await dirExists(tempDir);
-  if (status) return await mkdir(dir);
-}
-
 export default {
   name: "Controller",
   beforeCreate() {},
   mounted() {
-    this.APP_CONFIG_PATH = this.$conf.getPath();
-    dirExists(this.APP_CONFIG_PATH);
-
     this.$public.on("rebuild-app-key", () => {
       this.handleRebuildKey("appkey");
     });
@@ -66,66 +34,43 @@ export default {
         text: msg,
       });
     });
-
-    this.$conf.getConfPromise().then((data) => {
-      this.APP_CONFIG = data.data;
-      this.initController();
-    });
+    this.initController();
   },
   data() {
-    return {
-      DeFineBoolean: [],
-      APP_CONFIG: {},
-      APP_CONFIG_PATH: "",
-    };
+    return {};
   },
   methods: {
     handleRebuildKey: function (...option) {
-      if (option.length == 0) {
-        this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-        this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      } else if (
-        option.indexOf("appkey") != -1 &&
-        option.indexOf("userkey") == -1
-      )
-        this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-      else if (
-        option.indexOf("userkey") != -1 &&
-        option.indexOf("appkey") == -1
-      )
-        this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      else {
-        this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-        this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      }
-      this.handleSaveKey();
-    },
-    handleSaveKey: function () {
-      localStorage.setItem("appKey", this.APP_CONFIG.appInfo.key);
-      localStorage.setItem("userKey", this.APP_CONFIG.userInfo.key);
-      fs.writeFile(
-        this.APP_CONFIG_PATH,
-        JSON.stringify(this.APP_CONFIG),
-        (err) => {
-          if (err)
-            this.$public.emit("notice", {
-              type: "error",
-              msg: "文件保存失败",
-            });
-          else
-            this.$public.emit("notice", {
-              type: "success",
-              msg: "文件保存成功",
-            });
-        }
-      );
+      // if (option.length == 0) {
+      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
+      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
+      // } else if (
+      //   option.indexOf("appkey") != -1 &&
+      //   option.indexOf("userkey") == -1
+      // )
+      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
+      // else if (
+      //   option.indexOf("userkey") != -1 &&
+      //   option.indexOf("appkey") == -1
+      // )
+      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
+      // else {
+      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
+      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
+      // }
+      console.log(option);
     },
     handleCheckKey: function () {
-      if (this.APP_CONFIG.appInfo.key == null) this.handleRebuildKey("appkey");
-      else if (this.APP_CONFIG.userInfo.key == null)
-        this.$message.error("Warning: Userkey is null.");
-
-      this.handleSaveKey();
+      this.$conf
+        .getConfPromise()
+        .then((data) => {
+          if (data.data.appInfo.key == null) this.handleRebuildKey("appkey");
+          else if (data.data.userInfo.key == null)
+            this.$message.error("Warning: Userkey is null.");
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
     initUser: function () {
       if (localStorage.getItem("checkKey") != (null || undefined))

@@ -1,5 +1,5 @@
 <template>
-  <div class="userSetting" id="userSetting">
+  <div class="localSetting">
     <SettingOption
       opTitle="⚠开发者模式"
       opType="switch"
@@ -158,8 +158,8 @@ export default {
 </script>
 
 <style scoped lang="postcss">
-.userSetting {
-  @apply p-8;
+.localSetting {
+  @apply py-8;
 }
 
 @media (prefers-color-scheme: dark) {

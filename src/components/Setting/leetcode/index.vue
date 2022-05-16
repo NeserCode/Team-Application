@@ -93,7 +93,7 @@ export default {
 
 <style scoped lang="postcss">
 .leetcodeSetting {
-  @apply p-8;
+  @apply py-8;
 }
 
 @media (prefers-color-scheme: dark) {

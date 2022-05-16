@@ -32,11 +32,6 @@ export default {
     Controller,
   },
   beforeMount() {
-    // console.log(this.$conf.getConf());
-    // this.$conf.getPathPromise().then((data)=>{console.log(data);})
-    // this.$conf.getConfPromise().then((data) => {
-    //   console.log(data);
-    // });
     // document.onmousedown = (e) => {
     //   if (e.button == 2) console.log("你按下了右键");
     // };
@@ -93,15 +88,7 @@ export default {
 
     initApp: function () {
       this.initSettings();
-      // this.$message.info({
-      //   dangerouslyUseHTMLString: true,
-      //   message:
-      //     "Flush => <strong>Ctrl + M</strong><br/><br/>Tools => <strong>Ctrl + Q</strong>",
-      //   offset: 400,
-      //   duration: 3000,
-      //   center: true,
-      // });
-      console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
+      // console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
     },
   },
 };

@@ -236,7 +236,7 @@ export default {
 }
 
 .subitable {
-  @apply w-2/3 mx-auto;
+  @apply w-2/3 mx-auto bg-transparent;
 }
 
 .submitInfo {
@@ -283,8 +283,14 @@ export default {
   :deep(.el-divider__text) {
     @apply bg-gray-800 text-gray-200;
   }
+  :deep(.el-table__body-wrapper) {
+    @apply bg-transparent;
+  }
 }
 
 @media (prefers-color-scheme: light) {
+  :deep(.el-divider__text) {
+    @apply bg-gray-100 text-gray-800;
+  }
 }
 </style>
