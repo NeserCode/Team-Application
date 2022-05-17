@@ -11,7 +11,7 @@
       :opDisabled="isDisabled"
       :opBindValue="message"
       @settingInput="messageInput"
-      @cookieChange="handleChangeLeetcodeCookie"
+      @opChange="handleChangeLeetcodeCookie"
     />
     <SettingOption
       opTitle="X-CsrfToken Cookie项"
@@ -24,7 +24,7 @@
       :opDisabled="isDisabled"
       :opBindValue="message"
       @settingInput="messageInput"
-      @cookieChange="handleChangeLeetcodeCookie"
+      @opChange="handleChangeLeetcodeCookie"
     />
   </div>
 </template>

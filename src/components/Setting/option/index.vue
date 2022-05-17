@@ -28,27 +28,35 @@
         </el-radio-group>
       </div>
       <div class="operateContainer" v-if="opType == 'input'">
-        <el-tag v-show="!isInputEdit" @click="handleInputEdit">{{
+        <!-- <el-input v-show="!isInputEdit" @click="handleInputEdit">{{
           opInputBtnText
-        }}</el-tag>
-        <div class="opInput" v-show="isInputEdit">
+        }}</el-tag> -->
+        <div class="opInput">
           <el-input
             v-model="inputTempValue"
             :placeholder="opInputPlaceholder"
+            :disabled="inputDisable"
             @input="emitInputPropsToper('settingInput', this.inputTempValue)"
           >
             <template #append
-              ><el-button
-                @click="
-                  emitInputPropsToper('cookieChange', {
-                    name: this.opExtraValue,
-                    value: this.inputTempValue,
-                  })
-                "
-                >{{ opBtnText ?? "确认" }}</el-button
-              >
-              <el-divider direction="vertical"></el-divider>
-              <el-button @click="cancelInputEdit">取消</el-button></template
+              ><div v-show="!isInputEdit">
+                <el-button :disabled="opDisabled" @click="handleInputEdit"
+                  >更改</el-button
+                >
+              </div>
+              <div v-show="isInputEdit">
+                <el-button
+                  @click="
+                    emitInputPropsToper('opChange', {
+                      name: this.opExtraValue,
+                      value: this.inputTempValue,
+                    })
+                  "
+                  >确认更改</el-button
+                >
+                <el-divider direction="vertical"></el-divider>
+                <el-button @click="cancelInputEdit">取消</el-button>
+              </div></template
             >
           </el-input>
         </div>
@@ -109,6 +117,7 @@ export default {
     return {
       inputTempValue: "",
       isInputEdit: false,
+      inputDisable: true,
     };
   },
   methods: {
@@ -118,14 +127,17 @@ export default {
     handleInputEdit: function () {
       this.$public.emit("opInputEditFinish");
       this.isInputEdit = !this.isInputEdit;
+      this.inputDisable = !this.isInputEdit;
     },
     cancelInputEdit: function () {
       this.isInputEdit = !this.isInputEdit;
+      this.inputDisable = !this.isInputEdit;
     },
     initOption: function () {
       this.$public.on("opInputEditFinish", () => {
         this.isInputEdit = false;
       });
+      this.inputTempValue = this.opBindValue;
     },
   },
 };
@@ -175,6 +187,9 @@ span.opTip {
 
 :deep(.el-switch) {
   @apply inline top-1/2 transform -translate-y-1/2;
+}
+:deep(.el-input) {
+  @apply w-auto;
 }
 
 @media screen and (max-width: 830px) {

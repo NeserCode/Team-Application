@@ -28,6 +28,28 @@
       :opTouchArray="appTheme.array"
       :opTouchValue="appTheme.value"
     />
+    <SettingOption
+      :opTitle="appHostDomain.title"
+      opType="input"
+      :opTip="appHostDomain.tip"
+      opExtraValue="serverDomain"
+      opInputPlaceholder="Domain Here"
+      :opDisabled="false"
+      :opBindValue="appHostDomain.value"
+      @settingInput="domainInput"
+      @opChange="handleDomainChange"
+    />
+    <SettingOption
+      :opTitle="appHostPort.title"
+      opType="input"
+      :opTip="appHostPort.tip"
+      opExtraValue="serverPort"
+      opInputPlaceholder="Port Here"
+      :opDisabled="false"
+      :opBindValue="appHostPort.value"
+      @settingInput="portInput"
+      @opChange="handlePortChange"
+    />
   </div>
 </template>
 
@@ -84,6 +106,16 @@ export default {
         ],
         tip: "选择色彩主题以应对视觉疲劳和损伤",
       },
+      appHostDomain: {
+        title: "服务器主机地址",
+        value: "127.0.0.1",
+        tip: "服务器的主机名即域名或者IP 不需要协议与端口 例如:127.0.0.1",
+      },
+      appHostPort: {
+        title: "服务器端口",
+        value: "5999",
+        tip: "服务器运行服务的端口 例如:5999",
+      },
       settings: null,
     };
   },
@@ -96,6 +128,18 @@ export default {
     });
   },
   methods: {
+    domainInput: function (temp) {
+      this.appHostDomain.value = temp;
+    },
+    portInput: function (temp) {
+      this.appHostPort = temp;
+    },
+    handleDomainChange: function (e) {
+      console.log(e);
+    },
+    handlePortChange: function (e) {
+      console.log(e);
+    },
     handleChangeAppOnTop: function () {
       if (this.isClickable) {
         this.isClickable = false;

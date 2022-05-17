@@ -82,7 +82,7 @@ export default {
         .getConfPromise()
         .then((data) => {
           const { userInfo } = data.data;
-          console.log(userInfo);
+          console.log(userInfo, data.data);
           this.namespace = userInfo.name;
           this.nickspace = userInfo.nickname ?? "[无名氏]";
           this.introduce =
@@ -193,7 +193,7 @@ export default {
               this.$conf
                 .getConfPromise()
                 .then((data) => {
-                  data.data.userInfo.nickname = this.nickname;
+                  data.data.userInfo.nickname = this.nickspace;
                   this.$conf
                     .updateLocalConfig(data.data, () => {
                       this.$public.emit("notice", {
