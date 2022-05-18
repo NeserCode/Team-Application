@@ -1,7 +1,7 @@
 <template>
   <div class="localSetting">
     <SettingOption
-      opTitle="⚠开发者模式"
+      opTitle="开发者模式"
       opType="switch"
       :opBindValue="true"
       opTip="开启此选项以获得开发者功能权限"
@@ -140,9 +140,11 @@ export default {
       this.appHostPort.value = temp;
     },
     handleDomainChange: function (e) {
+      this.$refs.opDomain.handleInputEditEnd();
       console.log(e);
     },
     handlePortChange: function (e) {
+      this.$refs.opPort.handleInputEditEnd();
       console.log(e);
     },
     handleChangeAppOnTop: function () {

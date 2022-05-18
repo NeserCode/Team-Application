@@ -113,6 +113,7 @@ export default {
   beforeCreate() {
     this.$public.on("opInputEditFinish", () => {
       this.isInputEdit = false;
+      this.inputDisable = true;
     });
   },
   beforeMount() {},
@@ -122,6 +123,7 @@ export default {
       inputTempValue: "",
       isInputEdit: false,
       inputDisable: true,
+      cancelTemp: null,
     };
   },
   methods: {
@@ -132,10 +134,16 @@ export default {
       this.$public.emit("opInputEditFinish");
       this.isInputEdit = !this.isInputEdit;
       this.inputDisable = !this.isInputEdit;
+      this.cancelTemp = this.inputTempValue;
+    },
+    handleInputEditEnd: function () {
+      this.$public.emit("opInputEditFinish");
     },
     cancelInputEdit: function () {
       this.isInputEdit = !this.isInputEdit;
       this.inputDisable = !this.isInputEdit;
+      this.inputTempValue = this.cancelTemp;
+      this.emitInputPropsToper("settingInput", this.inputTempValue);
     },
     initOption: function (val) {
       this.inputTempValue = val ?? this.opBindValue;
@@ -211,8 +219,9 @@ span.opTip {
   }
   :deep(.el-tag),
   :deep(.el-button),
-  :deep(.el-input__inner),
-  :deep(.el-input-group__append) {
+  :deep(.el-input.is-disabled .el-input__inner),
+  :deep(.el-input-group__append),
+  :deep(.el-input__inner) {
     @apply bg-gray-600 text-gray-200;
   }
 }

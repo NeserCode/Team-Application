@@ -40,12 +40,12 @@ export default {
       Leetcode_Session: {
         title: "Leetcode_Session Cookie项",
         value: "",
-        tip: "LEETCODE_SESSION",
+        tip: "LEETCODE_SESSION值 完成Cookie值的填写 才能以用户身份登入Leetcode 获取方法: 在Leetcode.cn官方网站登录后于网页控制台查看已经成功响应的网络请求的表头获取",
       },
       x_csrftoken: {
         title: "X-CsrfToken Cookie项",
         value: "",
-        tip: "X-CSRFTOKEN",
+        tip: "X-CSRFTOKEN值 完成Cookie值的填写 才能以用户身份登入Leetcode 获取方法同上",
       },
     };
   },
@@ -101,6 +101,9 @@ export default {
           this.$public.emit("notice", {
             msg: "设置保存成功 正在为您启用设置",
             type: "success",
+            fn: () => {
+              this.isDisabled = false;
+            },
           });
         }
       });

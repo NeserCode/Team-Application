@@ -13,6 +13,7 @@ const appConfig = {
     , getHost: async () => {
         return appConfig.getConfPromise().then((res) => {
             const { appInfo } = res.data
+            console.log(appInfo);
             return {
                 port: appInfo.port,
                 domain: appInfo.domain,
