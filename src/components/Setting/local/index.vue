@@ -38,6 +38,7 @@
       :opBindValue="appHostDomain.value"
       @settingInput="domainInput"
       @opChange="handleDomainChange"
+      ref="opDomain"
     />
     <SettingOption
       :opTitle="appHostPort.title"
@@ -49,6 +50,7 @@
       :opBindValue="appHostPort.value"
       @settingInput="portInput"
       @opChange="handlePortChange"
+      ref="opPort"
     />
   </div>
 </template>
@@ -108,31 +110,34 @@ export default {
       },
       appHostDomain: {
         title: "服务器主机地址",
-        value: "127.0.0.1",
+        value: " ",
         tip: "服务器的主机名即域名或者IP 不需要协议与端口 例如:127.0.0.1",
       },
       appHostPort: {
         title: "服务器端口",
-        value: "5999",
+        value: " ",
         tip: "服务器运行服务的端口 例如:5999",
       },
       settings: null,
     };
   },
-  mounted() {
+  beforeMount() {
     this.$conf.getConfPromise().then((data) => {
-      this.settings = data.data;
-      this.appOnTop.value = this.settings.userSetting.alwaysOnTop;
-      this.appCloseAction.value = this.settings.userSetting.alwaysCloseDirect;
-      this.appTheme.value = this.settings.userSetting.colorSchemeMode;
+      const { userSetting, appInfo } = data.data;
+      this.appOnTop.value = userSetting.alwaysOnTop;
+      this.appCloseAction.value = userSetting.alwaysCloseDirect;
+      this.appTheme.value = userSetting.colorSchemeMode;
+      this.$refs.opDomain.initOption(appInfo.domain);
+      this.$refs.opPort.initOption(appInfo.port);
     });
   },
+  mounted() {},
   methods: {
     domainInput: function (temp) {
       this.appHostDomain.value = temp;
     },
     portInput: function (temp) {
-      this.appHostPort = temp;
+      this.appHostPort.value = temp;
     },
     handleDomainChange: function (e) {
       console.log(e);
@@ -147,8 +152,15 @@ export default {
 
         if (this.appOnTop.value) ipcRenderer.send("setting-always-on-top");
         else ipcRenderer.send("setting-always-not-top");
-        this.settings.userSetting.alwaysOnTop = this.appOnTop.value;
-        this.handleChangeSettingAction();
+        this.$conf
+          .getConfPromise()
+          .then((data) => {
+            data.data.userSetting.alwaysOnTop = this.appOnTop.value;
+            this.handleChangeSettingAction(data.data);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
       }
     },
     handleChangeCloseAction: function () {
@@ -158,8 +170,15 @@ export default {
         if (this.appCloseAction.value)
           this.$public.emit("update-header-need-close-direct", true);
         else this.$public.emit("update-header-need-close-direct", false);
-        this.settings.userSetting.alwaysCloseDirect = this.appCloseAction.value;
-        this.handleChangeSettingAction();
+        this.$conf
+          .getConfPromise()
+          .then((data) => {
+            data.data.userSetting.alwaysCloseDirect = this.appCloseAction.value;
+            this.handleChangeSettingAction(data.data);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
       }
     },
     handleChangeAppTheme: function (theme) {
@@ -167,34 +186,36 @@ export default {
         this.isClickable = false;
         this.appTheme.value = theme;
         ipcRenderer.send("color-schemeMode-" + theme);
-        this.settings.userSetting.colorSchemeMode = this.appTheme.value;
-        this.handleChangeSettingAction();
+        this.$conf
+          .getConfPromise()
+          .then((data) => {
+            data.data.userSetting.colorSchemeMode = this.appTheme.value;
+            this.handleChangeSettingAction(data.data);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
       }
     },
-    handleChangeSettingProcess: function (err) {
-      if (err)
-        this.$public.emit("notice", {
-          title: "保存时出现了一个错误",
-          msg: err,
-          type: "error",
-          fn: () => {
-            this.isClickable = true;
-          },
-        });
-      else {
-        this.$public.emit("notice", {
-          title: "",
-          msg: "设置保存成功 正在为您启用设置",
-          type: "success",
-          fn: () => {
-            this.isClickable = true;
-          },
-        });
-      }
-    },
-    handleChangeSettingAction: function () {
-      this.$conf.updateLocalConfig(this.settings, (err) => {
-        this.handleChangeSettingProcess(err);
+    handleChangeSettingAction: function (setting) {
+      this.$conf.updateLocalConfig(setting, (err) => {
+        if (err)
+          this.$public.emit("notice", {
+            msg: "保存时出现了一个错误",
+            type: "error",
+            fn: () => {
+              this.isClickable = true;
+            },
+          });
+        else {
+          this.$public.emit("notice", {
+            msg: "设置保存成功 正在为您启用设置",
+            type: "success",
+            fn: () => {
+              this.isClickable = true;
+            },
+          });
+        }
       });
     },
   },

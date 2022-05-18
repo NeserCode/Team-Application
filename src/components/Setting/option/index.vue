@@ -71,9 +71,6 @@
 <script>
 export default {
   name: "SettingOption",
-  mounted() {
-    this.initOption();
-  },
   props: {
     opTitle: {
       type: String,
@@ -113,6 +110,13 @@ export default {
       type: [String, Array, Boolean, Number, Set, Symbol],
     },
   },
+  beforeCreate() {
+    this.$public.on("opInputEditFinish", () => {
+      this.isInputEdit = false;
+    });
+  },
+  beforeMount() {},
+  mounted() {},
   data() {
     return {
       inputTempValue: "",
@@ -133,11 +137,8 @@ export default {
       this.isInputEdit = !this.isInputEdit;
       this.inputDisable = !this.isInputEdit;
     },
-    initOption: function () {
-      this.$public.on("opInputEditFinish", () => {
-        this.isInputEdit = false;
-      });
-      this.inputTempValue = this.opBindValue;
+    initOption: function (val) {
+      this.inputTempValue = val ?? this.opBindValue;
     },
   },
 };

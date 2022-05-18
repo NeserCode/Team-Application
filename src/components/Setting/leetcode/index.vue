@@ -1,30 +1,28 @@
 <template>
   <div class="leetcodeSetting">
     <SettingOption
-      opTitle="Leetcode_Session Cookie项"
+      :opTitle="Leetcode_Session.title"
       opType="input"
-      opTip="LEETCODE_SESSION"
-      opInputBtnText="更改上次填写的Cookie值"
-      opBtnText="更改保存"
+      :opTip="Leetcode_Session.tip"
       opInputPlaceholder="Cookie Here"
       opExtraValue="LEETCODE_SESSION"
       :opDisabled="isDisabled"
-      :opBindValue="message"
-      @settingInput="messageInput"
+      :opBindValue="Leetcode_Session.value"
+      @settingInput="sessionInput"
       @opChange="handleChangeLeetcodeCookie"
+      ref="opSession"
     />
     <SettingOption
-      opTitle="X-CsrfToken Cookie项"
+      :opTitle="x_csrftoken.title"
       opType="input"
-      opTip="X-CSRFTOKEN"
+      :opTip="x_csrftoken.tip"
       opExtraValue="x-csrftoken"
-      opInputBtnText="更改上次填写的Cookie值"
-      opBtnText="更改保存"
       opInputPlaceholder="Cookie Here"
       :opDisabled="isDisabled"
-      :opBindValue="message"
-      @settingInput="messageInput"
+      :opBindValue="x_csrftoken.value"
+      @settingInput="tokenInput"
       @opChange="handleChangeLeetcodeCookie"
+      ref="opToken"
     />
   </div>
 </template>
@@ -38,19 +36,35 @@ export default {
   components: { SettingOption },
   data() {
     return {
-      settings: null,
       isDisabled: false,
-      message: "",
+      Leetcode_Session: {
+        title: "Leetcode_Session Cookie项",
+        value: "",
+        tip: "LEETCODE_SESSION",
+      },
+      x_csrftoken: {
+        title: "X-CsrfToken Cookie项",
+        value: "",
+        tip: "X-CSRFTOKEN",
+      },
     };
   },
   mounted() {
     this.$conf.getConfPromise().then((data) => {
-      this.settings = data.data;
+      const { userAccount } = data.data;
+      this.$refs.opSession.initOption(
+        userAccount.cookie_leetcode["LEETCODE_SESSION"]
+      );
+      this.$refs.opToken.initOption(userAccount.cookie_leetcode["x-csrftoken"]);
     });
   },
+  beforeMount() {},
   methods: {
-    messageInput: function (temp) {
-      this.message = temp;
+    sessionInput: function (temp) {
+      this.Leetcode_Session.value = temp;
+    },
+    tokenInput: function (temp) {
+      this.x_csrftoken.value = temp;
     },
     handleChangeLeetcodeCookie: function (cookie) {
       this.$leetcode
@@ -61,30 +75,34 @@ export default {
         )
         .then(() => {
           this.isDisabled = true;
-          this.settings.userAccount.cookie_leetcode[cookie.name] = cookie.value;
-          this.handleChangeSettingAction();
-          this.$public.emit("opInputEditFinish");
+          this.$conf
+            .getConfPromise()
+            .then((data) => {
+              data.data.userAccount.cookie_leetcode[cookie.name] = cookie.value;
+              this.handleChangeSettingAction(data.data);
+              this.$public.emit("opInputEditFinish");
+            })
+            .catch((e) => {
+              console.log(e.message);
+            });
         });
     },
-    handleChangeSettingProcess: function (err) {
-      if (err)
-        this.$public.emit("notice", {
-          msg: "保存时出现了一个错误",
-          type: "error",
-          fn: () => {
-            this.isDisabled = false;
-          },
-        });
-      else {
-        this.$public.emit("notice", {
-          msg: "设置保存成功 正在为您启用设置",
-          type: "success",
-        });
-      }
-    },
-    handleChangeSettingAction: function () {
-      this.$conf.updateLocalConfig(this.settings, (err) => {
-        this.handleChangeSettingProcess(err);
+    handleChangeSettingAction: function (setting) {
+      this.$conf.updateLocalConfig(setting, (err) => {
+        if (err)
+          this.$public.emit("notice", {
+            msg: "保存时出现了一个错误",
+            type: "error",
+            fn: () => {
+              this.isDisabled = false;
+            },
+          });
+        else {
+          this.$public.emit("notice", {
+            msg: "设置保存成功 正在为您启用设置",
+            type: "success",
+          });
+        }
       });
     },
   },
