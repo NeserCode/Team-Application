@@ -28,6 +28,7 @@
 <script>
 import { _debounce } from "@/plugins/utils.js";
 // @ is an alias to /src
+import fs from "fs";
 
 export default {
   name: "CheckDays",
@@ -35,10 +36,32 @@ export default {
     this.$public.on("update-check-day", () => {
       this.initCheckDay();
     });
+    fs.watchFile(
+      "C:/Users/Neser/AppData/Local/Netease/CloudMusic/webdata/file/history",
+      () => {
+        // console.log(cur);
+        let s = this.$axios.get(
+          "C:/Users/Neser/AppData/Local/Netease/CloudMusic/webdata/file/history"
+        );
+        s.then((e) => {
+          const { nickName, text } = e.data[0];
+          const { album, artists, name } = e.data[0].track;
+          console.log(
+            " 🎵 网易云音乐\n",
+            `正在播放${nickName}的歌单${text}\n`,
+            `\t${name} --${artists[0].name}|${album.name}`
+          );
+        });
+      }
+    );
   },
   activated() {},
   mounted() {
     this.initCheckDay();
+    // setInterval(() => {
+    //   this.checkObject.timestamp = (+new Date()).toString();
+    //   // console.log(this.checkObject.timestamp);
+    // }, 1000);
   },
   data() {
     return {
@@ -50,6 +73,7 @@ export default {
         isSuper: false,
         isCheck: false,
         isLoading: false,
+        timestamp: null,
       },
     };
   },

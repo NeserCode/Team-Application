@@ -10,11 +10,6 @@
           <el-skeleton style="--el-skeleton-circle-size: 100px">
             <el-skeleton-item variant="circle" />
           </el-skeleton>
-          <el-skeleton />
-          <br />
-          <el-skeleton style="--el-skeleton-circle-size: 100px">
-            <el-skeleton-item variant="circle" />
-          </el-skeleton>
         </div>
         <el-divider></el-divider>
         <div class="artical">

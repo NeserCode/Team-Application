@@ -1,14 +1,5 @@
 module.exports = {
   publicPath: './',
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5999/api/',
-        changeOrigin: true,//允许跨域
-        pathRewrite: { "^/api": "/" }  //将/api开头替换为/
-      }
-    }
-  },
   pluginOptions: {
     electronBuilder: {
       nodeIntegration: true,
