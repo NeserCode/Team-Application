@@ -2,9 +2,23 @@
   <div class="article">
     <div class="topContainer">
       <Avatar class="avatar" :isDot="false" :image="author.avatar" />
-      <div class="namespace">
-        <span class="name">{{ author.name }}</span>
+      <div class="head">
+        <div class="namespace">
+          <span class="name">{{ author.name }}</span>
+          <span class="access" v-show="author.access.status">
+            <span class="organization">{{ author.access.organization }}</span
+            >&nbsp;
+            <span class="position">{{ author.access.position }}</span>
+          </span>
+        </div>
         <span class="introduce">{{ author.introduce }}</span>
+      </div>
+    </div>
+    <div class="mainContainer">
+      <div class="content">
+        <span class="contentText">
+          {{ body.content }}
+        </span>
       </div>
     </div>
   </div>
@@ -25,7 +39,7 @@ export default {
         avatar: "http://localhost/Images/q.jpg",
         access: {
           status: true,
-          organiztion: "NumberOne Base",
+          organization: "NumberOne Base",
           position: "后端负责人",
         },
         introduce: "一个兴趣使然的程序员",
@@ -33,7 +47,10 @@ export default {
     },
     body: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        content:
+          "理念论是柏拉图哲学的核心，理念世界和现实世界的关系怎样，是柏拉图毕生探索的重要问题。\n在《理想国》中，他把不变的理念看作唯一真实的原本，把变化的事物看作理念的摹本和消极的产物。为了说明这一观点，他提出两个著名的比喻：一个是床的比喻。他说理念的床是唯一的真实的床，是工匠制造的床的摹本，而艺术家画出来的床则是摹本的摹本。另一个是洞穴的比喻。他把人们在现实世界中的生活比作在阴暗洞穴里的居留。洞穴中的人们戴着镣铐，背向出口，只能勉强看到被火光投射在洞壁上的东西的模糊的影子。在柏拉图看来，感性实物只不过是变幻不定的影子，人们必须摆脱这些影子，走出洞穴。这两个比喻说明，“永久不变”的理念是第一性的，生灭变化的事物则是第二性的。这是典型的客观唯心主义理论。",
+      }),
     },
     detail: {
       type: Object,
@@ -52,25 +69,44 @@ export default {
 
 <style scoped lang="postcss">
 .article {
-  @apply w-full h-full;
+  @apply w-full h-full p-2;
 }
-
 .topContainer {
-  @apply w-full px-2 h-16;
+  @apply w-full px-2 my-2 h-16;
 }
 .avatar {
-  @apply w-16 h-16;
+  @apply w-16 h-16 float-left p-1;
+}
+.head {
+  @apply h-16 px-2 py-1 float-left;
+  width: calc(100% - 4rem);
+}
+.namespace {
+  @apply leading-4;
+}
+.namespace .name {
+  @apply text-xl font-semibold;
+}
+.namespace .access {
+  @apply text-xs inline-block ml-2;
+}
+.introduce {
+  @apply inline-block w-full text-sm opacity-50 overflow-ellipsis whitespace-nowrap overflow-hidden leading-8;
+}
+
+.content {
+  @apply px-4 py-2 whitespace-pre-line select-text;
 }
 
 @media (prefers-color-scheme: dark) {
   .article {
-    @apply bg-gray-800;
+    @apply bg-blue-900;
   }
 }
 
 @media (prefers-color-scheme: light) {
   .article {
-    @apply bg-gray-100;
+    @apply bg-green-100;
   }
 }
 </style>
