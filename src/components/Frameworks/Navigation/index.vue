@@ -2,7 +2,7 @@
   <div
     :class="['navigation', getUserStatus() == 'NeserCode' ? 'skin' : 'noskin']"
   >
-    <UserAvatar @click="handleOpenUserArea" v-show="isLogined" />
+    <UserAvatar class="avatar" @click="handleOpenUserArea" v-show="isLogined" />
 
     <router-link
       class="areaLink"
@@ -108,6 +108,10 @@ export default {
 
 .router-link-active.router-link-exact-active {
   @apply px-4 rounded-3xl border;
+}
+
+.avatar {
+  @apply w-11 h-11 absolute right-4;
 }
 
 @media (prefers-color-scheme: dark) {

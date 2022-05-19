@@ -59,19 +59,34 @@
         submissionDetail.statusDisplay + " / " + submissionDetail.lang
       }}</el-descriptions-item>
       <el-descriptions-item label="时间戳" label-align="center">{{
-        submissionDetail.timestamp
+        new Date(submissionDetail.timestamp * 1000).toLocaleString()
       }}</el-descriptions-item>
 
-      <el-descriptions-item label="终止测试用例" label-align="center"
-        >{{ submissionDetail.outputDetail.lastTestcase }}
+      <el-descriptions-item label="终止测试用例/输出" label-align="center"
+        >{{
+          !submissionDetail.outputDetail.lastTestcase
+            ? "无"
+            : submissionDetail.outputDetail.lastTestcase +
+              " / " +
+              submissionDetail.outputDetail.expectedOutput
+        }}
       </el-descriptions-item>
       <el-descriptions-item label="已通过测试用例个数" label-align="center"
-        >{{ submissionDetail.passedTestCaseCnt }}
+        >{{
+          submissionDetail.passedTestCaseCnt +
+          " / " +
+          submissionDetail.totalTestCaseCnt
+        }}
       </el-descriptions-item>
       <el-descriptions-item label="运行时间" label-align="center"
         >{{ submissionDetail.runtime }}
       </el-descriptions-item>
-      <el-descriptions-item label="代码" label-align="center">
+      <el-descriptions-item label="编译错误" label-align="center" span="3">
+        <pre><code>{{
+        `${!submissionDetail.outputDetail.compileError?"无":submissionDetail.outputDetail.compileError}`
+      }}</code></pre>
+      </el-descriptions-item>
+      <el-descriptions-item label="代码" label-align="center" span="3">
         <pre><code>{{
         `${submissionDetail.code}`
       }}</code></pre>

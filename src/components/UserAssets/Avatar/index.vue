@@ -1,10 +1,10 @@
 <template>
   <div class="userAvatar">
-    <el-badge :is-dot="isUserImageDot">
+    <el-badge :is-dot="isDot">
       <div :class="{ Round: isUserImageRound, avatarSkin: true }">
         <img
           :ondragstart="keepDragPicture"
-          :src="userImage"
+          :src="image ?? userImage"
           :class="{ Round: isUserImageRound, imgBody: true }"
         />
       </div>
@@ -22,9 +22,13 @@ export default {
       type: Boolean,
       default: true,
     },
-    isUserImageDot: {
+    isDot: {
       type: Boolean,
       default: true,
+    },
+    image: {
+      type: String,
+      default: null,
     },
   },
   data() {
@@ -61,10 +65,10 @@ export default {
 
 <style scoped lang="postcss">
 .userAvatar {
-  @apply w-11 h-11 absolute right-4;
+  @apply w-full h-full;
 }
 .userAvatar img {
-  @apply rounded-full border border-gray-400 w-9 h-9;
+  @apply rounded-full border border-gray-400 w-full h-full;
   animation: unblur 1.5s linear infinite;
 }
 .userAvatar img.Round {
@@ -76,12 +80,12 @@ export default {
   animation: blur 1.5s linear infinite;
 }
 .avatarSkin.Round::before {
-  @apply absolute rounded-full top-0 left-0 w-12 h-12;
+  @apply absolute rounded-full top-0 left-0 w-full h-full;
   content: " ";
   background: linear-gradient(red 2%, rgba(0, 0, 0, 0) 2%);
 }
 .avatarSkin.Round::after {
-  @apply absolute rounded-full bottom-0 right-0 w-12 h-12;
+  @apply absolute rounded-full bottom-0 right-0 w-full h-full;
   content: " ";
   background: linear-gradient(rgba(255, 255, 255, 0) 98%, blue 2%);
 }

@@ -4,25 +4,7 @@
     <div class="mainContainer">
       <div class="leftTabs"></div>
       <div class="centerBody">
-        <div class="artical">
-          <el-skeleton />
-          <br />
-          <el-skeleton style="--el-skeleton-circle-size: 100px">
-            <el-skeleton-item variant="circle" />
-          </el-skeleton>
-        </div>
-        <el-divider></el-divider>
-        <div class="artical">
-          <el-skeleton />
-        </div>
-        <el-divider></el-divider>
-        <div class="artical">
-          <el-skeleton />
-          <br />
-          <el-skeleton style="--el-skeleton-circle-size: 100px">
-            <el-skeleton-item variant="circle" />
-          </el-skeleton>
-        </div>
+        <Article />
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
@@ -35,10 +17,11 @@
 <script>
 // @ is an alias to /src
 import CheckDays from "@/components/CheckDays/index.vue";
+import Article from "@/components/Article/index.vue";
 
 export default {
   name: "Home",
-  components: { CheckDays },
+  components: { CheckDays, Article },
   beforeCreate() {},
   activated() {},
   mounted() {
@@ -68,17 +51,18 @@ export default {
   @apply h-16 w-full overflow-hidden;
 }
 .mainContainer {
-  @apply flex justify-between w-full;
+  @apply flex justify-center w-full;
 }
 .mainContainer .leftTabs,
 .mainContainer .rightTabs {
-  @apply w-1/5 mx-4;
+  @apply w-1/5 mx-4 text-center;
 }
 .checkdays {
   @apply sticky top-16 h-auto;
+  max-width: 277px;
 }
 .mainContainer .centerBody {
-  @apply h-full w-1/2 mx-auto p-4;
+  @apply h-full w-1/2 mx-0 p-4;
 }
 
 .artical {
@@ -99,17 +83,11 @@ export default {
   .home {
     @apply bg-gray-800;
   }
-  .mainContainer .centerBody {
-    @apply bg-black;
-  }
 }
 
 @media (prefers-color-scheme: light) {
   .home {
     @apply bg-gray-100;
-  }
-  .mainContainer .centerBody {
-    @apply bg-white;
   }
 }
 </style>
