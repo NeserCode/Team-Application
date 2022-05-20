@@ -3,14 +3,17 @@
     <div class="topContainer"></div>
     <div class="mainContainer">
       <div class="leftTabs"></div>
-      <div class="centerBody" v-infinite-scroll="load">
+      <div
+        class="centerBody"
+        v-infinite-scroll="load"
+        infinite-scroll-delay="1500"
+      >
         <Article v-for="i in articleSums" :key="i" />
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
       </div>
     </div>
-    <div class="bottContainer"></div>
   </div>
 </template>
 
@@ -23,7 +26,6 @@ export default {
   name: "Home",
   components: { CheckDays, Article },
   beforeCreate() {},
-  activated() {},
   mounted() {
     // this.$leetcode
     //   .getSubmissionStatus("209321358")
@@ -57,7 +59,8 @@ export default {
   },
   methods: {
     load: function () {
-      this.articleSums++;
+      if (this.$route.name == "Home")
+        console.log(`加载第${this.articleSums++}篇文章`);
     },
   },
 };
