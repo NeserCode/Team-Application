@@ -49,8 +49,8 @@ export default {
           console.log(
             " 🎵 网易云音乐\n",
             `正在播放${nickName}的歌单${text}\n`,
-            `\t${name} --${artists[0].name}|${album.name}`,
-            e.data[0]
+            `\t${name} --${artists[0].name}|${album.name}`
+            // e.data[0]
           );
           // setTimeout(() => {
           //   console.log("网易云切换歌曲中（自动）");

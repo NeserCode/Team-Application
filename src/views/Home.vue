@@ -3,11 +3,8 @@
     <div class="topContainer"></div>
     <div class="mainContainer">
       <div class="leftTabs"></div>
-      <div class="centerBody">
-        <Article />
-        <Article />
-        <Article />
-        <Article />
+      <div class="centerBody" v-infinite-scroll="load">
+        <Article v-for="i in articleSums" :key="i" />
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
@@ -37,11 +34,32 @@ export default {
     //   .catch((e) => {
     //     console.log(e.message);
     //   });
+    var ws = new WebSocket("ws://114.115.164.199:5998");
+
+    ws.onopen = function () {
+      console.log("Connection open ...");
+      ws.send("客户端连接" + new Date().toLocaleString());
+    };
+
+    ws.onmessage = function (evt) {
+      console.log("Received Message: " + evt.data);
+      ws.close();
+    };
+
+    ws.onclose = function () {
+      console.log("Connection closed.");
+    };
   },
   data() {
-    return {};
+    return {
+      articleSums: 5,
+    };
   },
-  methods: {},
+  methods: {
+    load: function () {
+      this.articleSums++;
+    },
+  },
 };
 </script>
 

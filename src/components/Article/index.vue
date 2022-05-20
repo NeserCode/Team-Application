@@ -24,6 +24,19 @@
           <span class="ip" title="IP地址">{{ detail.ip }}</span>
         </span>
         <el-divider>Article End</el-divider>
+        <div class="other">
+          <span class="likes" @click="handleLike">
+            <el-icon :size="24" v-show="!isLike"><Star /></el-icon>
+            <el-icon :size="24" v-show="isLike"><StarFilled /></el-icon>
+            &nbsp;
+            <span class="sum">{{ likes }}</span>
+          </span>
+          <span class="comment">
+            <el-icon :size="24"><Comment /></el-icon>
+            &nbsp;
+            <span class="sum">{{ comments }}</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -62,20 +75,46 @@ export default {
       default: () => ({
         ip: "210.87.90.1",
         time: new Date().toDateString(),
+        likes: {
+          sum: 231,
+          all: [],
+        },
+        islike: false,
+        comments: {
+          sum: 18,
+          all: [],
+        },
       }),
     },
   },
-  mounted() {},
-  data() {
-    return {};
+  mounted() {
+    this.initLikes();
   },
-  methods: {},
+  data() {
+    return {
+      isLike: false,
+      likes: NaN,
+      comments: NaN,
+    };
+  },
+  methods: {
+    initLikes: function () {
+      this.isLike = this.detail.islike;
+      this.likes = this.detail.likes.sum;
+      this.comments = this.detail.comments.sum;
+    },
+    handleLike: function () {
+      this.isLike = !this.isLike;
+      if (this.isLike) this.likes++;
+      else this.likes--;
+    },
+  },
 };
 </script>
 
 <style scoped lang="postcss">
 .article {
-  @apply w-full h-full p-2;
+  @apply w-full h-full p-2 py-6;
 }
 .topContainer {
   @apply w-full px-2 my-2 h-16;
@@ -111,6 +150,14 @@ export default {
 }
 .ip {
   @apply inline-block mx-2 font-bold opacity-60;
+}
+
+.other {
+  @apply flex justify-center;
+}
+.other .likes,
+.other .comment {
+  @apply flex w-1/3 float-left font-bold justify-center;
 }
 
 @media (prefers-color-scheme: dark) {
