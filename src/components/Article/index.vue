@@ -7,7 +7,7 @@
           <span class="name">{{ author.name }}</span>
           <span class="access" v-show="author.access.status">
             <span class="organization">{{ author.access.organization }}</span
-            >&nbsp;
+            >&nbsp;·
             <span class="position">{{ author.access.position }}</span>
           </span>
         </div>
@@ -19,6 +19,10 @@
         <span class="contentText">
           {{ body.content }}
         </span>
+        <span class="detail">
+          <span class="ip">{{ detail.ip }}</span>
+        </span>
+        <el-divider>Article End</el-divider>
       </div>
     </div>
   </div>
@@ -49,12 +53,14 @@ export default {
       type: Object,
       default: () => ({
         content:
-          "理念论是柏拉图哲学的核心，理念世界和现实世界的关系怎样，是柏拉图毕生探索的重要问题。\n在《理想国》中，他把不变的理念看作唯一真实的原本，把变化的事物看作理念的摹本和消极的产物。为了说明这一观点，他提出两个著名的比喻：一个是床的比喻。他说理念的床是唯一的真实的床，是工匠制造的床的摹本，而艺术家画出来的床则是摹本的摹本。另一个是洞穴的比喻。他把人们在现实世界中的生活比作在阴暗洞穴里的居留。洞穴中的人们戴着镣铐，背向出口，只能勉强看到被火光投射在洞壁上的东西的模糊的影子。在柏拉图看来，感性实物只不过是变幻不定的影子，人们必须摆脱这些影子，走出洞穴。这两个比喻说明，“永久不变”的理念是第一性的，生灭变化的事物则是第二性的。这是典型的客观唯心主义理论。",
+          "\t理念论是柏拉图哲学的核心，理念世界和现实世界的关系怎样，是柏拉图毕生探索的重要问题。\n\t在《理想国》中，他把不变的理念看作唯一真实的原本，把变化的事物看作理念的摹本和消极的产物。为了说明这一观点，他提出两个著名的比喻：一个是床的比喻。他说理念的床是唯一的真实的床，是工匠制造的床的摹本，而艺术家画出来的床则是摹本的摹本。另一个是洞穴的比喻。他把人们在现实世界中的生活比作在阴暗洞穴里的居留。洞穴中的人们戴着镣铐，背向出口，只能勉强看到被火光投射在洞壁上的东西的模糊的影子。在柏拉图看来，感性实物只不过是变幻不定的影子，人们必须摆脱这些影子，走出洞穴。这两个比喻说明，“永久不变”的理念是第一性的，生灭变化的事物则是第二性的。这是典型的客观唯心主义理论。",
       }),
     },
     detail: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        ip: "210.87.90.1",
+      }),
     },
   },
   mounted() {
@@ -88,25 +94,34 @@ export default {
   @apply text-xl font-semibold;
 }
 .namespace .access {
-  @apply text-xs inline-block ml-2;
+  @apply text-xs inline-block ml-2 opacity-90;
 }
 .introduce {
   @apply inline-block w-full text-sm opacity-50 overflow-ellipsis whitespace-nowrap overflow-hidden leading-8;
 }
 
 .content {
-  @apply px-4 py-2 whitespace-pre-line select-text;
+  @apply px-4 py-2 whitespace-pre-wrap select-text;
 }
 
 @media (prefers-color-scheme: dark) {
   .article {
-    @apply bg-blue-900;
+    @apply bg-gray-900;
+  }
+  :deep(.el-divider) {
+    @apply opacity-60;
+  }
+  :deep(.el-divider__text) {
+    @apply bg-gray-900 text-gray-200;
   }
 }
 
 @media (prefers-color-scheme: light) {
   .article {
-    @apply bg-green-100;
+    @apply bg-white;
+  }
+  :deep(.el-divider__text) {
+    @apply bg-white text-gray-700;
   }
 }
 </style>

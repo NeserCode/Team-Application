@@ -5,6 +5,9 @@
       <div class="leftTabs"></div>
       <div class="centerBody">
         <Article />
+        <Article />
+        <Article />
+        <Article />
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
@@ -62,7 +65,7 @@ export default {
   max-width: 277px;
 }
 .mainContainer .centerBody {
-  @apply h-full w-1/2 mx-0 p-4;
+  @apply h-full w-1/2 mx-0 px-4;
 }
 
 .artical {
