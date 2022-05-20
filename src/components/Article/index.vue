@@ -20,7 +20,8 @@
           {{ body.content }}
         </span>
         <span class="detail">
-          <span class="ip">{{ detail.ip }}</span>
+          <span class="time">{{ detail.time }}</span>
+          <span class="ip" title="IP地址">{{ detail.ip }}</span>
         </span>
         <el-divider>Article End</el-divider>
       </div>
@@ -60,12 +61,11 @@ export default {
       type: Object,
       default: () => ({
         ip: "210.87.90.1",
+        time: new Date().toDateString(),
       }),
     },
   },
-  mounted() {
-    console.log(this.author, this.body, this.detail);
-  },
+  mounted() {},
   data() {
     return {};
   },
@@ -84,7 +84,7 @@ export default {
   @apply w-16 h-16 float-left p-1;
 }
 .head {
-  @apply h-16 px-2 py-1 float-left;
+  @apply h-16 px-2 py-1 float-left font-normal;
   width: calc(100% - 4rem);
 }
 .namespace {
@@ -97,11 +97,20 @@ export default {
   @apply text-xs inline-block ml-2 opacity-90;
 }
 .introduce {
-  @apply inline-block w-full text-sm opacity-50 overflow-ellipsis whitespace-nowrap overflow-hidden leading-8;
+  @apply inline-block w-full text-sm opacity-75 overflow-ellipsis whitespace-nowrap overflow-hidden leading-6;
 }
 
 .content {
-  @apply px-4 py-2 whitespace-pre-wrap select-text;
+  @apply px-4 py-2 whitespace-pre-wrap select-none;
+}
+.contentText {
+  @apply opacity-90 select-text;
+}
+.detail {
+  @apply inline-block w-full leading-8 text-xs text-right;
+}
+.ip {
+  @apply inline-block mx-2 font-bold opacity-60;
 }
 
 @media (prefers-color-scheme: dark) {
