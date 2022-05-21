@@ -31,12 +31,13 @@
             &nbsp;
             <span class="sum">{{ likes }}</span>
           </span>
-          <span class="comment">
+          <span class="comment" @click="toggleCommentShown">
             <el-icon :size="24"><Comment /></el-icon>
             &nbsp;
             <span class="sum">{{ comments }}</span>
           </span>
         </div>
+        <ArticleComment v-show="isShow.comment" />
       </div>
     </div>
   </div>
@@ -45,10 +46,11 @@
 <script>
 // @ is an alias to /src
 import Avatar from "@/components/UserAssets/Avatar/index.vue";
+import ArticleComment from "@/components/Article/Comment/index.vue";
 
 export default {
   name: "Article",
-  components: { Avatar },
+  components: { Avatar, ArticleComment },
   props: {
     author: {
       type: Object,
@@ -95,6 +97,9 @@ export default {
       isLike: false,
       likes: NaN,
       comments: NaN,
+      isShow: {
+        comment: false,
+      },
     };
   },
   methods: {
@@ -107,6 +112,9 @@ export default {
       this.isLike = !this.isLike;
       if (this.isLike) this.likes++;
       else this.likes--;
+    },
+    toggleCommentShown: function () {
+      this.isShow.comment = !this.isShow.comment;
     },
   },
 };

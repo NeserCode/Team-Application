@@ -60,7 +60,7 @@ export default {
   methods: {
     load: function () {
       if (this.$route.name == "Home")
-        console.log(`加载第${this.articleSums++}篇文章`);
+        console.log(`加载第${(this.articleSums += 2)}篇文章`);
     },
   },
 };

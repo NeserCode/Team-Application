@@ -7,7 +7,6 @@
       <el-divider>Other Setting</el-divider>
       <OtherSetting />
     </div>
-    <div class="bottContainer"></div>
   </div>
 </template>
 
@@ -37,9 +36,6 @@ export default {
 }
 .allSettings {
   @apply w-4/5 h-full mx-auto py-4;
-}
-.bottContainer {
-  @apply w-full h-36;
 }
 
 @media (prefers-color-scheme: dark) {
