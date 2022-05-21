@@ -21,7 +21,7 @@
         </span>
         <span class="detail">
           <span class="time">{{ detail.time }}</span>
-          <span class="ip" title="IP地址">{{ detail.ip }}</span>
+          <span class="ip">{{ detail.ip }}</span>
         </span>
         <el-divider>Article End</el-divider>
         <div class="other">
@@ -79,12 +79,10 @@ export default {
         time: new Date().toDateString(),
         likes: {
           sum: 231,
-          all: [],
         },
         islike: false,
         comments: {
           sum: 18,
-          all: [],
         },
       }),
     },

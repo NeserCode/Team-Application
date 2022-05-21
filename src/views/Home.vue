@@ -54,12 +54,12 @@ export default {
   },
   data() {
     return {
-      articleSums: 5,
+      articleSums: 1,
     };
   },
   methods: {
     load: function () {
-      if (this.$route.name == "Home")
+      if (this.$route.name == "Home" && 0)
         console.log(`加载第${(this.articleSums += 2)}篇文章`);
     },
   },
