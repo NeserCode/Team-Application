@@ -54,7 +54,7 @@ export default {
   },
   data() {
     return {
-      articleSums: 1,
+      articleSums: 8,
     };
   },
   methods: {
