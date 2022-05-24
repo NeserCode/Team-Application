@@ -1,5 +1,15 @@
 <template>
   <div class="score" v-loading="loading">
+    <el-pagination
+      v-if="total"
+      v-model:currentPage="submitPage"
+      v-model:page-size="pageLimit"
+      :total="total"
+      background
+      @page-size="getSubmitArr(pageLimit, submitPage * 10)"
+      @current-change="getQuestionPage"
+      layout="prev, pager, next, jumper"
+    /><br />
     <el-table
       :data="subs"
       border
@@ -98,6 +108,9 @@ export default {
       loading: true,
       subs: [],
       submissionDetail: {},
+      submitPage: 1,
+      pageLimit: 10,
+      total: null,
     };
   },
   mounted() {
@@ -119,21 +132,28 @@ export default {
           });
         });
     },
-    initTables: function () {
+    getSubmitArr: function (limit, offset) {
       this.$conf.getHost().then((h) => {
         this.$conf
           .allLeetcodeSubmission({
             host: this.$conf.getHttpString(h.host),
+            limit,
+            offset,
           })
           .then((result) => {
             console.log(result);
-            this.subs = result.data;
+            this.subs = result.data.arr;
+            this.total = result.data.all;
             this.loading = false;
           })
           .catch((err) => {
             console.log(err.message);
           });
       });
+    },
+    getQuestionPage: function () {},
+    initTables: function () {
+      this.getSubmitArr(this.pageLimit, 0);
     },
   },
 };
