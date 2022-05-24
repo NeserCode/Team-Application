@@ -59,7 +59,7 @@ export default {
   },
   data() {
     return {
-      appTitle: "",
+      appTitle: "正在内卷",
       statusReal: {
         status: "Loading",
         text: "😀 I'm loading with my best, but so long a message ...",
@@ -116,6 +116,10 @@ export default {
 
 a {
   -webkit-user-drag: none;
+}
+
+pre {
+  @apply whitespace-pre-wrap;
 }
 
 @media (prefers-color-scheme: dark) {

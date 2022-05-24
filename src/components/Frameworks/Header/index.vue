@@ -96,7 +96,10 @@ const { ipcRenderer } = window.require("electron");
 export default {
   name: "appViewHead",
   props: {
-    title: String,
+    title: {
+      type: String,
+      default: "正在内卷",
+    },
     isSettingCloseDirect: {
       type: Boolean,
       default: () => false,
@@ -149,18 +152,18 @@ export default {
   width: calc(100% - 2px);
 }
 .headDargArea {
-  @apply h-8 absolute left-0 text-center;
+  @apply h-8 left-0 text-center flex items-center float-left;
 }
 .headDargArea .logo {
   @apply w-4 m-2 block float-left;
 }
 .headDargArea .titleFromProp {
-  @apply block float-left h-8 pl-28 text-sm overflow-hidden;
-  width: calc(100vw - 12rem);
+  @apply block float-left h-8 text-sm overflow-hidden;
+  width: calc(100vw - 9rem);
   line-height: 2rem;
 }
 .headOpArea {
-  @apply h-8 absolute right-0;
+  @apply h-8  float-left absolute right-0;
 }
 .headOpArea .option {
   @apply float-left;
@@ -176,6 +179,9 @@ export default {
 }
 .headOpArea .option.close a:hover {
   @apply bg-red-600;
+}
+.headDargArea .titleFromProp {
+  @apply flex justify-center items-center text-sm text-gray-300;
 }
 </style>
 

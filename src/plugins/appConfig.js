@@ -92,6 +92,9 @@ const appConfig = {
     , getLeetcodeSubmission: ({ host, username, offset, limit }) => {
         return Axios.post(`${host}/api/user/leetcode/get`, { username, offset: offset ?? 0, limit: limit ?? 10 })
     }
+    , allLeetcodeSubmission: ({ host, offset, limit }) => {
+        return Axios.post(`${host}/api/user/leetcode/all`, { offset: offset ?? 0, limit: limit ?? 10 })
+    }
 
 }
 

@@ -3,12 +3,8 @@
     <div class="topContainer"></div>
     <div class="mainContainer">
       <div class="leftTabs"></div>
-      <div
-        class="centerBody"
-        v-infinite-scroll="load"
-        infinite-scroll-delay="1500"
-      >
-        <Article v-for="i in articleSums" :key="i" />
+      <div class="centerBody">
+        <Score />
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
@@ -20,11 +16,11 @@
 <script>
 // @ is an alias to /src
 import CheckDays from "@/components/CheckDays/index.vue";
-import Article from "@/components/Article/index.vue";
+import Score from "@/components/Score/index.vue";
 
 export default {
   name: "Home",
-  components: { CheckDays, Article },
+  components: { CheckDays, Score },
   beforeCreate() {},
   mounted() {
     // this.$leetcode
@@ -57,12 +53,7 @@ export default {
       articleSums: 8,
     };
   },
-  methods: {
-    load: function () {
-      if (this.$route.name == "Home" && 0)
-        console.log(`加载第${(this.articleSums += 2)}篇文章`);
-    },
-  },
+  methods: {},
 };
 </script>
 

@@ -26,7 +26,9 @@ var sqlMap = {
         },
         leetcode: {
             add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,timestamp) values (?,?,?,?,?)',
-            get: 'select * from team_leetcode_submit where userid = ? limit ?,?'
+            get: 'select * from team_leetcode_submit where userid = ? limit ?,?',
+            count: 'select count(*) from team_leetcode_submit',
+            all: 'select * from team_leetcode_submit limit ?,?'
         },
         checkDay: {
             check: 'insert into team_user_checkday(userid,appKey,checkDay,checkMonth,isSuper) values (?,?,?,?,?)',

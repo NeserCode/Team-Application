@@ -28,11 +28,6 @@
       </div>
     </div>
   </div>
-  <!-- <div class="absolute">
-    <div class="relative sliderContainer">
-      <Slider>Content</Slider>
-    </div>
-  </div> -->
 </template>
 
 <script>
