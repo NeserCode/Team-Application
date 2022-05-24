@@ -25,19 +25,17 @@
         </span>
         <el-divider>Article End</el-divider>
         <div class="other">
-          <span class="likes" @click="handleLike">
-            <el-icon :size="24" v-show="!isLike"><Star /></el-icon>
-            <el-icon :size="24" v-show="isLike"><StarFilled /></el-icon>
+          <span class="likes">
+            <el-icon @click="handleLike" :size="24" v-show="!isLike"
+              ><Star
+            /></el-icon>
+            <el-icon @click="handleLike" :size="24" v-show="isLike"
+              ><StarFilled
+            /></el-icon>
             &nbsp;
             <span class="sum">{{ likes }}</span>
           </span>
-          <span class="comment" @click="toggleCommentShown">
-            <el-icon :size="24"><Comment /></el-icon>
-            &nbsp;
-            <span class="sum">{{ comments }}</span>
-          </span>
         </div>
-        <ArticleComment v-show="isShow.comment" />
       </div>
     </div>
   </div>
@@ -46,11 +44,10 @@
 <script>
 // @ is an alias to /src
 import Avatar from "@/components/UserAssets/Avatar/index.vue";
-import ArticleComment from "@/components/Article/Comment/index.vue";
 
 export default {
   name: "Article",
-  components: { Avatar, ArticleComment },
+  components: { Avatar },
   props: {
     author: {
       type: Object,
@@ -77,13 +74,8 @@ export default {
       default: () => ({
         ip: "210.87.90.1",
         time: new Date().toDateString(),
-        likes: {
-          sum: 231,
-        },
+        likes: 231,
         islike: false,
-        comments: {
-          sum: 18,
-        },
       }),
     },
   },
@@ -94,25 +86,17 @@ export default {
     return {
       isLike: false,
       likes: NaN,
-      comments: NaN,
-      isShow: {
-        comment: false,
-      },
     };
   },
   methods: {
     initLikes: function () {
       this.isLike = this.detail.islike;
-      this.likes = this.detail.likes.sum;
-      this.comments = this.detail.comments.sum;
+      this.likes = this.detail.likes;
     },
     handleLike: function () {
       this.isLike = !this.isLike;
       if (this.isLike) this.likes++;
       else this.likes--;
-    },
-    toggleCommentShown: function () {
-      this.isShow.comment = !this.isShow.comment;
     },
   },
 };
@@ -161,8 +145,7 @@ export default {
 .other {
   @apply flex justify-center;
 }
-.other .likes,
-.other .comment {
+.other .likes {
   @apply flex w-1/3 float-left font-bold justify-center;
 }
 
