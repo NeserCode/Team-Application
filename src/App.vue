@@ -59,7 +59,7 @@ export default {
   },
   data() {
     return {
-      appTitle: "正在内卷",
+      appTitle: "Team Application",
       statusReal: {
         status: "Loading",
         text: "😀 I'm loading with my best, but so long a message ...",
@@ -107,7 +107,6 @@ export default {
   z-index: 2009;
 }
 .appViewHead {
-  font-family: Helvetica_otf;
 }
 
 :deep().el-message {

@@ -158,9 +158,8 @@ export default {
   @apply w-4 m-2 block float-left;
 }
 .headDargArea .titleFromProp {
-  @apply block float-left h-8 text-sm overflow-hidden;
+  @apply float-left h-8 text-sm overflow-hidden flex justify-center items-center pl-16;
   width: calc(100vw - 9rem);
-  line-height: 2rem;
 }
 .headOpArea {
   @apply h-8  float-left absolute right-0;
@@ -180,8 +179,17 @@ export default {
 .headOpArea .option.close a:hover {
   @apply bg-red-600;
 }
-.headDargArea .titleFromProp {
-  @apply flex justify-center items-center text-sm text-gray-300;
+
+@media (prefers-color-scheme: dark) {
+  .headDargArea .titleFromProp {
+    @apply text-gray-400 font-thin font-mono;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .headDargArea .titleFromProp {
+    @apply text-gray-900 font-thin font-mono;
+  }
 }
 </style>
 

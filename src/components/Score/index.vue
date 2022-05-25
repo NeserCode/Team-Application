@@ -1,5 +1,6 @@
 <template>
-  <div class="score" v-loading="loading">
+  <div class="score">
+    <h1>Status</h1>
     <el-pagination
       v-if="total"
       v-model:currentPage="submitPage"
@@ -9,6 +10,7 @@
       @page-size="getQuestionPage"
       @current-change="getSubmitArr"
       layout="prev, pager, next, total, jumper"
+      v-loading="loading"
     ></el-pagination
     ><br />
     <el-table
@@ -122,6 +124,7 @@ export default {
         .then((result) => {
           const { submissionDetail } = result.data.data;
           this.submissionDetail = submissionDetail;
+          console.log(this.submissionDetail);
         })
         .catch((e) => {
           this.$public.emit("notice", {
@@ -139,6 +142,7 @@ export default {
             offset: (this.submitPage - 1) * this.pageLimit,
           })
           .then((result) => {
+            console.log(result);
             this.subs = result.data.arr;
             this.total = result.data.all;
             this.submitPage = val;
@@ -162,11 +166,22 @@ export default {
   @apply flex w-full h-auto flex-col;
 }
 
+h1 {
+  @apply text-3xl font-bold;
+}
+
 .el-tag {
   @apply bg-transparent;
 }
-.el-descriptions table {
-  @apply w-full;
+.el-pagination {
+  @apply inline-block w-full text-center;
+}
+
+:deep(.el-pagination button.btn-next),
+:deep(.el-pagination button.btn-prev),
+:deep(.el-pager li.number),
+:deep(.el-pager li.more) {
+  @apply bg-transparent text-base;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -194,6 +209,9 @@ export default {
   }
   :deep(.el-table__body-wrapper) {
     @apply bg-transparent;
+  }
+  :deep(.el-input__inner) {
+    @apply bg-gray-800 border border-gray-100;
   }
 }
 
