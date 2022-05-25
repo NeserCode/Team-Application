@@ -41,6 +41,7 @@
     </el-table>
     <Detail
       class="detail"
+      ref="detail"
       :submissionDetail="submissionDetail"
       :loading="loading"
       :author="author"
@@ -78,9 +79,17 @@ export default {
           const { submissionDetail } = result.data.data;
           this.getSubmitor(uid);
           this.submissionDetail = submissionDetail;
+          this.$public.emit("notice", {
+            type: "success",
+            msg: `✔ 提交返回数据`,
+            fn: () => {
+              this.$refs.detail.$refs.card.$refs.avatar.initImage();
+            },
+          });
         })
         .catch((e) => {
           this.$public.emit("notice", {
+            type: "error",
             msg: `获取提交返回数据失败 ${e.message}`,
           });
         });

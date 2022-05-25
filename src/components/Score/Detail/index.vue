@@ -52,7 +52,7 @@
       }}</code></pre>
       </el-descriptions-item>
     </el-descriptions>
-    <Card :author="author" class="card" />
+    <Card :author="author" ref="card" class="card" />
   </div>
 </template>
 

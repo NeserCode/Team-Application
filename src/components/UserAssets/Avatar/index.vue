@@ -3,6 +3,7 @@
     <el-badge :is-dot="isDot">
       <div :class="{ Round: isUserImageRound, avatarSkin: true }">
         <img
+          ref="image"
           :ondragstart="keepDragPicture"
           :src="image ?? userImage"
           :class="{ Round: isUserImageRound, imgBody: true }"
@@ -56,9 +57,17 @@ export default {
   },
   activated() {
     this.userImage = localStorage.getItem("avatar");
+    this.initImage();
   },
   methods: {
     keepDragPicture: () => false,
+    initImage: function () {
+      let w = window.getComputedStyle(this.$refs.image).width,
+        h = window.getComputedStyle(this.$refs.image).height;
+
+      if (w > h) this.$refs.image.style.height = w;
+      else this.$refs.image.style.width = h;
+    },
   },
 };
 </script>
@@ -68,7 +77,7 @@ export default {
   @apply w-full h-full;
 }
 .userAvatar img {
-  @apply rounded-full border border-gray-400 w-full h-full;
+  @apply relative block border border-gray-400 w-full h-full;
   animation: unblur 1.5s linear infinite;
 }
 .userAvatar img.Round {
