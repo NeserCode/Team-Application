@@ -64,8 +64,8 @@ export default {
     return {
       appTitle: "Team Application",
       statusReal: {
-        status: "Loading",
-        text: "😀 I'm loading with my best, but so long a message ...",
+        status: "success",
+        text: "😀 Thank your usage for Team Application",
       },
       needs: {
         isSettingCloseDirect: false,

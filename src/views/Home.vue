@@ -23,15 +23,6 @@ export default {
   components: { CheckDays, Score },
   beforeCreate() {},
   mounted() {
-    // this.$leetcode
-    //   .getSubmissionStatus("209321358")
-    //   .then((res) => {
-    //     const { submissionDetail } = res.data.data;
-    //     console.log(submissionDetail);
-    //   })
-    //   .catch((e) => {
-    //     console.log(e.message);
-    //   });
     var ws = new WebSocket("ws://114.115.164.199:5998");
 
     ws.onopen = function () {
@@ -49,9 +40,7 @@ export default {
     };
   },
   data() {
-    return {
-      articleSums: 8,
-    };
+    return {};
   },
   methods: {},
 };

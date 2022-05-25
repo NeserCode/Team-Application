@@ -39,70 +39,21 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-descriptions
-      class="submitInfo"
-      border
-      v-if="submissionDetail.question"
-      size="small"
-    >
-      <el-descriptions-item label="题目ID" label-align="center">{{
-        submissionDetail.question.questionId
-      }}</el-descriptions-item>
-      <el-descriptions-item label="题目名" label-align="center">{{
-        submissionDetail.question.title
-      }}</el-descriptions-item>
-      <el-descriptions-item label="翻译名" label-align="center">{{
-        submissionDetail.question.translatedTitle
-      }}</el-descriptions-item>
-
-      <el-descriptions-item label="提交ID" label-align="center">{{
-        submissionDetail.id
-      }}</el-descriptions-item>
-      <el-descriptions-item label="提交状态/语言" label-align="center"
-        ><b>{{ submissionDetail.statusDisplay }}</b> /
-        {{ submissionDetail.lang }}</el-descriptions-item
-      >
-      <el-descriptions-item label="时间戳" label-align="center">{{
-        new Date(submissionDetail.timestamp * 1000).toLocaleString()
-      }}</el-descriptions-item>
-
-      <el-descriptions-item label="终止测试用例/输出" label-align="center"
-        >{{
-          !submissionDetail.outputDetail.lastTestcase
-            ? "无"
-            : submissionDetail.outputDetail.lastTestcase +
-              " / " +
-              submissionDetail.outputDetail.expectedOutput
-        }}
-      </el-descriptions-item>
-      <el-descriptions-item label="已通过测试用例个数" label-align="center"
-        >{{
-          submissionDetail.passedTestCaseCnt +
-          " / " +
-          submissionDetail.totalTestCaseCnt
-        }}
-      </el-descriptions-item>
-      <el-descriptions-item label="运行时间" label-align="center"
-        >{{ submissionDetail.runtime }}
-      </el-descriptions-item>
-      <el-descriptions-item label="编译错误" label-align="center" span="3">
-        <pre><code>{{
-            `${!submissionDetail.outputDetail.compileError?"无":submissionDetail.outputDetail.compileError}`
-         }}</code></pre>
-      </el-descriptions-item>
-      <el-descriptions-item label="代码" label-align="center" span="3">
-        <pre><code>{{
-        `${submissionDetail.code}`
-      }}</code></pre>
-      </el-descriptions-item>
-    </el-descriptions>
+    <Detail
+      class="detail"
+      :submissionDetail="submissionDetail"
+      :loading="loading"
+    />
   </div>
 </template>
 
 <script>
+import { _debounce } from "@/plugins/utils";
+import Detail from "@/components/Score/Detail/index.vue";
+
 export default {
   name: "Score",
-  components: {},
+  components: { Detail },
   data() {
     return {
       loading: true,
@@ -132,8 +83,9 @@ export default {
           });
         });
     },
-    getSubmitArr: function (val) {
+    getSubmitArr: _debounce(function (val) {
       this.loading = true;
+      this.submissionDetail = {};
       this.$conf.getHost().then((h) => {
         this.$conf
           .allLeetcodeSubmission({
@@ -142,7 +94,6 @@ export default {
             offset: (this.submitPage - 1) * this.pageLimit,
           })
           .then((result) => {
-            console.log(result);
             this.subs = result.data.arr;
             this.total = result.data.all;
             this.submitPage = val;
@@ -152,7 +103,7 @@ export default {
             console.log(err.message);
           });
       });
-    },
+    }, 200),
     getQuestionPage: function () {},
     initTables: function () {
       this.getSubmitArr();
@@ -169,12 +120,11 @@ export default {
 h1 {
   @apply text-3xl font-bold;
 }
-
 .el-tag {
   @apply bg-transparent;
 }
 .el-pagination {
-  @apply inline-block w-full text-center;
+  @apply inline-block w-full pt-4;
 }
 
 :deep(.el-pagination button.btn-next),
