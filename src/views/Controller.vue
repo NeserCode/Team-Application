@@ -6,6 +6,11 @@
 export default {
   name: "Controller",
   beforeCreate() {},
+  watch: {
+    "$route.name"(val) {
+      this.$public.emit("update-app-title", val);
+    },
+  },
   mounted() {
     this.$public.on("rebuild-app-key", () => {
       this.handleRebuildKey("appkey");

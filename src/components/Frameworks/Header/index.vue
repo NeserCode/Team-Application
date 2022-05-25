@@ -98,7 +98,6 @@ export default {
   props: {
     title: {
       type: String,
-      default: "正在内卷",
     },
     isSettingCloseDirect: {
       type: Boolean,
