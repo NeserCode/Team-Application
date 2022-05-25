@@ -35,7 +35,8 @@ var sqlMap = {
             get: 'select * from team_user_checkday where userid = ?'
         },
         get: {
-            uid: "select id from team_user_info where username = ?"
+            uid: "select id from team_user_info where username = ?",
+            all: "select * from team_user_info where id = ?"
         }
     },
 }

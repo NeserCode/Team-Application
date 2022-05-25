@@ -170,7 +170,7 @@ router.post('/checkDay/get', (req, res) => {
     })
 })
 
-// 用户leetcode提交id | username,leetName,a ppKey,submitId,submitDay,submitMonth
+// leetcode提交id | username,leetName,a ppKey,submitId,submitDay,submitMonth
 
 router.post('/leetcode/add', (req, res) => {
     let sql = $sql.user.leetcode.add
@@ -218,6 +218,21 @@ router.post('/leetcode/all', (req, res) => {
             })
         }
     })
+})
+
+// 获取用户信息 | username, uid
+router.post('/detail/all', (req, res) => {
+    let sql = $sql.user.login.detail
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) res.send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[detail uid ${params.id} √]`);
+            res.send(result)
+        }
+    })
+
 })
 
 

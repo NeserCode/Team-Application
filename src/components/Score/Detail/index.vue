@@ -52,7 +52,7 @@
       }}</code></pre>
       </el-descriptions-item>
     </el-descriptions>
-    <Card class="card" />
+    <Card :author="author" class="card" />
   </div>
 </template>
 
@@ -68,6 +68,9 @@ export default {
     },
     loading: {
       type: Boolean,
+    },
+    author: {
+      type: Object,
     },
   },
   data() {

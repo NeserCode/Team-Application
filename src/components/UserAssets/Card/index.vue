@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" v-if="author">
     <Avatar :image="author.avatar" :isDot="false" class="avatar" />
     <div class="right">
       <span class="nickname">{{ author.nickname }}</span>
@@ -15,14 +15,18 @@ export default {
   components: {
     Avatar,
   },
-  data() {
-    return {
-      author: {
+  props: {
+    author: {
+      type: Object,
+      default: () => ({
         nickname: "NeserCode✨",
         avatar: "http://localhost/Images/q.jpg",
         introduce: "A test line.",
-      },
-    };
+      }),
+    },
+  },
+  data() {
+    return {};
   },
   methods: {},
 };

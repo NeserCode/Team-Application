@@ -33,7 +33,7 @@
         <template #default="scope">
           <el-button
             type="primary"
-            @click="getSubmissionDetail(scope.row.submitId)"
+            @click="getSubmissionDetail(scope.row.submitId, scope.row.userid)"
             >查看</el-button
           >
         </template>
@@ -43,6 +43,7 @@
       class="detail"
       :submissionDetail="submissionDetail"
       :loading="loading"
+      :author="author"
     />
   </div>
 </template>
@@ -62,6 +63,7 @@ export default {
       submitPage: 1,
       pageLimit: 10,
       total: null,
+      author: null,
     };
   },
   mounted() {
@@ -69,13 +71,13 @@ export default {
   },
   methods: {
     sortByCount: (a, b) => a - b,
-    getSubmissionDetail: async function (id) {
+    getSubmissionDetail: async function (id, uid) {
       await this.$leetcode
         .getSubmissionStatus(`${id}`)
         .then((result) => {
           const { submissionDetail } = result.data.data;
+          this.getSubmitor(uid);
           this.submissionDetail = submissionDetail;
-          console.log(this.submissionDetail);
         })
         .catch((e) => {
           this.$public.emit("notice", {
@@ -104,6 +106,19 @@ export default {
           });
       });
     }, 200),
+    getSubmitor: function (uid) {
+      this.$conf.getHost().then((h) => {
+        this.$conf
+          .getUserDetailById({
+            host: this.$conf.getHttpString(h.host),
+            id: uid,
+          })
+          .then((data) => {
+            const { nickname, avatar, introduce } = data.data[0];
+            this.author = { nickname, avatar, introduce };
+          });
+      });
+    },
     getQuestionPage: function () {},
     initTables: function () {
       this.getSubmitArr();
