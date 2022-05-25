@@ -6,10 +6,11 @@
       v-model:page-size="pageLimit"
       :total="total"
       background
-      @page-size="getSubmitArr(pageLimit, submitPage * 10)"
-      @current-change="getQuestionPage"
-      layout="prev, pager, next, jumper"
-    /><br />
+      @page-size="getQuestionPage"
+      @current-change="getSubmitArr"
+      layout="prev, pager, next, total, jumper"
+    ></el-pagination
+    ><br />
     <el-table
       :data="subs"
       border
@@ -55,9 +56,10 @@
       <el-descriptions-item label="提交ID" label-align="center">{{
         submissionDetail.id
       }}</el-descriptions-item>
-      <el-descriptions-item label="提交状态/语言" label-align="center">{{
-        submissionDetail.statusDisplay + " / " + submissionDetail.lang
-      }}</el-descriptions-item>
+      <el-descriptions-item label="提交状态/语言" label-align="center"
+        ><b>{{ submissionDetail.statusDisplay }}</b> /
+        {{ submissionDetail.lang }}</el-descriptions-item
+      >
       <el-descriptions-item label="时间戳" label-align="center">{{
         new Date(submissionDetail.timestamp * 1000).toLocaleString()
       }}</el-descriptions-item>
@@ -82,11 +84,9 @@
         >{{ submissionDetail.runtime }}
       </el-descriptions-item>
       <el-descriptions-item label="编译错误" label-align="center" span="3">
-        <Slider :horizontal="true">
-          <pre><code>{{
+        <pre><code>{{
             `${!submissionDetail.outputDetail.compileError?"无":submissionDetail.outputDetail.compileError}`
          }}</code></pre>
-        </Slider>
       </el-descriptions-item>
       <el-descriptions-item label="代码" label-align="center" span="3">
         <pre><code>{{
@@ -98,11 +98,9 @@
 </template>
 
 <script>
-import Slider from "@/components/Frameworks/Slider/index.vue";
-
 export default {
   name: "Score",
-  components: { Slider },
+  components: {},
   data() {
     return {
       loading: true,
@@ -123,7 +121,6 @@ export default {
         .getSubmissionStatus(`${id}`)
         .then((result) => {
           const { submissionDetail } = result.data.data;
-          console.log(submissionDetail);
           this.submissionDetail = submissionDetail;
         })
         .catch((e) => {
@@ -132,18 +129,19 @@ export default {
           });
         });
     },
-    getSubmitArr: function (limit, offset) {
+    getSubmitArr: function (val) {
+      this.loading = true;
       this.$conf.getHost().then((h) => {
         this.$conf
           .allLeetcodeSubmission({
             host: this.$conf.getHttpString(h.host),
-            limit,
-            offset,
+            limit: this.pageLimit,
+            offset: (this.submitPage - 1) * this.pageLimit,
           })
           .then((result) => {
-            console.log(result);
             this.subs = result.data.arr;
             this.total = result.data.all;
+            this.submitPage = val;
             this.loading = false;
           })
           .catch((err) => {
@@ -153,7 +151,7 @@ export default {
     },
     getQuestionPage: function () {},
     initTables: function () {
-      this.getSubmitArr(this.pageLimit, 0);
+      this.getSubmitArr();
     },
   },
 };
