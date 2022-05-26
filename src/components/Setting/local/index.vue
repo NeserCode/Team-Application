@@ -140,12 +140,28 @@ export default {
       this.appHostPort.value = temp;
     },
     handleDomainChange: function (e) {
-      this.$refs.opDomain.handleInputEditEnd();
-      console.log(e);
+      if (this.isClickable) {
+        this.isClickable = false;
+        this.$refs.opDomain.handleInputEditEnd();
+        this.$conf.getConfPromise().then((data) => {
+          let temp = data.data;
+          temp.appInfo.domain = e.value;
+          temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port;
+          this.handleChangeSettingAction(temp);
+        });
+      }
     },
     handlePortChange: function (e) {
-      this.$refs.opPort.handleInputEditEnd();
-      console.log(e);
+      if (this.isClickable) {
+        this.isClickable = false;
+        this.$refs.opPort.handleInputEditEnd();
+        this.$conf.getConfPromise().then((data) => {
+          let temp = data.data;
+          temp.appInfo.port = e.value;
+          temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port;
+          this.handleChangeSettingAction(temp);
+        });
+      }
     },
     handleChangeAppOnTop: function () {
       if (this.isClickable) {

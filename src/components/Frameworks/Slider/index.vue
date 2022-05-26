@@ -69,13 +69,14 @@ export default {
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
-      console.log(
-        `Slider(${this.$refs.ythumb.nextElementSibling.lastElementChild.classList}) Resized`
-      );
+      // console.log(
+      //   `Slider(${this.$refs.ythumb.nextElementSibling.lastElementChild.classList}) Resized`
+      // );
       this.$refs.ythumb.style.height = `0px`;
       this.$refs.xthumb.style.width = `0px`;
       this.initBars();
     });
+
     this.resizeObserver.observe(this.$refs.ythumb.nextElementSibling);
   },
   activated() {
