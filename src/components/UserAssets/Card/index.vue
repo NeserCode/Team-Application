@@ -1,10 +1,12 @@
 <template>
   <div class="card" v-if="author">
+    <span class="prefix">{{ prefix }}</span>
     <Avatar ref="avatar" :image="author.avatar" :isDot="false" class="avatar" />
     <div class="right">
       <span class="nickname">{{ author.nickname }}</span>
       <span class="introduce">{{ author.introduce }}</span>
     </div>
+    <span class="append">{{ append }}</span>
   </div>
 </template>
 
@@ -19,21 +21,30 @@ export default {
     author: {
       type: Object,
     },
+    prefix: {
+      type: String,
+    },
+    append: {
+      type: String,
+    },
   },
   data() {
     return {};
   },
+  mounted() {},
   methods: {},
 };
 </script>
 
 <style scoped lang="postcss">
 .card {
-  @apply w-full;
+  @apply flex items-center justify-center w-full h-full;
 }
 
 .avatar,
-.right {
+.right,
+.prefix,
+.append {
   @apply float-left;
 }
 .avatar {
@@ -51,5 +62,10 @@ export default {
 }
 .introduce {
   @apply text-sm;
+}
+
+.prefix,
+.append {
+  @apply text-lg font-thin px-6;
 }
 </style>

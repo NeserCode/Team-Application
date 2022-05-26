@@ -1,28 +1,52 @@
 <template>
   <div class="detail" v-if="submissionDetail.question">
     <el-descriptions class="submitInfo" border size="small" v-loading="loading">
-      <el-descriptions-item label="题目ID" label-align="center">{{
-        submissionDetail.question.questionId
-      }}</el-descriptions-item>
-      <el-descriptions-item label="题目名" label-align="center">{{
-        submissionDetail.question.title
-      }}</el-descriptions-item>
-      <el-descriptions-item label="翻译名" label-align="center">{{
-        submissionDetail.question.translatedTitle
-      }}</el-descriptions-item>
+      <el-descriptions-item
+        label="题目ID"
+        label-align="center"
+        @dblclick="getClipText(this.submissionDetail.question.questionId)"
+        >{{ submissionDetail.question.questionId }}</el-descriptions-item
+      >
+      <el-descriptions-item
+        label="题目名"
+        label-align="center"
+        @dblclick="getClipText(this.submissionDetail.question.title)"
+        >{{ submissionDetail.question.title }}</el-descriptions-item
+      >
+      <el-descriptions-item
+        label="翻译名"
+        label-align="center"
+        @dblclick="getClipText(this.submissionDetail.question.translatedTitle)"
+        >{{ submissionDetail.question.translatedTitle }}</el-descriptions-item
+      >
 
-      <el-descriptions-item label="提交ID" label-align="center">{{
-        submissionDetail.id
-      }}</el-descriptions-item>
+      <el-descriptions-item
+        label="提交ID"
+        label-align="center"
+        @dblclick="getClipText(this.submissionDetail.id)"
+        >{{ submissionDetail.id }}</el-descriptions-item
+      >
       <el-descriptions-item label="提交状态/语言" label-align="center"
         ><b>{{ submissionDetail.statusDisplay }}</b> /
         {{ submissionDetail.lang }}</el-descriptions-item
       >
-      <el-descriptions-item label="时间戳" label-align="center">{{
-        new Date(submissionDetail.timestamp * 1000).toLocaleString()
-      }}</el-descriptions-item>
+      <el-descriptions-item
+        label="时间戳"
+        label-align="center"
+        @dblclick="
+          getClipText(
+            new Date(submissionDetail.timestamp * 1000).toLocaleString()
+          )
+        "
+        >{{
+          new Date(submissionDetail.timestamp * 1000).toLocaleString()
+        }}</el-descriptions-item
+      >
 
-      <el-descriptions-item label="终止测试用例/输出" label-align="center"
+      <el-descriptions-item
+        class-name="needmorelong"
+        label="终止测试用例/输出"
+        label-align="center"
         >{{
           !submissionDetail.outputDetail.lastTestcase
             ? "无"
@@ -38,7 +62,10 @@
           submissionDetail.totalTestCaseCnt
         }}
       </el-descriptions-item>
-      <el-descriptions-item label="运行时间" label-align="center"
+      <el-descriptions-item
+        label="运行时间"
+        label-align="center"
+        @dblclick="getClipText(this.submissionDetail.runtime)"
         >{{ submissionDetail.runtime }}
       </el-descriptions-item>
       <el-descriptions-item label="编译错误" label-align="center" span="3">
@@ -47,17 +74,18 @@
          }}</code></pre>
       </el-descriptions-item>
       <el-descriptions-item label="代码" label-align="center" span="3">
-        <pre><code>{{
+        <pre @dblclick="getClipText(this.submissionDetail.code)"><code>{{
         `${submissionDetail.code}`
       }}</code></pre>
       </el-descriptions-item>
     </el-descriptions>
-    <Card :author="author" ref="card" class="card" />
+    <Card :author="author" :prefix="cardProfix" ref="card" class="card" />
   </div>
 </template>
 
 <script>
 import Card from "@/components/UserAssets/Card/index.vue";
+import { clipboard } from "electron";
 
 export default {
   name: "Detail",
@@ -74,10 +102,28 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      cardProfix: "By",
+      clickable: true,
+    };
   },
   mounted() {},
-  methods: {},
+  methods: {
+    getClipText: function (t) {
+      console.log(1, t);
+      if (this.clickable) {
+        this.clickable = false;
+        clipboard.writeText(t);
+        this.$public.emit("notice", {
+          type: "success",
+          msg: `✔ 已复制到剪切板`,
+          fn: () => {
+            this.clickable = true;
+          },
+        });
+      }
+    },
+  },
 };
 </script>
 
@@ -90,6 +136,13 @@ export default {
 }
 .card {
   @apply my-4 w-auto;
+}
+:deep(.needmorelong) {
+  @apply inline-block w-24 overflow-ellipsis overflow-hidden border-none;
+}
+
+:deep(.el-descriptions__content) {
+  @apply select-auto;
 }
 
 @media (prefers-color-scheme: dark) {

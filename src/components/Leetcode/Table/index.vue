@@ -62,7 +62,10 @@
         new Date(submissionDetail.timestamp * 1000).toLocaleString()
       }}</el-descriptions-item>
 
-      <el-descriptions-item label="终止测试用例/输出" label-align="center"
+      <el-descriptions-item
+        label="终止测试用例/输出"
+        label-align="center"
+        class-name="needmorelong"
         >{{
           !submissionDetail.outputDetail.lastTestcase
             ? "无"
@@ -259,7 +262,11 @@ export default {
 }
 
 :deep(.el-descriptions__content) {
-  @apply whitespace-pre;
+  @apply whitespace-pre-line;
+}
+
+:deep(.needmorelong) {
+  @apply inline-block w-32 overflow-ellipsis overflow-hidden border-none;
 }
 
 .tipContainer {

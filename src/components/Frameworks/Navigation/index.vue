@@ -2,14 +2,19 @@
   <div
     :class="['navigation', getUserStatus() == 'NeserCode' ? 'skin' : 'noskin']"
   >
-    <UserAvatar class="avatar" @click="handleOpenUserArea" v-show="isLogined" />
+    <UserAvatar
+      class="avatar"
+      @click="handleOpenUserArea"
+      v-show="isLogined"
+      :isDot="false"
+    />
 
     <router-link
       class="areaLink"
       tabindex="-1"
       :ondragstart="handleKeepDrag"
       to="/home"
-      >圈子</router-link
+      >主页</router-link
     >
     <el-divider direction="vertical"></el-divider>
     <router-link
