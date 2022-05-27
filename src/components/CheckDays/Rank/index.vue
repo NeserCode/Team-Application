@@ -1,13 +1,16 @@
 <template>
   <div class="rank">
-    <span class="title">Rank</span>
-    <div class="mainContainer">
-      <Card
-        class="card"
-        :author="item"
-        v-for="item in rankers"
-        :key="item.nickname"
-      />
+    <span class="title">Sign Rank</span>
+    <div
+      class="mainContainer"
+      v-for="(item, index) in rankers"
+      :key="item.nickname"
+    >
+      <Card class="card" :author="item" />
+      <span class="time">{{ new Date(item.timeStamp).toLocaleString() }}</span>
+      <span class="th"
+        >{{ index + 1 }}&nbsp;<sup>{{ thString(index + 1) }}</sup></span
+      >
     </div>
   </div>
 </template>
@@ -48,7 +51,12 @@ export default {
                     })
                     .then((data) => {
                       const { nickname, avatar, introduce } = data.data[0];
-                      this.rankers.push({ nickname, avatar, introduce });
+                      this.rankers.push({
+                        nickname,
+                        avatar,
+                        introduce,
+                        timeStamp: Number(element.timeStamp),
+                      });
                     });
                 });
               });
@@ -61,20 +69,49 @@ export default {
           console.log(e.messgae);
         });
     },
+    thString: function (i) {
+      if (i == 1) return "st";
+      else if (i == 2) return "nd";
+      else if (i == 3) return "rd";
+      return "th";
+    },
   },
 };
 </script>
 
 <style scoped lang="postcss">
 .rank {
-  @apply w-full mt-8;
+  @apply relative w-full mt-8;
 }
 
 .title {
-  @apply inline-block w-full mx-4 px-4 text-lg font-bold text-left;
+  @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
+  z-index: 2010;
+}
+.mainContainer {
+  @apply relative py-4 my-2;
 }
 
 .card {
   @apply flex-col px-2;
+}
+.time {
+  @apply text-xs font-bold;
+}
+
+.th {
+  @apply inline-block absolute top-0 right-8 font-semibold text-lg;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    @apply bg-gray-800;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .title {
+    @apply bg-gray-100;
+  }
 }
 </style>

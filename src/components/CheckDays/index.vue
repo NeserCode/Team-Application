@@ -1,5 +1,6 @@
 <template>
   <div class="checkContainer">
+    <span class="title">Sign Check</span>
     <div class="checkDays" v-show="getUserStatus()">
       <span
         :class="[
@@ -24,19 +25,18 @@
     <div class="checkDays" v-show="!getUserStatus()">
       <span class="notSignSpan">用户未登录</span>
     </div>
-    <Rank />
   </div>
 </template>
 
 <script>
 import { _debounce } from "@/plugins/utils.js";
-import Rank from "@/components/CheckDays/Rank/index.vue";
+
 // @ is an alias to /src
 import fs from "fs";
 
 export default {
   name: "CheckDays",
-  components: { Rank },
+  components: {},
   beforeCreate() {
     this.$public.on("update-check-day", () => {
       this.initCheckDay();
@@ -143,13 +143,17 @@ export default {
     handleCheckDay: _debounce(function () {
       for (let i = 0; i < this.checkedDays.length; i++)
         if (
-          this.checkedDays[i].m == this.checkObject.checkMonth &&
-          this.checkedDays[i].d == this.checkObject.checkDay
+          (this.checkedDays[i].m == this.checkObject.checkMonth &&
+            this.checkedDays[i].d == this.checkObject.checkDay) ||
+          this.checkedDays[i].timeStamp -
+            new Date(new Date().toLocaleDateString()).getTime() <
+            24 * 60 * 60 * 1000
         ) {
           this.$public.emit("notice", {
             msg: "今日已经签到",
             type: "error",
             fn: () => {
+              this.checkObject.isCheck = true;
               this.checkObject.isLoading = false;
             },
           });
@@ -160,11 +164,9 @@ export default {
         this.$conf.getConfPromise().then((response) => {
           const { name } = response.data.userInfo;
           const { key } = response.data.appInfo;
-          // console.log(response);
           this.$conf
             .getHost()
             .then((h) => {
-              console.log(h);
               this.$conf
                 .updateCheckDay({
                   host: this.$conf.getHttpString(h.host),
@@ -173,13 +175,13 @@ export default {
                   timeStamp: new Date().getTime(),
                 })
                 .then((res) => {
-                  console.log(res);
-                  // this.checkObject.isLoading = false;
-                  // this.checkObject.isCheck = res.status == 200 ?? false;
-                  // if (this.checkObject.isCheck) this.getCheckedDay();
+                  this.checkObject.isLoading = false;
+                  this.checkObject.isCheck = res.status == 200 ?? false;
+                  this.getCheckedDay();
                 })
                 .catch(() => {
                   this.$public.emit("notice", {
+                    type: "error",
                     msg: `更新签到状态失败`,
                   });
                 });
@@ -188,13 +190,12 @@ export default {
               console.log(e.message);
             });
         });
-    }, 1500),
+    }, 500),
     handleCheckLoading: function () {
       this.checkObject.isLoading = true;
     },
     getCheckedDay: function () {
-      let checkedDays = [],
-        checkedObject = [];
+      let checkedDays = [];
 
       if (this.getUserStatus())
         this.$conf.getHost().then((h) => {
@@ -206,15 +207,11 @@ export default {
             .then((response) => {
               response.data.forEach((element) => {
                 const { id, timeStamp } = element;
-                checkedObject.push({
-                  id,
-                  checkDay: new Date(Number(timeStamp)).getDate(),
-                  checkMonth: new Date(Number(timeStamp)).getMonth(),
-                  timeStamp,
-                });
                 checkedDays.push({
+                  id,
                   m: new Date(Number(timeStamp)).getMonth(),
                   d: new Date(Number(timeStamp)).getDate(),
+                  timeStamp: Number(timeStamp),
                 });
               });
               this.checkedDays = checkedDays;
@@ -250,6 +247,11 @@ export default {
 .checkContainer {
   @apply w-full h-full;
 }
+.title {
+  @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
+  z-index: 2010;
+}
+
 .checkDays {
   @apply flex flex-wrap justify-center text-left;
 }
@@ -274,6 +276,9 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
+  .title {
+    @apply bg-gray-800;
+  }
   .message {
     @apply bg-gray-600;
   }
@@ -286,6 +291,9 @@ export default {
 }
 
 @media (prefers-color-scheme: light) {
+  .title {
+    @apply bg-gray-100;
+  }
   .message {
     @apply bg-blue-400;
   }

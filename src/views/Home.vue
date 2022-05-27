@@ -8,6 +8,7 @@
       </div>
       <div class="rightTabs">
         <CheckDays class="checkdays" />
+        <Rank />
       </div>
     </div>
   </div>
@@ -16,11 +17,12 @@
 <script>
 // @ is an alias to /src
 import CheckDays from "@/components/CheckDays/index.vue";
+import Rank from "@/components/CheckDays/Rank/index.vue";
 import Score from "@/components/Score/index.vue";
 
 export default {
   name: "Home",
-  components: { CheckDays, Score },
+  components: { CheckDays, Score, Rank },
   beforeCreate() {},
   mounted() {
     var ws = new WebSocket("ws://114.115.164.199:5998");
@@ -62,7 +64,7 @@ export default {
   @apply w-1/5 mx-4 text-center;
 }
 .checkdays {
-  @apply sticky top-16 h-auto;
+  @apply h-auto;
   max-width: 277px;
 }
 .mainContainer .centerBody {

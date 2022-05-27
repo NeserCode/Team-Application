@@ -82,7 +82,6 @@ export default {
         .getConfPromise()
         .then((data) => {
           const { userInfo } = data.data;
-          console.log(userInfo, data.data);
           this.namespace = userInfo.name;
           this.nickspace = userInfo.nickname ?? "[无名氏]";
           this.introduce =
