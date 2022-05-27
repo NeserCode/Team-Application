@@ -147,7 +147,17 @@ export default {
           let temp = data.data;
           temp.appInfo.domain = e.value;
           temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port;
-          this.handleChangeSettingAction(temp);
+
+          this.handleChangeSettingAction(temp, () => {
+            this.$router.push("UserArea");
+            this.$public.emit("notice", {
+              msg: "🎈 检测到服务主机地址更改，正在为您登出Team账号",
+              time: 3000,
+              fn: () => {
+                this.$public.emit("clear-user-sign-status");
+              },
+            });
+          });
         });
       }
     },
@@ -159,7 +169,17 @@ export default {
           let temp = data.data;
           temp.appInfo.port = e.value;
           temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port;
-          this.handleChangeSettingAction(temp);
+
+          this.handleChangeSettingAction(temp, () => {
+            this.$router.push("UserArea");
+            this.$public.emit("notice", {
+              msg: "🎈 检测到服务主机端口更改，正在为您登出Team账号",
+              time: 3000,
+              fn: () => {
+                this.$public.emit("clear-user-sign-status");
+              },
+            });
+          });
         });
       }
     },
@@ -215,7 +235,7 @@ export default {
           });
       }
     },
-    handleChangeSettingAction: function (setting) {
+    handleChangeSettingAction: function (setting, cb) {
       this.$conf.updateLocalConfig(setting, (err) => {
         if (err)
           this.$public.emit("notice", {
@@ -223,6 +243,7 @@ export default {
             type: "error",
             fn: () => {
               this.isClickable = true;
+              if (cb) cb();
             },
           });
         else {
@@ -231,6 +252,7 @@ export default {
             type: "success",
             fn: () => {
               this.isClickable = true;
+              if (cb) cb();
             },
           });
         }

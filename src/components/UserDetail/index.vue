@@ -18,10 +18,6 @@
         opType="tag"
         :opTagValue="sexObj.text"
         :opDisabled="sexObj.disabled"
-        :opCallbackFn="sexObj.fn"
-        :opExtraValue="radioTemp"
-        opTagEditable="radio"
-        :opRadioArray="sexObj.arr"
       />
       <UserDetailOption
         :opTitle="accessObj.title"
@@ -152,28 +148,6 @@ export default {
         title: "性别",
         text: "",
         disabled: true,
-        arr: [
-          {
-            id: 0,
-            value: 0,
-            choice: "男",
-            fn: () => {
-              this.radioTemp = 0;
-              this.sexObj.text = "男";
-              this.$public.emit("opInputEditFinish");
-            },
-          },
-          {
-            id: 1,
-            value: 1,
-            choice: "女",
-            fn: () => {
-              this.radioTemp = 1;
-              this.sexObj.text = "女";
-              this.$public.emit("opInputEditFinish");
-            },
-          },
-        ],
       },
       accessOgz: {
         access: false,
@@ -240,7 +214,7 @@ export default {
     },
     handleSignOut: function () {
       this.$public.emit("clear-user-sign-status");
-      this.isConfirmOut = false;
+      this.cancelConfirmOut();
     },
     handleConfirmOut: function () {
       this.isConfirmOut = true;

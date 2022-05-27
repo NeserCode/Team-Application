@@ -1,47 +1,28 @@
 <template>
   <div class="detail" v-if="submissionDetail.question">
     <el-descriptions class="submitInfo" border size="small" v-loading="loading">
-      <el-descriptions-item
-        label="题目ID"
-        label-align="center"
-        @dblclick="getClipText(this.submissionDetail.question.questionId)"
-        >{{ submissionDetail.question.questionId }}</el-descriptions-item
-      >
-      <el-descriptions-item
-        label="题目名"
-        label-align="center"
-        @dblclick="getClipText(this.submissionDetail.question.title)"
-        >{{ submissionDetail.question.title }}</el-descriptions-item
-      >
-      <el-descriptions-item
-        label="翻译名"
-        label-align="center"
-        @dblclick="getClipText(this.submissionDetail.question.translatedTitle)"
-        >{{ submissionDetail.question.translatedTitle }}</el-descriptions-item
-      >
+      <el-descriptions-item label="题目ID" label-align="center">{{
+        submissionDetail.question.questionId
+      }}</el-descriptions-item>
+      <el-descriptions-item label="题目名" label-align="center">{{
+        submissionDetail.question.title
+      }}</el-descriptions-item>
+      <el-descriptions-item label="翻译名" label-align="center">{{
+        submissionDetail.question.translatedTitle
+      }}</el-descriptions-item>
 
-      <el-descriptions-item
-        label="提交ID"
-        label-align="center"
-        @dblclick="getClipText(this.submissionDetail.id)"
-        >{{ submissionDetail.id }}</el-descriptions-item
+      <el-descriptions-item label="提交ID" label-align="center"
+        ><span @dblclick="getClipText(this.submissionDetail.id)">{{
+          submissionDetail.id
+        }}</span></el-descriptions-item
       >
       <el-descriptions-item label="提交状态/语言" label-align="center"
         ><b>{{ submissionDetail.statusDisplay }}</b> /
         {{ submissionDetail.lang }}</el-descriptions-item
       >
-      <el-descriptions-item
-        label="时间戳"
-        label-align="center"
-        @dblclick="
-          getClipText(
-            new Date(submissionDetail.timestamp * 1000).toLocaleString()
-          )
-        "
-        >{{
-          new Date(submissionDetail.timestamp * 1000).toLocaleString()
-        }}</el-descriptions-item
-      >
+      <el-descriptions-item label="时间戳" label-align="center">{{
+        new Date(submissionDetail.timestamp * 1000).toLocaleString()
+      }}</el-descriptions-item>
 
       <el-descriptions-item
         class-name="needmorelong"
@@ -62,10 +43,7 @@
           submissionDetail.totalTestCaseCnt
         }}
       </el-descriptions-item>
-      <el-descriptions-item
-        label="运行时间"
-        label-align="center"
-        @dblclick="getClipText(this.submissionDetail.runtime)"
+      <el-descriptions-item label="运行时间" label-align="center"
         >{{ submissionDetail.runtime }}
       </el-descriptions-item>
       <el-descriptions-item label="编译错误" label-align="center" span="3">
@@ -110,7 +88,6 @@ export default {
   mounted() {},
   methods: {
     getClipText: function (t) {
-      console.log(1, t);
       if (this.clickable) {
         this.clickable = false;
         clipboard.writeText(t);
