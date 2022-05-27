@@ -2,7 +2,12 @@
   <div class="rank">
     <span class="title">Rank</span>
     <div class="mainContainer">
-      <Card class="card" :author="authorExample" v-for="i in 8" :key="i" />
+      <Card
+        class="card"
+        :author="item"
+        v-for="item in rankers"
+        :key="item.nickname"
+      />
     </div>
   </div>
 </template>
@@ -20,9 +25,43 @@ export default {
         avatar: "http://localhost/Images/q2.jpg",
         introduce: "One to Be Success, you wanna a thing, then do it.",
       },
+      rankers: [],
     };
   },
-  methods: {},
+  mounted() {
+    this.initRankers();
+  },
+  methods: {
+    initRankers: function () {
+      this.$conf
+        .getHost()
+        .then((h) => {
+          this.$conf
+            .allCheckToday(this.$conf.getHttpString(h.host))
+            .then((adata) => {
+              adata.data.forEach((element) => {
+                this.$conf.getHost().then((h) => {
+                  this.$conf
+                    .getUserDetailById({
+                      host: this.$conf.getHttpString(h.host),
+                      id: element.userid,
+                    })
+                    .then((data) => {
+                      const { nickname, avatar, introduce } = data.data[0];
+                      this.rankers.push({ nickname, avatar, introduce });
+                    });
+                });
+              });
+            })
+            .catch((e) => {
+              console.log(e.messgae);
+            });
+        })
+        .catch((e) => {
+          console.log(e.messgae);
+        });
+    },
+  },
 };
 </script>
 

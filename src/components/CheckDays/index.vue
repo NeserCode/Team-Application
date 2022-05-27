@@ -204,7 +204,6 @@ export default {
               username: localStorage.getItem("username"),
             })
             .then((response) => {
-              console.log(response);
               response.data.forEach((element) => {
                 const { id, timeStamp } = element;
                 checkedObject.push({
@@ -217,7 +216,6 @@ export default {
                   m: new Date(Number(timeStamp)).getMonth(),
                   d: new Date(Number(timeStamp)).getDate(),
                 });
-                console.log(new Date(Number(timeStamp)).getMonth());
               });
               this.checkedDays = checkedDays;
 
@@ -260,7 +258,7 @@ export default {
   line-height: 3rem;
 }
 .message {
-  @apply inline-block w-32 h-12 px-3 my-4 text-center font-bold transition;
+  @apply inline-block w-32 h-12 px-3 my-4 text-center font-thin text-sm transition rounded-lg;
   line-height: 3rem;
 }
 .message.checked {

@@ -68,7 +68,7 @@ const appConfig = {
         })
     }
     , allCheckToday: async (host) => {
-        return Axios.post(`${host}/api/user/checkDay/get`)
+        return Axios.post(`${host}/api/user/checkDay/all`)
     }
     , getLocalIP: async () => {
         //https://api.ipify.org?format=json

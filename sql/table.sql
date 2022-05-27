@@ -30,9 +30,7 @@ create table team_user_checkDay(
 	id int auto_increment primary key,
     userid int not null,
     appKey varchar(60) not null,
-    checkDay int not null,
-    checkMonth int not null,
-    isSuper boolean default false,
+    timeStamp varchar(20) not null,
     FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
 );
 -- Leetcode提交表
