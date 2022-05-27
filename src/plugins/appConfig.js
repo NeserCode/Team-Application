@@ -57,15 +57,18 @@ const appConfig = {
             key: value
         })
     }
-    , updateCheckDay: async (host, username, month, checkDay, appKey, isSuper) => {
+    , updateCheckDay: async ({ host, username, appKey, timeStamp }) => {
         return Axios.post(`${host}/api/user/checkDay/check`, {
-            username, month, checkDay, appKey, isSuper
+            username, appKey, timeStamp
         })
     }
-    , getCheckDay: async (host, username) => {
+    , getCheckDay: async ({ host, username }) => {
         return Axios.post(`${host}/api/user/checkDay/get`, {
             username
         })
+    }
+    , allCheckToday: async (host) => {
+        return Axios.post(`${host}/api/user/checkDay/get`)
     }
     , getLocalIP: async () => {
         //https://api.ipify.org?format=json

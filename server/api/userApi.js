@@ -144,7 +144,7 @@ router.post('/checkDay/check', (req, res) => {
 
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) res.status(502).send({ message: iderr.sqlMessage, errorCode: iderr.errno })
-        else conn.query(sql, [idresult[0].id, params.appKey, params.checkDay, params.month, params.isSuper], (err, result) => {
+        else conn.query(sql, [idresult[0].id, params.appKey, params.timeStamp], (err, result) => {
             if (err) res.status(502).send(err)
             else {
                 console.log(`[${params.username} uid_${idresult[0].id} check √]`);
@@ -166,6 +166,17 @@ router.post('/checkDay/get', (req, res) => {
                 res.status(200).send(result)
             }
         })
+    })
+})
+
+router.post('/checkDay/all', (req, res) => {
+    let sql = $sql.user.checkDay.all
+    conn.query(sql, [new Date(new Date().toLocaleDateString()).getTime()], (err, result) => {
+        if (err) res.status(502).send(err)
+        else {
+            console.log(`[${new Date().toLocaleDateString()} check all √]`);
+            res.status(200).send(result)
+        }
     })
 })
 

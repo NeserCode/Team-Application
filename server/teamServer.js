@@ -14,4 +14,4 @@ app.use('/api/user', userApi);
 // 监听端口
 app.listen(5999);
 
-console.log('success listen at port:5999......');
+console.log('Server deployment finish | [Port:5999] | [Host:127.0.0.1]');

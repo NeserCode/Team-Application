@@ -15,23 +15,28 @@
         :class="['message', checkObject.isCheck ? 'checked' : '']"
         @click="handleCheckLoading(), handleCheckDay()"
       >
-        {{ checkObject.isCheck ? "已" : "未" }}签到
+        <span v-show="!checkObject.isLoading"
+          >{{ checkObject.isCheck ? "已" : "未" }}签到</span
+        >
         <i class="el-icon-loading" v-show="checkObject.isLoading"></i>
       </a>
     </div>
     <div class="checkDays" v-show="!getUserStatus()">
       <span class="notSignSpan">用户未登录</span>
     </div>
+    <Rank />
   </div>
 </template>
 
 <script>
 import { _debounce } from "@/plugins/utils.js";
+import Rank from "@/components/CheckDays/Rank/index.vue";
 // @ is an alias to /src
 import fs from "fs";
 
 export default {
   name: "CheckDays",
+  components: { Rank },
   beforeCreate() {
     this.$public.on("update-check-day", () => {
       this.initCheckDay();
@@ -74,10 +79,9 @@ export default {
       checkObject: {
         checkDay: null,
         checkMonth: null,
-        isSuper: false,
         isCheck: false,
         isLoading: false,
-        timestamp: null,
+        timeStamp: null,
       },
     };
   },
@@ -87,7 +91,6 @@ export default {
     initCheckDay: function () {
       this.checkObject.checkDay = null;
       this.checkObject.checkMonth = null;
-      this.checkObject.isSuper = false;
       this.checkObject.isCheck = false;
 
       let T = new Date();
@@ -144,7 +147,6 @@ export default {
           this.checkedDays[i].d == this.checkObject.checkDay
         ) {
           this.$public.emit("notice", {
-            title: "注意",
             msg: "今日已经签到",
             type: "error",
             fn: () => {
@@ -162,19 +164,19 @@ export default {
           this.$conf
             .getHost()
             .then((h) => {
+              console.log(h);
               this.$conf
-                .updateCheckDay(
-                  this.$conf.getHttpString(h.host),
-                  name,
-                  this.checkObject.checkMonth,
-                  this.checkObject.checkDay,
-                  key,
-                  this.checkObject.isSuper
-                )
+                .updateCheckDay({
+                  host: this.$conf.getHttpString(h.host),
+                  username: name,
+                  appKey: key,
+                  timeStamp: new Date().getTime(),
+                })
                 .then((res) => {
-                  this.checkObject.isLoading = false;
-                  this.checkObject.isCheck = res.status == 200 ?? false;
-                  if (this.checkObject.isCheck) this.getCheckedDay();
+                  console.log(res);
+                  // this.checkObject.isLoading = false;
+                  // this.checkObject.isCheck = res.status == 200 ?? false;
+                  // if (this.checkObject.isCheck) this.getCheckedDay();
                 })
                 .catch(() => {
                   this.$public.emit("notice", {
@@ -197,22 +199,28 @@ export default {
       if (this.getUserStatus())
         this.$conf.getHost().then((h) => {
           this.$conf
-            .getCheckDay(
-              this.$conf.getHttpString(h.host),
-              localStorage.getItem("username")
-            )
+            .getCheckDay({
+              host: this.$conf.getHttpString(h.host),
+              username: localStorage.getItem("username"),
+            })
             .then((response) => {
+              console.log(response);
               response.data.forEach((element) => {
-                const { id, checkDay, checkMonth, isSuper } = element;
+                const { id, timeStamp } = element;
                 checkedObject.push({
                   id,
-                  checkDay,
-                  checkMonth,
-                  isSuper,
+                  checkDay: new Date(Number(timeStamp)).getDate(),
+                  checkMonth: new Date(Number(timeStamp)).getMonth(),
+                  timeStamp,
                 });
-                checkedDays.push({ m: checkMonth, d: checkDay });
+                checkedDays.push({
+                  m: new Date(Number(timeStamp)).getMonth(),
+                  d: new Date(Number(timeStamp)).getDate(),
+                });
+                console.log(new Date(Number(timeStamp)).getMonth());
               });
               this.checkedDays = checkedDays;
+
               for (let i = 0; i < this.checkedDays.length; i++) {
                 if (
                   this.checkedDays[i].m == this.checkObject.checkMonth &&
@@ -252,7 +260,7 @@ export default {
   line-height: 3rem;
 }
 .message {
-  @apply relative inline-block w-full h-12 px-3 text-center font-bold right-0 mx-8 transition;
+  @apply inline-block w-32 h-12 px-3 my-4 text-center font-bold transition;
   line-height: 3rem;
 }
 .message.checked {

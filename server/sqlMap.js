@@ -31,8 +31,9 @@ var sqlMap = {
             all: 'select * from team_leetcode_submit ORDER BY submitId DESC limit ?,?'
         },
         checkDay: {
-            check: 'insert into team_user_checkday(userid,appKey,checkDay,checkMonth,isSuper) values (?,?,?,?,?)',
-            get: 'select * from team_user_checkday where userid = ?'
+            check: 'insert into team_user_checkday(userid,appKey,timestamp) values (?,?,?)',
+            get: 'select * from team_user_checkday where userid = ?',
+            all: 'select * from team_user_checkday where timeStamp > ?'
         },
         get: {
             uid: "select id from team_user_info where username = ?",
