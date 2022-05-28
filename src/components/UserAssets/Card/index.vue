@@ -31,6 +31,12 @@ export default {
   data() {
     return {};
   },
+  activated() {
+    this.$refs.avatar.initImage();
+  },
+  updated() {
+    this.$refs.avatar.initImage();
+  },
   mounted() {},
   methods: {},
 };

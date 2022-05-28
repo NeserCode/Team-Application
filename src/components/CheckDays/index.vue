@@ -1,7 +1,7 @@
 <template>
   <div class="checkContainer">
     <span class="title">Sign Check</span>
-    <div class="checkDays" v-show="getUserStatus()">
+    <div class="checkDays" v-show="userStatus">
       <span
         :class="[
           'day',
@@ -22,7 +22,7 @@
         <i class="el-icon-loading" v-show="checkObject.isLoading"></i>
       </a>
     </div>
-    <div class="checkDays" v-show="!getUserStatus()">
+    <div class="checkDays" v-show="!userStatus">
       <span class="notSignSpan">用户未登录</span>
     </div>
   </div>
@@ -40,6 +40,9 @@ export default {
   beforeCreate() {
     this.$public.on("update-check-day", () => {
       this.initCheckDay();
+    });
+    this.$public.on("clear-user-sign-status", () => {
+      this.userStatus = false;
     });
     fs.watchFile(
       "C:/Users/Neser/AppData/Local/Netease/CloudMusic/webdata/file/history",
@@ -83,6 +86,7 @@ export default {
         isLoading: false,
         timeStamp: null,
       },
+      userStatus: false,
     };
   },
   methods: {
@@ -138,6 +142,7 @@ export default {
           });
       }
       this.checkDays = days;
+      this.userStatus = this.getUserStatus();
       this.getCheckedDay();
     },
     handleCheckDay: _debounce(function () {
@@ -179,6 +184,9 @@ export default {
                   this.$public.emit("notice", {
                     type: "success",
                     msg: `签到成功`,
+                    fn: () => {
+                      this.$public.emit("update-user-check");
+                    },
                   });
                   this.getCheckedDay();
                 })
@@ -186,6 +194,9 @@ export default {
                   this.$public.emit("notice", {
                     type: "error",
                     msg: `更新签到状态失败`,
+                    fn: () => {
+                      this.$public.emit("update-user-check");
+                    },
                   });
                 });
             })
@@ -252,7 +263,7 @@ export default {
 }
 .title {
   @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
-  z-index: 2009;
+  z-index: 2001;
 }
 
 .checkDays {

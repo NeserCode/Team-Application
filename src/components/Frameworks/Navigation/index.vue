@@ -104,7 +104,7 @@ export default {
   animation: colorfy infinite 12s;
 }
 .navigation .areaLink {
-  @apply font-semibold inline-block mx-2;
+  @apply font-thin inline-block mx-2;
 }
 .navigation .areaLink:hover {
   transform: translateY(-8%);

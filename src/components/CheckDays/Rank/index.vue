@@ -5,18 +5,7 @@
       class="mainContainer"
       v-for="(item, index) in rankers"
       :key="item.nickname"
-    >
-      <Card class="card" :author="item" />
-      <span class="time">{{ new Date(item.timeStamp).toLocaleString() }}</span>
-      <span class="th"
-        >{{ index + 1 }}&nbsp;<sup>{{ thString(index + 1) }}</sup></span
-      >
-    </div>
-    <span class="title">Sign Rank - Series</span>
-    <div
-      class="mainContainer"
-      v-for="(item, index) in rankers"
-      :key="item.nickname"
+      v-loading="isLoading.single"
     >
       <Card class="card" :author="item" />
       <span class="time">{{ new Date(item.timeStamp).toLocaleString() }}</span>
@@ -40,8 +29,14 @@ export default {
         avatar: "http://localhost/Images/q2.jpg",
         introduce: "One to Be Success, you wanna a thing, then do it.",
       },
+      isLoading: true,
       rankers: [],
     };
+  },
+  beforeCreate() {
+    this.$public.on("update-user-check", () => {
+      this.initRankers();
+    });
   },
   mounted() {
     this.initRankers();
@@ -51,9 +46,12 @@ export default {
       this.$conf
         .getHost()
         .then((h) => {
+          this.isLoading = true;
+          this.isLoading = true;
           this.$conf
             .allCheckToday(this.$conf.getHttpString(h.host))
             .then((adata) => {
+              this.rankers = [];
               adata.data.forEach((element) => {
                 this.$conf.getHost().then((h) => {
                   this.$conf
@@ -69,6 +67,8 @@ export default {
                         introduce,
                         timeStamp: Number(element.timeStamp),
                       });
+                      this.isLoading = false;
+                      this.isLoading = false;
                     });
                 });
               });
@@ -98,7 +98,7 @@ export default {
 
 .title {
   @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
-  z-index: 2009;
+  z-index: 2001;
 }
 .mainContainer {
   @apply relative py-4 my-2;

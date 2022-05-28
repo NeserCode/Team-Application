@@ -37,7 +37,7 @@ export default {
       userImage: null,
     };
   },
-  mounted() {
+  beforeCreate() {
     this.$public.on("app-mounted", (setting) => {
       this.userImage =
         setting.userInfo.avatar ??
@@ -55,8 +55,15 @@ export default {
       localStorage.setItem("avatar", this.userImage);
     });
   },
+  mounted() {
+    this.userImage = localStorage.getItem("avatar");
+    this.initImage();
+  },
   activated() {
     this.userImage = localStorage.getItem("avatar");
+    this.initImage();
+  },
+  updated() {
     this.initImage();
   },
   methods: {

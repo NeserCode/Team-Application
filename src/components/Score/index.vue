@@ -82,9 +82,6 @@ export default {
           this.$public.emit("notice", {
             type: "success",
             msg: `✔ 提交返回数据`,
-            fn: () => {
-              this.$refs.detail.$refs.card.$refs.avatar.initImage();
-            },
           });
         })
         .catch((e) => {
