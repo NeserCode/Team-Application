@@ -145,9 +145,8 @@ export default {
         if (
           (this.checkedDays[i].m == this.checkObject.checkMonth &&
             this.checkedDays[i].d == this.checkObject.checkDay) ||
-          this.checkedDays[i].timeStamp -
-            new Date(new Date().toLocaleDateString()).getTime() <
-            24 * 60 * 60 * 1000
+          new Date(new Date().toLocaleDateString()).getTime() <
+            this.checkedDays[i].timeStamp
         ) {
           this.$public.emit("notice", {
             msg: "今日已经签到",
@@ -177,6 +176,10 @@ export default {
                 .then((res) => {
                   this.checkObject.isLoading = false;
                   this.checkObject.isCheck = res.status == 200 ?? false;
+                  this.$public.emit("notice", {
+                    type: "success",
+                    msg: `签到成功`,
+                  });
                   this.getCheckedDay();
                 })
                 .catch(() => {
@@ -249,7 +252,7 @@ export default {
 }
 .title {
   @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
-  z-index: 2010;
+  z-index: 2009;
 }
 
 .checkDays {

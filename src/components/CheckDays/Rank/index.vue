@@ -1,6 +1,18 @@
 <template>
   <div class="rank">
-    <span class="title">Sign Rank</span>
+    <span class="title">Sign Rank - Single</span>
+    <div
+      class="mainContainer"
+      v-for="(item, index) in rankers"
+      :key="item.nickname"
+    >
+      <Card class="card" :author="item" />
+      <span class="time">{{ new Date(item.timeStamp).toLocaleString() }}</span>
+      <span class="th"
+        >{{ index + 1 }}&nbsp;<sup>{{ thString(index + 1) }}</sup></span
+      >
+    </div>
+    <span class="title">Sign Rank - Series</span>
     <div
       class="mainContainer"
       v-for="(item, index) in rankers"
@@ -86,7 +98,7 @@ export default {
 
 .title {
   @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
-  z-index: 2010;
+  z-index: 2009;
 }
 .mainContainer {
   @apply relative py-4 my-2;
