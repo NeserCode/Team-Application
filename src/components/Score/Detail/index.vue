@@ -85,6 +85,7 @@ export default {
       clickable: true,
     };
   },
+  beforeCreate() {},
   mounted() {},
   methods: {
     getClipText: function (t) {

@@ -67,6 +67,11 @@ export default {
       author: null,
     };
   },
+  beforeCreate() {
+    this.$public.on("clear-user-sign-status", () => {
+      this.initTables();
+    });
+  },
   mounted() {
     this.initTables();
   },
@@ -127,6 +132,7 @@ export default {
     },
     getQuestionPage: function () {},
     initTables: function () {
+      this.submitPage = 1;
       this.getSubmitArr();
     },
   },

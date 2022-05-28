@@ -162,7 +162,8 @@ router.post('/checkDay/get', (req, res) => {
         else conn.query(sql, [idresult[0].id], (err, result) => {
             if (err) res.status(502).send(err)
             else {
-                console.log(`[${params.username} uid_${idresult[0].id} check get √]`);
+                if (idresult[0])
+                    console.log(`[${params.username} uid_${idresult[0].id} check get √]`);
                 res.status(200).send(result)
             }
         })

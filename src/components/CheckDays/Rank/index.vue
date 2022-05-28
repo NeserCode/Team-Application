@@ -37,6 +37,9 @@ export default {
     this.$public.on("update-user-check", () => {
       this.initRankers();
     });
+    this.$public.on("clear-user-sign-status", () => {
+      this.initRankers();
+    });
   },
   mounted() {
     this.initRankers();
@@ -108,7 +111,7 @@ export default {
   @apply flex-col px-2;
 }
 .time {
-  @apply text-xs font-bold;
+  @apply text-xs font-bold opacity-60;
 }
 
 .th {
