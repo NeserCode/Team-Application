@@ -1,7 +1,13 @@
 <template>
   <div class="card" v-if="author">
     <span class="prefix">{{ prefix }}</span>
-    <Avatar ref="avatar" :image="author.avatar" :isDot="false" class="avatar" />
+    <Avatar
+      ref="avatar"
+      @click="handleOpenDetail"
+      :image="author.avatar"
+      :isDot="false"
+      class="avatar"
+    />
     <div class="right">
       <span class="nickname">{{ author.nickname }}</span>
       <span class="introduce">{{ author.introduce }}</span>
@@ -11,6 +17,8 @@
 </template>
 
 <script>
+import { _debounce } from "@/plugins/utils";
+
 import Avatar from "@/components/UserAssets/Avatar/index.vue";
 export default {
   name: "Card",
@@ -31,14 +39,17 @@ export default {
   data() {
     return {};
   },
-  activated() {
-    this.$refs.avatar.initImage();
-  },
   updated() {
     this.$refs.avatar.initImage();
   },
   mounted() {},
-  methods: {},
+  methods: {
+    handleOpenDetail: _debounce(function () {
+      this.$public.emit("notice", {
+        msg: "👀 暂未开放的功能",
+      });
+    }, 500),
+  },
 };
 </script>
 

@@ -59,13 +59,6 @@ export default {
     this.userImage = localStorage.getItem("avatar");
     this.initImage();
   },
-  activated() {
-    this.userImage = localStorage.getItem("avatar");
-    this.initImage();
-  },
-  updated() {
-    this.initImage();
-  },
   methods: {
     keepDragPicture: () => false,
     initImage: function () {
