@@ -105,7 +105,7 @@ export default {
         password: "",
       },
       options: {
-        isOnlineSignIn: false,
+        isOnlineSignIn: true,
         isShowPassword: false,
       },
       checkText: "",

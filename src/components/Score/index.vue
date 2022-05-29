@@ -77,11 +77,18 @@ export default {
   },
   methods: {
     sortByCount: (a, b) => a - b,
-    getSubmissionDetail: async function (id, uid) {
+    getSubmissionDetail: _debounce(async function (id, uid) {
       await this.$leetcode
         .getSubmissionStatus(`${id}`)
         .then((result) => {
           const { submissionDetail } = result.data.data;
+          if (!submissionDetail) {
+            this.$public.emit("notice", {
+              type: "error",
+              msg: `❌ 检测到未登入 LeetCode 无法获取题解详情`,
+            });
+            return 0;
+          }
           this.getSubmitor(uid);
           this.submissionDetail = submissionDetail;
           this.$public.emit("notice", {
@@ -95,7 +102,7 @@ export default {
             msg: `获取提交返回数据失败 ${e.message}`,
           });
         });
-    },
+    }, 300),
     getSubmitArr: _debounce(function (val) {
       this.loading = true;
       this.submissionDetail = {};
@@ -116,7 +123,7 @@ export default {
             console.log(err.message);
           });
       });
-    }, 200),
+    }, 400),
     getSubmitor: function (uid) {
       this.$conf.getHost().then((h) => {
         this.$conf

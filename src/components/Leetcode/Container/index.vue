@@ -164,7 +164,12 @@ export default {
             this.$public.emit("leetcode-submit-back-id", submission_id);
           })
           .catch((e) => {
-            console.log(e);
+            console.log();
+            this.$public.emit("notice", {
+              type: "error",
+              time: 4500,
+              msg: `❌ ${e.message} 未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,
+            });
           });
       });
     },

@@ -109,10 +109,16 @@ export default {
               : response
           );
           this.$public.emit("leetcode-user-sign-in", this.userStat.username);
-          this.$public.emit("notice", {
-            type: "success",
-            msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
-          });
+          if (response.data.isSignedIn)
+            this.$public.emit("notice", {
+              type: "success",
+              msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
+            });
+          else
+            this.$public.emit("notice", {
+              type: "error",
+              msg: `❌ 登入 Leetcode.cn(zh) 失败 请检查您的LeetCode设置`,
+            });
         })
         .catch((e) => {
           this.$public.emit("notice", {

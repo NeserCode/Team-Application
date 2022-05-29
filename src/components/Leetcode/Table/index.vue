@@ -205,12 +205,18 @@ export default {
           });
       }, 8000);
     },
-    getSubmissionDetail: async function (id) {
+    getSubmissionDetail: _debounce(async function (id) {
       await this.$leetcode
         .getSubmissionStatus(`${id}`)
         .then((result) => {
           const { submissionDetail } = result.data.data;
-          console.log(submissionDetail);
+          if (!submissionDetail) {
+            this.$public.emit("notice", {
+              type: "error",
+              msg: `❌ 检测到未登入 LeetCode 无法获取题解详情`,
+            });
+            return 0;
+          }
           this.submissionDetail = submissionDetail;
         })
         .catch((e) => {
@@ -218,7 +224,7 @@ export default {
             msg: `获取提交返回数据失败 ${e.message}`,
           });
         });
-    },
+    }, 300),
     researchSubmission: _debounce(function () {
       this.$public.emit("notice", {
         msg: "重新获取提交列表",

@@ -211,6 +211,7 @@ app.on('window-all-closed', () => {
 
 app.on('ready', function () {
   runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));
+  runExec('pm2 log', path.join(__dirname, '../server'));
   createLoadingWindow()
 })
 
