@@ -39,10 +39,7 @@ export default {
   data() {
     return {};
   },
-  updated() {
-    this.$refs.avatar.initImage();
-  },
-  mounted() {},
+  updated() {},
   methods: {
     handleOpenDetail: _debounce(function () {
       this.$public.emit("notice", {

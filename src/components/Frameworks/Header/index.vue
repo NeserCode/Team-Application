@@ -154,7 +154,7 @@ export default {
   @apply h-8 left-0 text-center flex items-center float-left;
 }
 .headDargArea .logo {
-  @apply w-4 m-2 block float-left;
+  @apply w-8 h-8 p-1 ml-1 block float-left;
 }
 .headDargArea .titleFromProp {
   @apply float-left h-8 text-sm overflow-hidden flex justify-center items-center pl-16;

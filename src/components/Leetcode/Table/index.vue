@@ -140,29 +140,44 @@ export default {
       return b - a;
     },
     addSubmission: function (leetname, submitid, timestamp) {
-      this.$conf
-        .getHost()
-        .then((h) => {
-          this.$conf
-            .addLeetcodeSubmission({
-              host: this.$conf.getHttpString(h.host),
-              leetname,
-              username: localStorage.getItem("username"),
-              appkey: localStorage.getItem("appKey"),
-              submitid,
-              timestamp,
-            })
-            .catch((e) => {
-              this.$public.emit("notice", {
-                msg: `提交本地修改失败 ${e.message}`,
-              });
-            });
-        })
-        .catch((e) => {
-          this.$public.emit("notice", {
-            msg: `获取Host失败 ${e.message}`,
-          });
+      if (!localStorage.getItem("username")) {
+        this.$public.emit("notice", {
+          msg: `☹ 检测用户Team未登入 本次提交将无法记录于Team 请前往LeetCode官网查看详细结果`,
+          time: 4500,
         });
+        return 0;
+      } else {
+        this.$public.emit("notice", {
+          msg: `提交本地录入 ${submitid}`,
+          time: 5000,
+          fn: () => {
+            this.initSubmission();
+          },
+        });
+        this.$conf
+          .getHost()
+          .then((h) => {
+            this.$conf
+              .addLeetcodeSubmission({
+                host: this.$conf.getHttpString(h.host),
+                leetname,
+                username: localStorage.getItem("username"),
+                appkey: localStorage.getItem("appKey"),
+                submitid,
+                timestamp,
+              })
+              .catch((e) => {
+                this.$public.emit("notice", {
+                  msg: `提交本地修改失败 ${e.message}`,
+                });
+              });
+          })
+          .catch((e) => {
+            this.$public.emit("notice", {
+              msg: `获取Host失败 ${e.message}`,
+            });
+          });
+      }
     },
     afterIdSubmission: function (id) {
       this.$public.emit("notice", {
@@ -173,20 +188,12 @@ export default {
         await this.$leetcode
           .getSubmissionStatusOnsubmit(`${id}`)
           .then((result) => {
-            console.log(result.data);
             const { status_msg, task_finish_time } = result.data;
             this.$public.emit("notice", {
               msg: `获取提交状态 ${status_msg} 详细信息请于查询处查询本次提交`,
               time: 5000,
               fn: () => {
                 this.addSubmission(this.leetname, id, task_finish_time);
-                this.$public.emit("notice", {
-                  msg: `提交本地录入 ${id}`,
-                  time: 5000,
-                  fn: () => {
-                    this.initSubmission();
-                  },
-                });
               },
             });
           })

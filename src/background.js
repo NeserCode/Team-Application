@@ -17,10 +17,6 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'setting', privileges: { secure: true, standard: true } }
-])
-
 async function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({

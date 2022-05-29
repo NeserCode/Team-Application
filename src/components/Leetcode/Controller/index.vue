@@ -95,7 +95,7 @@ export default {
     initLeetcodeAccount: function () {
       this.$public.emit("notice", {
         type: "loading",
-        msg: `🕹 正在尝试以设置身份登录`,
+        msg: `🕹 正在尝试以LeetCode设置身份登录`,
       });
       this.$leetcode
         .getUserStatus()

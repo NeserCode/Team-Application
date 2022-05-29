@@ -1,6 +1,6 @@
 <template>
   <div class="rank">
-    <span class="title">Sign Rank - Single</span>
+    <span class="title">Sign Rank</span>
     <div
       class="mainContainer"
       v-for="(item, index) in rankers"
