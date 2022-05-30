@@ -109,7 +109,7 @@ export default {
               : response
           );
           this.$public.emit("leetcode-user-sign-in", this.userStat.username);
-          if (response.data.isSignedIn)
+          if (response.data.data.userStatus.isSignedIn)
             this.$public.emit("notice", {
               type: "success",
               msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
