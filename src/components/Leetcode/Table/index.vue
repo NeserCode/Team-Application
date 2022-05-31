@@ -89,6 +89,11 @@
         `${!submissionDetail.outputDetail.compileError?"无":submissionDetail.outputDetail.compileError}`
       }}</code></pre>
       </el-descriptions-item>
+      <el-descriptions-item label="运行时错误" label-align="center" span="3">
+        <pre><code>{{
+            `${!submissionDetail.outputDetail.runtimeError?"无":submissionDetail.outputDetail.runtimeError}`
+         }}</code></pre>
+      </el-descriptions-item>
       <el-descriptions-item label="代码" label-align="center" span="3">
         <pre><code>{{
         `${submissionDetail.code}`
@@ -274,7 +279,9 @@ export default {
 
 :deep(.needmorelong) {
   @apply inline-block w-32 overflow-ellipsis overflow-hidden border-none;
-  width: -webkit-fill-available;
+}
+:deep(.el-descriptions .is-bordered td.needmorelong) {
+  @apply border-none;
 }
 
 .tipContainer {
