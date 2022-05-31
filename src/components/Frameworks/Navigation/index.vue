@@ -8,7 +8,16 @@
       v-show="isLogined"
       :isDot="false"
     />
-
+    <div class="netease">
+      <span class="name">{{
+        "🎧 " + (NeteaseMusic.name ?? "NeteaseMusic")
+      }}</span>
+      <span class="namespace"
+        ><span class="author">{{ NeteaseMusic.artist }}</span
+        >&nbsp;<span class="album">{{ NeteaseMusic.album }}</span>
+        <span class="tip" v-if="!NeteaseMusic.name">网易云音乐集成</span>
+      </span>
+    </div>
     <router-link
       class="areaLink"
       tabindex="-1"
@@ -58,6 +67,7 @@ export default {
     return {
       isLogined: false,
       signText: "登录",
+      NeteaseMusic: {},
     };
   },
   beforeCreate() {
@@ -69,6 +79,10 @@ export default {
     });
     this.$public.on("change-login-or-register-view", (bool) => {
       this.signText = bool ? "登录" : "注册";
+    });
+    this.$public.on("Netease-music-switch", (s) => {
+      this.NeteaseMusic = s;
+      console.log(s);
     });
   },
   mounted() {
@@ -117,6 +131,16 @@ export default {
 
 .avatar {
   @apply w-11 h-11 absolute right-4;
+}
+
+.netease {
+  @apply absolute flex flex-col left-8 top-2 w-auto h-full text-left;
+}
+.netease .name {
+  @apply font-semibold inline-block;
+}
+.netease .namespace {
+  @apply leading-4 font-thin text-sm;
 }
 
 @media (prefers-color-scheme: dark) {

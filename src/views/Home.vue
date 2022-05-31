@@ -24,23 +24,7 @@ export default {
   name: "Home",
   components: { CheckDays, Score, Rank },
   beforeCreate() {},
-  mounted() {
-    var ws = new WebSocket("ws://114.115.164.199:5998");
-
-    ws.onopen = function () {
-      console.log("Connection open ...");
-      ws.send("客户端连接" + new Date().toLocaleString());
-    };
-
-    ws.onmessage = function (evt) {
-      console.log("Received Message: " + evt.data);
-      ws.close();
-    };
-
-    ws.onclose = function () {
-      console.log("Connection closed.");
-    };
-  },
+  mounted() {},
   data() {
     return {};
   },

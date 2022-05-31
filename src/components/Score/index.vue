@@ -9,10 +9,8 @@
     <el-pagination
       v-if="total"
       v-model:currentPage="submitPage"
-      v-model:page-size="pageLimit"
       :total="total"
       background
-      @page-size="getQuestionPage"
       @current-change="getSubmitArr"
       layout="prev, pager, next, total, jumper"
       v-loading="loading"

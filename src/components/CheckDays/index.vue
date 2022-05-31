@@ -30,9 +30,7 @@
 
 <script>
 import { _debounce } from "@/plugins/utils.js";
-
 // @ is an alias to /src
-import fs from "fs";
 
 export default {
   name: "CheckDays",
@@ -44,28 +42,6 @@ export default {
     this.$public.on("clear-user-sign-status", () => {
       this.userStatus = false;
     });
-    fs.watchFile(
-      "C:/Users/Neser/AppData/Local/Netease/CloudMusic/webdata/file/history",
-      () => {
-        // console.log(cur);
-        let s = this.$axios.get(
-          "C:/Users/Neser/AppData/Local/Netease/CloudMusic/webdata/file/history"
-        );
-        s.then((e) => {
-          const { nickName, text } = e.data[0];
-          const { album, artists, name } = e.data[0].track;
-          console.log(
-            " 🎵 网易云音乐\n",
-            `正在播放${nickName}的歌单${text}\n`,
-            `\t${name} --${artists[0].name}|${album.name}`
-            // e.data[0]
-          );
-          // setTimeout(() => {
-          //   console.log("网易云切换歌曲中（自动）");
-          // }, duration);
-        });
-      }
-    );
   },
   activated() {},
   mounted() {

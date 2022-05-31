@@ -3,9 +3,37 @@
 </template>
 
 <script>
+import os from "os";
+import fs from "fs";
 export default {
   name: "Controller",
-  beforeCreate() {},
+  beforeCreate() {
+    fs.watchFile(
+      `C:/Users/${
+        os.userInfo().username
+      }/AppData/Local/Netease/CloudMusic/webdata/file/history`,
+      () => {
+        // console.log(cur);
+        let s = this.$axios.get(
+          `C:/Users/${
+            os.userInfo().username
+          }/AppData/Local/Netease/CloudMusic/webdata/file/history`
+        );
+        s.then((e) => {
+          const { album, artists, name } = e.data[0].track;
+          let artist = "";
+          artists.forEach((element, index) => {
+            artist += (index == 0 ? "" : "&") + element.name;
+          });
+          this.$public.emit("Netease-music-switch", {
+            name,
+            artist,
+            album: album.name,
+          });
+        });
+      }
+    );
+  },
   watch: {
     "$route.name"(val) {
       this.$public.emit("update-app-title", val);

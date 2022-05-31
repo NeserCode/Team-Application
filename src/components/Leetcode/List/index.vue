@@ -75,10 +75,8 @@
     <el-pagination
       v-if="questionSet.total"
       v-model:currentPage="questionPage"
-      v-model:page-size="pageLimit"
       :total="questionSet.total"
       background
-      @page-size="handlePageSetChange"
       @current-change="getQuestionPage"
       layout="prev, pager, next, jumper"
     />
@@ -182,9 +180,6 @@ export default {
           },
         });
     }, 120),
-    handlePageSetChange: function (val) {
-      console.log(val);
-    },
     initQuestionSet: function () {
       this.$leetcode.getQuestionSet("", 0, this.pageLimit).then((response) => {
         this.questionSet = response.data.data.problemsetQuestionList;

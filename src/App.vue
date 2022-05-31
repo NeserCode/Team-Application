@@ -46,7 +46,7 @@ export default {
       this.statusReal.text = status.text;
     });
     this.$public.on("update-app-title", (title) => {
-      this.appTitle = title + " - Team Application";
+      this.appTitle = `${title} - Team Application`;
     });
     this.$public.on("update-header-need-close-direct", (symbol) => {
       this.needs.isSettingCloseDirect = symbol;
