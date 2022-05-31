@@ -6,6 +6,8 @@
       <LeetcodeSetting />
       <el-divider>Other Setting</el-divider>
       <OtherSetting />
+      <el-divider>About</el-divider>
+      <About />
     </div>
   </div>
 </template>
@@ -14,6 +16,7 @@
 import LocalSetting from "@/components/Setting/local/index.vue";
 import LeetcodeSetting from "@/components/Setting/leetcode/index.vue";
 import OtherSetting from "@/components/Setting/other/index.vue";
+import About from "@/components/Setting/About/index.vue";
 
 export default {
   name: "Setting",
@@ -22,6 +25,7 @@ export default {
     LocalSetting,
     LeetcodeSetting,
     OtherSetting,
+    About,
   },
   data() {
     return {};

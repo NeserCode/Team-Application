@@ -87,7 +87,8 @@ async function createWindow() {
   setTray();
   // Load the index.html when not in development
 
-  ipcMain.on('open-link-extra', (url) => {
+  ipcMain.on('open-link-extra', (e, url) => {
+    console.log(url);
     shell.openExternal(url);
   })
   //接收关闭命令
@@ -210,8 +211,8 @@ app.on('window-all-closed', () => {
 })
 
 app.on('ready', function () {
-  runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));
-  runExec('pm2 log', path.join(__dirname, '../server'));
+  // runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));
+  // runExec('pm2 log', path.join(__dirname, '../server'));
   createLoadingWindow()
 })
 

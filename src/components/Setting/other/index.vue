@@ -4,8 +4,6 @@
       opTitle="代码编辑器JavaScript集成"
       opType="switch"
       opTip="在编辑器中按下 Ctrl 键以自动完成词法提示"
-      opInputPlaceholder="Cookie Here"
-      opExtraValue="LEETCODE_SESSION"
       :opDisabled="isDisabled"
       :opBindValue="true"
     />
@@ -13,8 +11,6 @@
       opTitle="网易云音乐集成"
       opType="switch"
       opTip="目前只支持集成曲名和作者 使用方法: 运行最新版本网易云音乐即可在切换歌曲时获取最新的播放信息"
-      opInputPlaceholder="Cookie Here"
-      opExtraValue="LEETCODE_SESSION"
       :opDisabled="isDisabled"
       :opBindValue="true"
     />
@@ -23,7 +19,6 @@
 
 <script>
 import SettingOption from "@/components/Setting/option/index.vue";
-// const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "OtherSetting",

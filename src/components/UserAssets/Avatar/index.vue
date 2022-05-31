@@ -64,9 +64,9 @@ export default {
     initImage: function () {
       let w = window.getComputedStyle(this.$refs.image).width,
         h = window.getComputedStyle(this.$refs.image).height;
-
-      if (w > h) this.$refs.image.style.height = w;
-      else this.$refs.image.style.width = h;
+      if (w > 2 && h > 2)
+        if (w > h) this.$refs.image.style.height = w;
+        else this.$refs.image.style.width = h;
     },
   },
 };

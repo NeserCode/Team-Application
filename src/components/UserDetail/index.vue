@@ -33,12 +33,6 @@
         :opDisabled="boundObj.disabled"
         :opTagValue="boundObj.text"
         :opCallbackFn="boundObj.fn"
-        :opBindValue="boundTemp"
-        opTagEditable="input"
-        :opEmitName="'boundChange'"
-        @emitInput="handleBoundInputTemp"
-        @boundChange="handleBoundChange"
-        opTip="目前还只是可以自己编辑的联系方式"
       />
     </div>
     <el-button
@@ -142,7 +136,6 @@ export default {
     return {
       isConfirmOut: false,
       thisUsername: "",
-      boundTemp: "",
       radioTemp: 0,
       sexObj: {
         title: "性别",
@@ -174,6 +167,9 @@ export default {
         title: "绑定",
         text: "",
         disabled: false,
+        fn: () => {
+          this.handleClipBound();
+        },
       },
       keyObj: {
         title: "密钥",
@@ -190,14 +186,8 @@ export default {
     this.initComponent();
   },
   methods: {
-    handleBoundInputTemp: function (val) {
-      this.boundTemp = val;
-    },
     handleSexRadioTemp: function (val) {
       this.radioTemp = val;
-    },
-    handleBoundChange: function () {
-      this.$public.emit("opInputEditFinish");
     },
     handleClipKey: function () {
       if (this.keyObj.text.length >= 12) {
@@ -208,6 +198,19 @@ export default {
           msg: "密钥已经复制到剪切板中",
           fn: () => {
             this.keyObj.disabled = false;
+          },
+        });
+      }
+    },
+    handleClipBound: function () {
+      if (this.boundObj.text.length >= 4) {
+        this.boundObj.disabled = true;
+        clipboard.writeText(this.boundObj.text);
+        this.$public.emit("notice", {
+          type: "success",
+          msg: "邮箱已经复制到剪切板中",
+          fn: () => {
+            this.boundObj.disabled = false;
           },
         });
       }

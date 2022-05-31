@@ -62,11 +62,6 @@ const leetcode = {
         return new Promise((resolve, reject) => {
             session.defaultSession.cookies.get({ url })
                 .then((cookie) => {
-                    // success
-                    // cookie.forEach((item) => {
-                    //     if (item.name != 'LEETCODE_SESSION')
-                    //         leetcode.clearCookie("https://leetcode-cn.com/graphql/", item.name)
-                    // })
                     resolve(cookie)
                 }, (error) => {
                     reject(error)
@@ -82,14 +77,14 @@ const leetcode = {
     }
     , setBeforeSubmit: async (questionSlug, callback) => {
         session.defaultSession.cookies.get({ url: 'https://leetcode-cn.com/graphql/' }).then((cookies) => {
-                    cookies.forEach( async(item) => {
-                        const { name, value } = item
-                        let exp = new Date();
-                        let realcookie = { url:`https://leetcode.cn/problems/${questionSlug}/submit/`, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
-                        await session.defaultSession.cookies.set(realcookie)
-                    })
-            callback()
+            cookies.forEach(async (item) => {
+                const { name, value } = item
+                let exp = new Date();
+                let realcookie = { url: `https://leetcode.cn/problems/${questionSlug}/submit/`, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
+                await session.defaultSession.cookies.set(realcookie)
             })
+            callback()
+        })
     }
     , getSubmissionID: async (question_id, lang, typed_code, questionSlug) => {
         // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, (details, callback) => {
@@ -113,7 +108,7 @@ const leetcode = {
                 questionSlug: questionSlug
             }
         };
-        
+
         const res = await Axios(config);
         // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, null);
         session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode.cn/problems/*'] }, null);

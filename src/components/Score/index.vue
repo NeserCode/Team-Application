@@ -125,6 +125,7 @@ export default {
             this.submitPage = val;
             this.loading = false;
             this.$public.emit("notice", {
+              type: "success",
               msg: "✔ 获取提交列表",
             });
           })

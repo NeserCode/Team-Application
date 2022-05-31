@@ -75,7 +75,7 @@ export default {
         title: "关闭选项",
         value: true,
         fn: this.handleChangeCloseAction,
-        tip: "决定点击关闭按钮后应用是最小化还是彻底退出，默认不勾选为直接退出",
+        tip: "决定点击关闭按钮后应用是最小化还是彻底退出，默认勾选为直接退出",
       },
       appTheme: {
         title: "主题",
