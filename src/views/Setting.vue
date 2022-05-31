@@ -1,11 +1,11 @@
 <template>
   <div class="setting">
     <div class="allSettings">
-      <LocalSetting />
-      <el-divider>Leetcode Setting</el-divider>
-      <LeetcodeSetting />
-      <el-divider>Other Setting</el-divider>
-      <OtherSetting />
+      <LocalSetting class="settingItems" />
+      <span class="title">Leetcode Setting</span>
+      <LeetcodeSetting class="settingItems" />
+      <span class="title">Other Setting</span>
+      <OtherSetting class="settingItems" />
     </div>
   </div>
 </template>
@@ -35,7 +35,14 @@ export default {
   @apply w-full;
 }
 .allSettings {
-  @apply w-4/5 h-full mx-auto py-4;
+  @apply w-full h-full mx-auto py-4 px-12;
+}
+
+.title {
+  @apply inline-block text-left font-semibold text-2xl;
+}
+.settingItems {
+  @apply pl-8;
 }
 
 @media (prefers-color-scheme: dark) {

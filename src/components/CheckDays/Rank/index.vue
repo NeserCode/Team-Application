@@ -100,7 +100,7 @@ export default {
 }
 
 .title {
-  @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left;
+  @apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left font-mono;
   z-index: 2001;
 }
 .mainContainer {

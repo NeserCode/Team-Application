@@ -117,6 +117,7 @@ export default {
 }
 :deep(.needmorelong) {
   @apply inline-block w-24 overflow-ellipsis overflow-hidden border-none;
+  width: -webkit-fill-available;
 }
 
 :deep(.el-descriptions__content) {

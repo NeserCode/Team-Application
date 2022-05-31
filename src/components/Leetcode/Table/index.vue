@@ -152,31 +152,25 @@ export default {
           time: 5000,
           fn: () => {
             this.initSubmission();
+            this.$public.emit("leetcode-local-submit");
           },
         });
-        this.$conf
-          .getHost()
-          .then((h) => {
-            this.$conf
-              .addLeetcodeSubmission({
-                host: this.$conf.getHttpString(h.host),
-                leetname,
-                username: localStorage.getItem("username"),
-                appkey: localStorage.getItem("appKey"),
-                submitid,
-                timestamp,
-              })
-              .catch((e) => {
-                this.$public.emit("notice", {
-                  msg: `提交本地修改失败 ${e.message}`,
-                });
+        this.$conf.getHost().then((h) => {
+          this.$conf
+            .addLeetcodeSubmission({
+              host: this.$conf.getHttpString(h.host),
+              leetname,
+              username: localStorage.getItem("username"),
+              appkey: localStorage.getItem("appKey"),
+              submitid,
+              timestamp,
+            })
+            .catch((e) => {
+              this.$public.emit("notice", {
+                msg: `提交本地修改失败 ${e.message}`,
               });
-          })
-          .catch((e) => {
-            this.$public.emit("notice", {
-              msg: `获取Host失败 ${e.message}`,
             });
-          });
+        });
       }
     },
     afterIdSubmission: function (id) {
@@ -280,6 +274,7 @@ export default {
 
 :deep(.needmorelong) {
   @apply inline-block w-32 overflow-ellipsis overflow-hidden border-none;
+  width: -webkit-fill-available;
 }
 
 .tipContainer {

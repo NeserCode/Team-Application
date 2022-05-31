@@ -1,6 +1,11 @@
 <template>
   <div class="score">
-    <h1>Status</h1>
+    <h1>
+      <span>Status</span
+      ><span class="op">
+        <el-icon @click="researchSubmission" :size="18"><Refresh /></el-icon>
+      </span>
+    </h1>
     <el-pagination
       v-if="total"
       v-model:currentPage="submitPage"
@@ -71,6 +76,9 @@ export default {
     this.$public.on("clear-user-sign-status", () => {
       this.initTables();
     });
+    this.$public.on("leetcode-local-submit", () => {
+      this.initTables();
+    });
   },
   mounted() {
     this.initTables();
@@ -118,6 +126,9 @@ export default {
             this.total = result.data.all;
             this.submitPage = val;
             this.loading = false;
+            this.$public.emit("notice", {
+              msg: "✔ 获取提交列表",
+            });
           })
           .catch((err) => {
             console.log(err.message);
@@ -137,6 +148,14 @@ export default {
           });
       });
     },
+    researchSubmission: _debounce(function () {
+      this.$public.emit("notice", {
+        msg: "重新获取提交列表",
+        fn: () => {
+          this.initTables();
+        },
+      });
+    }, 500),
     getQuestionPage: function () {},
     initTables: function () {
       this.submitPage = 1;
@@ -152,7 +171,10 @@ export default {
 }
 
 h1 {
-  @apply text-3xl font-bold;
+  @apply flex items-center justify-between text-3xl font-bold font-mono;
+}
+h1 span {
+  @apply flex items-center py-2;
 }
 .el-tag {
   @apply bg-transparent;
