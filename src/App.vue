@@ -21,6 +21,8 @@ import AppMainContainer from "@/components/Frameworks/Container/index.vue";
 import Navigation from "@/components/Frameworks/Navigation/index.vue";
 import Controller from "@/views/Controller.vue";
 const { ipcRenderer } = window.require("electron");
+const { app } = window.require("electron").remote;
+import fs from "fs";
 
 export default {
   name: "App",
@@ -38,6 +40,11 @@ export default {
     // document.onmouseup = (e) => {
     //   if (e.button == 2) console.log("你松开了右键");
     // };
+    console.log(app.getPath("userData"));
+    fs.readdir(app.getPath("userData"), (err, data) => {
+      if (err) console.log(err);
+      else console.log(data);
+    });
   },
   mounted() {
     //listen public response this.$public.on('',()=>{})
