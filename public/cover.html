@@ -10,25 +10,38 @@
         padding: 0;
         margin: 0;
         display: flex;
-        user-select: none;
         width: 100vw;
         height: 100vh;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         background-color: lightblue;
+        position: relative;
+        overflow: hidden;
       }
 
       p {
         font-size: 36px;
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-        font-weight: 700;
+        font-weight: 900;
+        margin-bottom: 4rem;
+      }
+      sup {
+        font-size: 24px;
+        font-weight: 400;
       }
 
       .info {
-        width: 100%;
-        padding: 2rem;
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: calc(500px - 2rem);
+        padding: 0.35rem 1rem;
+        font-size: 14px;
+        white-space: nowrap;
       }
     </style>
   </head>
@@ -37,7 +50,7 @@
     <p>
       Team<sup><small>Beta</small></sup>
     </p>
-    <i class="info"></i>
+    <b class="info"></b>
   </body>
 
   <script src="./init.js"></script>

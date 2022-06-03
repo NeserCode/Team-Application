@@ -3,12 +3,12 @@ import fs from "fs"
 import Axios from "axios"
 import crypto from "crypto"
 
-// var app = require('electron').remote.app
+var app = require('electron').remote.app
 // var BrowserWindow = require('electron').remote.BrowserWindow
 
 const appConfig = {
     getPath: () => {
-        return path.join(__dirname, "../../../../../../", "src/user/appConfig.json")
+        return path.join(appConfig.getUserPath("userData"), "/user/appConfig.json")
     }
     , getHost: async () => {
         return appConfig.getConfPromise().then((res) => {
@@ -25,13 +25,13 @@ const appConfig = {
             }
         })
     }
-    // getUserPath: (str) => {
-    //     return app.getPath(str)
-    // },
+    , getUserPath: (str) => {
+        return app.getPath(str)
+    }
     , getPathPromise: async () => {
         return new Promise((resolve) => {
             resolve({
-                data: path.join(__dirname, "../../../../../../", "src/user/appConfig.json"),
+                data: path.join(appConfig.getUserPath("userData"), "/user/appConfig.json"),
                 status: 200
             })
         }).then((resolve) => { return resolve })

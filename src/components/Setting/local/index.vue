@@ -149,14 +149,16 @@ export default {
           temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port;
 
           this.handleChangeSettingAction(temp, () => {
-            this.$router.push("UserArea");
-            this.$public.emit("notice", {
-              msg: "🎈 检测到服务主机地址更改，正在为您登出Team账号",
-              time: 3000,
-              fn: () => {
-                this.$public.emit("clear-user-sign-status");
-              },
-            });
+            if (localStorage.getItem("username")) {
+              this.$router.push("UserArea");
+              this.$public.emit("notice", {
+                msg: "🎈 检测到服务主机地址更改，正在为您登出Team账号",
+                time: 3000,
+                fn: () => {
+                  this.$public.emit("clear-user-sign-status");
+                },
+              });
+            }
           });
         });
       }

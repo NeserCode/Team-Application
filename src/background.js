@@ -79,7 +79,9 @@ async function createWindow() {
   // Load the url of the dev server if in development mode
 
   createProtocol('app')
-  mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+  if (process.env.WEBPACK_DEV_SERVER_URL)
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+  else mainWindow.loadURL("app://./index.html")
   // path.join(__dirname, '../public/', 'index.html')
   // mainWindow.show()
   // mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
@@ -126,10 +128,11 @@ async function createWindow() {
 
   globalShortcut.register('CommandOrControl+Q', () => {
     mainWindow.webContents.openDevTools()
-    loadingWindow.webContents.openDevTools()
+    // loadingWindow.webContents.openDevTools()
   })
   globalShortcut.register('CommandOrControl+M', () => {
     mainWindow.webContents.reload();
+    // loadingWindow.webContents.reload();
   })
 
   ipcMain.on('setting-always-on-top', () => {
