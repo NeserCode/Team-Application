@@ -171,6 +171,7 @@ export default {
                     type: "error",
                     msg: `更新签到状态失败`,
                     fn: () => {
+                      this.checkObject.isLoading = false;
                       this.$public.emit("update-user-check");
                     },
                   });

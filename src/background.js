@@ -55,6 +55,7 @@ async function createWindow() {
     }, {
       label: 'Exit',
       click: () => {
+        loadingWindow.close()
         mainWindow.close()
       },
     }];
@@ -125,6 +126,7 @@ async function createWindow() {
 
   globalShortcut.register('CommandOrControl+Q', () => {
     mainWindow.webContents.openDevTools()
+    loadingWindow.webContents.openDevTools()
   })
   globalShortcut.register('CommandOrControl+M', () => {
     mainWindow.webContents.reload();
@@ -154,8 +156,8 @@ async function createWindow() {
 async function createLoadingWindow() {
   // Create the browser window.
   loadingWindow = new BrowserWindow({
-    width: 200,
-    height: 200,
+    width: 500,
+    height: 350,
     // alwaysOnTop: true,
     frame: false,
     center: true,
