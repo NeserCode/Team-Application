@@ -55,16 +55,15 @@ async function createWindow() {
     }, {
       label: 'Exit',
       click: () => {
-        loadingWindow.close()
         mainWindow.close()
       },
     }];
     // 创建托盘实例
     if (process.env.WEBPACK_DEV_SERVER_URL)
-      const iconPath = nativeImage.createFromPath(path.join(__dirname, '../src/assets/', 'logo.png'))
+      appTray = new Tray(path.join(__dirname, '../src/assets/', 'logo.png'));
     else
-      const iconPath = nativeImage.createFromPath(path.join('app://./icon.png'))
-    appTray = new Tray(iconPath);
+      appTray = new Tray(path.join(app.getAppPath(), '/icon.png'));
+
     // 图标的上下文菜单
     const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
 
@@ -81,7 +80,6 @@ async function createWindow() {
 
   // Load the url of the dev server if in development mode
 
-  createProtocol('app')
   if (process.env.WEBPACK_DEV_SERVER_URL)
     mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
   else mainWindow.loadURL("app://./index.html")
@@ -113,6 +111,7 @@ async function createWindow() {
       mainWindow.maximize();
     }
   })
+
   // 主进程监听打开托盘事件
   ipcMain.on('hide-in-bar', () => {
     mainWindow.hide()
@@ -176,12 +175,17 @@ async function createLoadingWindow() {
       webSecurity: false,
     }
   })
-  loadingWindow.loadFile(path.join(__dirname, '../public/', 'cover.html'))
+  createProtocol('app')
+  if (process.env.WEBPACK_DEV_SERVER_URL)
+    loadingWindow.loadURL(path.join(__dirname, '../public/', 'cover.html'))
+  else loadingWindow.loadURL("app://./cover.html")
+
   loadingWindow.show()
   loadingWindow.focus()
   createWindow()
   loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
   mainWindow.hide()
+
   ipcMain.on('loading-finish', () => {
     setTimeout(() => {
       mainWindow.show()
