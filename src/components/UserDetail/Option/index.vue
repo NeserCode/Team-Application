@@ -190,7 +190,7 @@ span.opTip {
 }
 
 @media screen and (max-width: 830px) {
-  :deep.el-radio {
+  :deep(.el-radio) {
     @apply block my-2;
   }
 }

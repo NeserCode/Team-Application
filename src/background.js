@@ -60,7 +60,10 @@ async function createWindow() {
       },
     }];
     // 创建托盘实例
-    const iconPath = nativeImage.createFromPath(path.join(__dirname, '../src/assets/', 'logo.png'))
+    if (process.env.WEBPACK_DEV_SERVER_URL)
+      const iconPath = nativeImage.createFromPath(path.join(__dirname, '../src/assets/', 'logo.png'))
+    else
+      const iconPath = nativeImage.createFromPath(path.join('app://./icon.png'))
     appTray = new Tray(iconPath);
     // 图标的上下文菜单
     const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
@@ -190,30 +193,30 @@ async function createLoadingWindow() {
   })
 }
 
-function runExec(cmdStr, cmdPath) {
-  workerProcess = exec(cmdStr, { cwd: cmdPath })
+// function runExec(cmdStr, cmdPath) {
+//   workerProcess = exec(cmdStr, { cwd: cmdPath })
 
-  workerProcess.stdout.on('data', function (data) {
-    console.log(data);
-  });
+//   workerProcess.stdout.on('data', function (data) {
+//     console.log(data);
+//   });
 
-  workerProcess.stderr.on('data', function (data) {
-    console.log(data);
-  });
+//   workerProcess.stderr.on('data', function (data) {
+//     console.log(data);
+//   });
 
-  workerProcess.on('close', function (code) {
-    console.log('[Server Exit] ' + code);
-  })
-}
+//   workerProcess.on('close', function (code) {
+//     console.log('[Server Exit] ' + code);
+//   })
+// }
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    runExec(`pm2 stop appServer`, path.join(__dirname, '../server'))
-    console.log(`SERVER EXIT`);
-    setTimeout(() => {
-      console.log("APPLICATION EXIT");
-      app.quit()
-    }, 1000)
+    // runExec(`pm2 stop appServer`, path.join(__dirname, '../server'))
+    // console.log(`SERVER EXIT`);
+    // setTimeout(() => {
+    //   console.log("APPLICATION EXIT");
+    app.quit()
+    // }, 1000)
   }
 })
 
