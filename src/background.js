@@ -179,13 +179,15 @@ async function createLoadingWindow() {
   createWindow()
   loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
   mainWindow.hide()
-  setTimeout(() => {
-    mainWindow.show()
-    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
-    mainWindow.focus()
-    loadingWindow.close()
-    mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
-  }, 3000);
+  ipcMain.on('loading-finish', () => {
+    setTimeout(() => {
+      mainWindow.show()
+      mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+      mainWindow.focus()
+      loadingWindow.close()
+      mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+    }, 5000);
+  })
 }
 
 function runExec(cmdStr, cmdPath) {

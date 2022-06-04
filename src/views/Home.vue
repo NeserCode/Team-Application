@@ -35,6 +35,7 @@ export default {
 <style scoped lang="postcss">
 .home {
   @apply w-full h-full relative;
+  min-height: calc(100vh -);
 }
 
 .topContainer {

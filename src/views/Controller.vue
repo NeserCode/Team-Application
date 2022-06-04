@@ -74,24 +74,34 @@ export default {
   },
   methods: {
     handleRebuildKey: function (...option) {
-      // if (option.length == 0) {
-      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      // } else if (
-      //   option.indexOf("appkey") != -1 &&
-      //   option.indexOf("userkey") == -1
-      // )
-      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-      // else if (
-      //   option.indexOf("userkey") != -1 &&
-      //   option.indexOf("appkey") == -1
-      // )
-      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      // else {
-      //   this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
-      //   this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
-      // }
-      console.log(option);
+      if (option.length == 0) {
+        this.APP_CONFIG.appInfo.key = this.$conf.getRandomKey(16);
+        this.APP_CONFIG.userInfo.key = this.$conf.getRandomKey(16);
+      } else if (
+        option.indexOf("appkey") != -1 &&
+        option.indexOf("userkey") == -1
+      )
+        this.$public.emit("notice", {
+          type: "error",
+          time: 10000,
+          msg: `键值检查中检测到应用键值异常，请重启应用以重新获取应用键值 ${option}`,
+        });
+      else if (
+        option.indexOf("userkey") != -1 &&
+        option.indexOf("appkey") == -1
+      )
+        this.$public.emit("notice", {
+          type: "error",
+          time: 10000,
+          msg: `键值检查中检测到用户键值异常，请重新注册账号以重新获取用户键值或联系管理员获取 ${option}`,
+        });
+      else {
+        this.$public.emit("notice", {
+          type: "error",
+          time: 10000,
+          msg: `键值检查中检测到多键值异常 请联系管理员 ${option}`,
+        });
+      }
     },
     handleCheckKey: function () {
       this.$conf
@@ -99,7 +109,7 @@ export default {
         .then((data) => {
           if (data.data.appInfo.key == null) this.handleRebuildKey("appkey");
           else if (data.data.userInfo.key == null)
-            this.$message.error("Warning: Userkey is null.");
+            this.handleRebuildKey("userkey");
         })
         .catch((e) => {
           console.log(e);

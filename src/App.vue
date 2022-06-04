@@ -126,16 +126,13 @@ pre {
 
 @media (prefers-color-scheme: dark) {
   #AppView {
-    @apply text-gray-100 border-gray-400;
+    @apply text-gray-100 bg-gray-800 border-gray-400;
   }
   .appViewHead {
     @apply bg-gray-800 text-gray-200;
   }
   .navigation {
     @apply bg-gray-700 text-gray-200 border-gray-300;
-  }
-  .appViewFoot {
-    @apply bg-gray-800 text-gray-200;
   }
   .AppMainContainer,
   .UserArea {
@@ -148,16 +145,13 @@ pre {
 
 @media (prefers-color-scheme: light) {
   #AppView {
-    @apply text-gray-800 border-gray-400;
+    @apply text-gray-800 bg-gray-100 border-gray-400;
   }
   .appViewHead {
     @apply bg-green-600 text-gray-800;
   }
   .navigation {
     @apply bg-white text-gray-800 border-gray-200;
-  }
-  .appViewFoot {
-    @apply bg-gray-200 text-gray-800;
   }
   .AppMainContainer,
   .UserArea {
