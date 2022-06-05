@@ -1,13 +1,14 @@
 'use strict'
 
 const path = require('path')
-const exec = require('child_process').exec
+// const exec = require('child_process').exec
 let ipcMain = require('electron').ipcMain
 import { app, protocol, BrowserWindow, Menu, shell, MenuItem, Tray, nativeImage, globalShortcut, ipcRenderer, nativeTheme } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import { session } from 'electron'
 
 //进程实例
-let workerProcess = null
+// let workerProcess = null
 //托盘实例
 let appTray = null
 let loadingWindow = null, mainWindow = null
@@ -219,6 +220,7 @@ app.on('window-all-closed', () => {
     // console.log(`SERVER EXIT`);
     // setTimeout(() => {
     //   console.log("APPLICATION EXIT");
+    session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*', 'https://leetcode.cn/*'] }, null);
     app.quit()
     // }, 1000)
   }
@@ -228,6 +230,10 @@ app.on('ready', function () {
   // runExec('pm2 start teamServer.js --name appServer', path.join(__dirname, '../server'));
   // runExec('pm2 log', path.join(__dirname, '../server'));
   createLoadingWindow()
+  session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*', 'https://leetcode.cn/*'] }, (details, callback) => {
+    details.requestHeaders['Referer'] = `https://leetcode.cn`
+    callback({ cancel: false, requestHeaders: details.requestHeaders })
+  })
 })
 
 // app.whenReady().then(() => {

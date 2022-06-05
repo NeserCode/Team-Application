@@ -52,13 +52,7 @@ const leetcode = {
     , setCookie: async (url, name, value) => {
         let exp = new Date();
         const cookie = { url, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
-
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, (details, callback) => {
-            details.requestHeaders['Referer'] = `https://leetcode-cn.com`
-            callback({ cancel: false, requestHeaders: details.requestHeaders })
-        })
         await session.defaultSession.cookies.set(cookie);
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, null);
     }
     , getCookie: (url) => {
         return new Promise((resolve, reject) => {
@@ -71,13 +65,12 @@ const leetcode = {
         })
     }
     , clearCookie: (url, arr) => {
-        // console.log(session.defaultSession.cookies);
         for (let p = 0; p < arr.length; p++) {
             session.defaultSession.cookies.remove(url, arr[p].name)
             console.log('CookieRemoved:', arr[p].name, `(${url})`);
         }
     }
-    , setBeforeSubmit: async (questionSlug, callback) => {
+    , setBeforeSubmit: async (questionSlug, callbackFn) => {
         appConfig.getConfPromise().then((res) => {
             let exp = new Date();
             let realcookie1 = {
@@ -93,23 +86,15 @@ const leetcode = {
                 expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60
             }
             session.defaultSession.cookies.set(realcookie1).then(() => {
-                session.defaultSession.cookies.set(realcookie2).then(
-                    () => { callback() }
+                session.defaultSession.cookies.set(realcookie2).then(() => {
+                    callbackFn()
+                }
                 )
             })
 
         })
     }
     , getSubmissionID: async (question_id, lang, typed_code, questionSlug) => {
-        // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, (details, callback) => {
-        //     details.requestHeaders['Referer'] = `https://leetcode-cn.com/problems/${questionSlug}/submissions/`
-        //     callback({ cancel: false, requestHeaders: details.requestHeaders })
-        // })
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode.cn/problems/*'] }, (details, callback) => {
-            details.requestHeaders['Referer'] = `https://leetcode.cn/problems/${questionSlug}/submissions/`
-            callback({ cancel: false, requestHeaders: details.requestHeaders })
-        })
-
         var config = {
             method: 'POST',
             url: `https://leetcode.cn/problems/${questionSlug}/submit/`,
@@ -124,8 +109,6 @@ const leetcode = {
         };
 
         const res = await Axios(config);
-        // session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/problems/*'] }, null);
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode.cn/problems/*'] }, null);
         return res;
 
     }
@@ -139,10 +122,6 @@ const leetcode = {
         return res;
     }
     , getSubmissionStatus: async (submissionID) => {
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, (details, callback) => {
-            details.requestHeaders['Referer'] = `https://leetcode-cn.com/submissions/detail/${submissionID}/`
-            callback({ cancel: false, requestHeaders: details.requestHeaders })
-        })
 
         var config = {
             method: 'post',
@@ -157,7 +136,6 @@ const leetcode = {
         };
 
         const res = await Axios(config);
-        session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, null);
         return res;
     }
     , getUserStatus: () => {
