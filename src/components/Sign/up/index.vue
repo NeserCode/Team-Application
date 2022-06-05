@@ -98,6 +98,7 @@ export default {
         sex: "m",
         bound: "",
       },
+      isNameRepeat: false,
       clickable: true,
       checkText: "",
     };
@@ -109,7 +110,8 @@ export default {
         if (this.signUp.username.length < 3)
           this.checkText = "用户名长度非法 用户名应为3位及以上的纯英文";
         else if (!this.usernameFormat)
-          this.checkText = "用户名非法 用户名应为3位及以上的纯英文";
+          this.checkText =
+            "用户名非法 用户名应为3位及以上的纯英文 若满足以上仍收到此信息则用户名重复";
         else if (!this.passwordFormat) {
           this.checkText =
             "密码长度非法 密码应为8位以上的数字、字母及符号组成的字符串";
@@ -118,6 +120,7 @@ export default {
         } else if (!this.boundFormat) {
           this.checkText = "邮箱格式错误";
         } else this.checkText = "";
+        console.log(this.usernameFormat, this.isNameRepeat);
       },
     },
   },
@@ -125,7 +128,8 @@ export default {
     usernameFormat() {
       return (
         this.signUp.username.length >= 3 &&
-        this.signUp.username == this.signUp.username.replace(/[^\w]/gi, "")
+        this.signUp.username == this.signUp.username.replace(/[^\w]/gi, "") &&
+        !this.isNameRepeat
       );
     },
     passwordFormat() {
@@ -144,7 +148,23 @@ export default {
   mounted() {},
   methods: {
     handleIAccount: function (s) {
-      this.signUp.username = s;
+      this.$conf.getHost().then((h) => {
+        this.$conf
+          .checkUsername({
+            host: this.$conf.getHttpString(h.host),
+            username: s,
+          })
+          .then((response) => {
+            this.isNameRepeat = response.data.length != 0;
+            this.signUp.username = s;
+          })
+          .catch((err) => {
+            this.$public.emit("notice", {
+              type: "error",
+              msg: `验证发生错误 ${err}`,
+            });
+          });
+      });
     },
     handleIPassword: function (s) {
       this.signUp.password = s;

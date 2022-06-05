@@ -62,6 +62,17 @@ router.post('/signin', (req, res) => {
     console.log('----------------------');
 })
 
+router.post('/signin/username', (req, res) => {
+    var sql = $sql.user.get.uid
+    var params = req.body
+
+    conn.query(sql, [params.username], (err, result) => {
+        if (err) return res.status(502).send(err)
+        else res.status(200).send(result)
+    })
+    console.log('----------------------');
+})
+
 //用户更新资料 |updateItem、username
 
 router.post('/detail/update/all', (req, res) => {

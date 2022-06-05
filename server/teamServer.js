@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 
+const port = 5999
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -12,6 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/user', userApi);
 
 // 监听端口
-app.listen(5999);
+app.listen(port);
 
-console.log('Server deployment finish | [Port:5999] | [Host:127.0.0.1]');
+console.log(`Server deployment finish | [Port:${port}] | [Host:127.0.0.1]`);

@@ -103,11 +103,39 @@ export default {
         });
       }
     },
+    handleSaveAppkey: function (key) {
+      localStorage.setItem("appKey", key);
+      this.$public
+        .emit("notice", {
+          type: "warning",
+          time: 5000,
+          msg: `⚙ 检测到新生成的应用键值 正在为您挂载`,
+          fn: () => {
+            this.$public.emit("notice", {
+              type: "success",
+              msg: `✔ 键值挂载完毕`,
+            });
+          },
+        })
+        .catch((err) => {
+          this.$public.emit("notice", {
+            type: "error",
+            time: 5000,
+            msg: `❌ 挂载失败 您将失去大部分可使用的功能 ${err}`,
+          });
+        });
+    },
     handleCheckKey: function () {
       this.$conf
         .getConfPromise()
         .then((data) => {
-          if (data.data.appInfo.key == null) this.handleRebuildKey("appkey");
+          if (
+            data.data.appInfo.key != null &&
+            localStorage.getItem("appKey") == null
+          )
+            this.handleSaveAppkey(data.data.appInfo.key);
+          else if (data.data.appInfo.key == null)
+            this.handleRebuildKey("appkey");
           else if (data.data.userInfo.key == null)
             this.handleRebuildKey("userkey");
         })

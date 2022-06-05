@@ -101,6 +101,9 @@ const appConfig = {
     , getUserDetailById: ({ host, id }) => {
         return Axios.post(`${host}/api/user/detail/all`, { id })
     }
+    , checkUsername: ({ host, username }) => {
+        return Axios.post(`${host}/api/user/signin/username`, { username })
+    }
 
 }
 
