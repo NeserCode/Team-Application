@@ -70,6 +70,7 @@ export default {
                         introduce,
                         timeStamp: Number(element.timeStamp),
                       });
+                      this.rankers.sort((a, b) => a.timeStamp - b.timeStamp);
                       this.isLoading = false;
                       this.isLoading = false;
                     });
