@@ -1,6 +1,7 @@
 import Axios from "axios"
 import { remote } from 'electron'
 const { session } = remote
+import appConfig from "./appConfig"
 
 const leetcode = {
     getQuestion: async (slug) => {
@@ -51,6 +52,7 @@ const leetcode = {
     , setCookie: async (url, name, value) => {
         let exp = new Date();
         const cookie = { url, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
+
         session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['https://leetcode-cn.com/*'] }, (details, callback) => {
             details.requestHeaders['Referer'] = `https://leetcode-cn.com`
             callback({ cancel: false, requestHeaders: details.requestHeaders })
@@ -76,14 +78,26 @@ const leetcode = {
         }
     }
     , setBeforeSubmit: async (questionSlug, callback) => {
-        session.defaultSession.cookies.get({ url: 'https://leetcode-cn.com/graphql/' }).then((cookies) => {
-            cookies.forEach(async (item) => {
-                const { name, value } = item
-                let exp = new Date();
-                let realcookie = { url: `https://leetcode.cn/problems/${questionSlug}/submit/`, name, value, expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60 }
-                await session.defaultSession.cookies.set(realcookie)
+        appConfig.getConfPromise().then((res) => {
+            let exp = new Date();
+            let realcookie1 = {
+                url: `https://leetcode.cn/problems/${questionSlug}/submit/`,
+                name: 'LEETCODE_SESSION',
+                value: res.data.userAccount.cookie_leetcode["LEETCODE_SESSION"],
+                expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60
+            }
+            let realcookie2 = {
+                url: `https://leetcode.cn/problems/${questionSlug}/submit/`,
+                name: 'x-csrftoken',
+                value: res.data.userAccount.cookie_leetcode["x-csrftoken"],
+                expirationDate: Math.round(exp.getTime() / 1000) + 30 * 24 * 60 * 60
+            }
+            session.defaultSession.cookies.set(realcookie1).then(() => {
+                session.defaultSession.cookies.set(realcookie2).then(
+                    () => { callback() }
+                )
             })
-            callback()
+
         })
     }
     , getSubmissionID: async (question_id, lang, typed_code, questionSlug) => {
