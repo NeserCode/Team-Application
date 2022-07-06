@@ -1,5 +1,7 @@
 # Team Application
 
+![Team-Application](https://img.shields.io/badge/Team--Application-v1.2.1-000.svg) ![Electron](https://img.shields.io/badge/Electron-v13.0.0-faf.svg) ![Vue](https://img.shields.io/badge/Vue-v3.2.31-eee.svg) ![Element Plus](https://img.shields.io/badge/Element Plus-v1.0.2--beta.28-234894.svg) ![Tailwind Css](https://img.shields.io/badge/Tailwind Css-v3.0.2-678111.svg)
+
 ## 应用概述
 
 Team 是一个基于 Vue.js 与 Electron 的 Windows 桌面应用。
