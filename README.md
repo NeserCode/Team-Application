@@ -58,6 +58,12 @@ $ pm2 log
 
 忽略步骤 Ⅲ 。
 
+## 试用服务器
+
+可提供的公共服务器地址 < 114.115.164.199 > : 5999
+
+本公用服务器只提供 Team 试用相关服务功能 api，请不要进行其他行为，感谢。
+
 ## 许可
 
 本项目持有并遵守 [MIT许可](https://github.com/NeserCode/Team-Application/blob/NeserCode/LICENSE)
