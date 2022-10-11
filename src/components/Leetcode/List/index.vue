@@ -61,7 +61,7 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="titleSlug" label="操作">
+      <el-table-column prop="titleSlug" label="操作" width="120">
         <template #default="scope">
           <el-button
             @click="getQuestionContent(scope.row.titleSlug)"
