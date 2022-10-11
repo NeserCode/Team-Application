@@ -24,7 +24,7 @@
           已作为
           <img class="userAvatar" :src="userStat.avatar" />
           <span class="username">{{ userStat.username }}</span> 登录
-          LeetCode.cn(zh)
+          LeetCode.cn(zh-CN)
         </span>
       </div>
     </div>
@@ -81,12 +81,12 @@ export default {
       if (this.isContentEng)
         this.$public.emit("notice", {
           type: "success",
-          msg: "🎈 Switching Question Content in English...",
+          msg: "Switching Question Content in English...",
         });
       else
         this.$public.emit("notice", {
           type: "success",
-          msg: "🎈 正在将题目内容切换为中文...",
+          msg: "正在将题目内容切换为中文...",
         });
     },
     getQuestionSubmit: _debounce(function () {
@@ -95,7 +95,7 @@ export default {
     initLeetcodeAccount: function () {
       this.$public.emit("notice", {
         type: "loading",
-        msg: `🕹 正在尝试以LeetCode设置身份登录`,
+        msg: `🕹 正在尝试登入 Leetcode.cn(zh-CN)`,
       });
       this.$leetcode
         .getUserStatus()
@@ -112,18 +112,18 @@ export default {
           if (response.data.data.userStatus.isSignedIn)
             this.$public.emit("notice", {
               type: "success",
-              msg: `✔ 以 ${this.userStat.username} 登入 Leetcode.cn(zh)`,
+              msg: `已登入 Leetcode.cn(zh-CN)`,
             });
           else
             this.$public.emit("notice", {
               type: "error",
-              msg: `❌ 登入 Leetcode.cn(zh) 失败 请检查您的LeetCode设置`,
+              msg: `登入失败，请检查您的LeetCode设置`,
             });
         })
         .catch((e) => {
           this.$public.emit("notice", {
             type: "error",
-            msg: `❌ 网络故障 登入失败 ${e.message}`,
+            msg: `网络故障，登入失败 ${e.message}`,
           });
         });
     },
