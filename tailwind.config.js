@@ -219,6 +219,8 @@ module.exports = {
       60: '60deg',
       90: '90deg',
       180: '180deg',
+
+      45: '45deg',
     },
     invert: {
       0: '0',

@@ -72,6 +72,7 @@
 <script>
 import SignInput from "@/components/Sign/input/index.vue";
 import SignRadio from "@/components/Sign/radio/index.vue";
+import { _debounce } from "@/plugins/utils";
 // @ is an alias to /src
 
 export default {
@@ -120,7 +121,6 @@ export default {
         } else if (!this.boundFormat) {
           this.checkText = "邮箱格式错误";
         } else this.checkText = "";
-        console.log(this.usernameFormat, this.isNameRepeat);
       },
     },
   },
@@ -147,7 +147,7 @@ export default {
   },
   mounted() {},
   methods: {
-    handleIAccount: function (s) {
+    handleIAccount: _debounce(function (s) {
       this.$conf.getHost().then((h) => {
         this.$conf
           .checkUsername({
@@ -165,7 +165,7 @@ export default {
             });
           });
       });
-    },
+    }, 400),
     handleIPassword: function (s) {
       this.signUp.password = s;
     },
