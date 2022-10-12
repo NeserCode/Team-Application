@@ -6,7 +6,7 @@ module.exports = {
       builderOptions: {
         "appId": "com.team.bigdata.beihua.china.application",
         "productName": "Team_Beihua", //项目名，也是生成的安装文件名，即demo.exe
-        "copyright": "Copyright © 2021 by BigData_Team", //版权信息
+        "copyright": "Copyright © 2021-2022 by BigData_Team", //版权信息
         "directories": {
           "output": "./dist_electron" //输出文件路径
         },
