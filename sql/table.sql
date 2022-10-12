@@ -9,6 +9,7 @@ create table team_user_info(
     userKey varchar(60) unique not null,
     checkKey varchar(60)
 );
+
 -- 用户信息
 drop table IF EXISTS team_user_detail;
 create table team_user_detail(
@@ -24,6 +25,7 @@ create table team_user_detail(
     exp bigint default 0,
     FOREIGN KEY fk_userid(id) REFERENCES team_user_info(id)
 );
+
 -- 用户签到表
 drop table IF EXISTS team_user_checkDay;
 create table team_user_checkDay(
@@ -33,6 +35,7 @@ create table team_user_checkDay(
     timeStamp varchar(20) not null,
     FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
 );
+
 -- Leetcode提交表
 drop table IF EXISTS team_leetcode_submit;
 create table team_leetcode_submit(
