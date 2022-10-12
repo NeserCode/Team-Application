@@ -12,7 +12,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // 后端api路由
 app.use('/api/user', userApi);
-
 // 监听端口
 app.listen(port);
 
