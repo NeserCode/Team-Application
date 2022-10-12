@@ -18,7 +18,6 @@
         </select>
       </a>
       <a v-show="question.codeSnippets" @click="getQuestionSubmit">提交</a>
-      <a class="logo">Offered by LeetCode.cn</a>
       <div class="userInfo" v-if="userStat.status">
         <span class="detail">
           已作为
@@ -137,10 +136,6 @@ export default {
 <style scoped lang="postcss">
 .ctrlContainer {
   @apply w-full mt-4 px-12 py-4;
-}
-
-.ctrlContainer .logo {
-  @apply bg-transparent border-none;
 }
 
 .ctrlContainer a {

@@ -26,5 +26,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
+// Router meta 信息替换
+router.beforeEach((to, from, next) => { if (to.meta.title) document.title = to.meta.title; next() })
+
 app.use(router).use(Codemirror).mount('#app')
 

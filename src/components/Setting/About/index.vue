@@ -8,14 +8,14 @@
       :opDisabled="isDisabled"
       :opCallbackFn="goForAuthor"
     />
-    <SettingOption
+    <!-- <SettingOption
       opTitle="关于本软件"
       opType="button"
       opTip="前往 GitHub 查看本项目 本项目遵循 GUN3.0 协议"
       opBtnText="前往"
       :opDisabled="isDisabled"
       :opCallbackFn="goForSoftware"
-    />
+    /> -->
   </div>
 </template>
 
