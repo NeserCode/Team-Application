@@ -49,7 +49,7 @@ export default {
     });
 
     this.$public.on("notice", ({ title, msg, type, time, fn }) => {
-      let duration = 1500,
+      let duration = 3000,
         position = "bottom-right";
 
       this.$notify({
@@ -113,7 +113,7 @@ export default {
           fn: () => {
             this.$public.emit("notice", {
               type: "success",
-              msg: `✔ 键值挂载完毕`,
+              msg: `键值挂载完毕`,
             });
           },
         })
@@ -121,7 +121,7 @@ export default {
           this.$public.emit("notice", {
             type: "error",
             time: 5000,
-            msg: `❌ 挂载失败 您将失去大部分可使用的功能 ${err}`,
+            msg: `键值挂载失败 ${err}`,
           });
         });
     },

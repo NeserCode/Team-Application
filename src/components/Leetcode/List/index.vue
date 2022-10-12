@@ -117,7 +117,7 @@ export default {
     getQuestionContent: _debounce(function (slug) {
       this.$public.emit("notice", {
         type: "loading",
-        msg: "🎈 正在从 Leetcode 获取题目详情...",
+        msg: "🎈 正在获取题目详情...",
       });
       this.$leetcode
         .getCookie("https://leetcode-cn.com/graphql/")
@@ -136,7 +136,7 @@ export default {
           this.$public.emit("leetcode-toggle-list-show", !this.isShowList);
           this.$public.emit("notice", {
             type: "success",
-            msg: `✔ 从 Leetcode 获取题目详情成功 -${this.question.title}`,
+            msg: `获取题目详情 成功 -${this.question.title}`,
           });
         });
       }, 200);
@@ -144,7 +144,7 @@ export default {
     getQuestionPage: _throttle(function (val) {
       if (val <= 0)
         this.$public.emit("notice", {
-          msg: "❌ 从 Leetcode 获取题目失败:页号非法",
+          msg: "获取题目 失败: 页号非法",
           type: "error",
           closefunc: () => {
             this.clickable = true;
@@ -153,7 +153,7 @@ export default {
       else if (val <= this.totalPages && val != null && this.clickable) {
         this.$public.emit("notice", {
           type: "loading",
-          msg: "🎈 正在从 Leetcode 获取题目...",
+          msg: "🎈 正在从获取题目...",
         });
         this.clickable = false;
         this.$leetcode
@@ -168,12 +168,12 @@ export default {
             this.clickable = true;
             this.$public.emit("notice", {
               type: "success",
-              msg: "✔ 从 Leetcode 获取题目成功",
+              msg: "获取题目 成功",
             });
           });
       } else
         this.$public.emit("notice", {
-          msg: "❌ 从 Leetcode 获取题目失败:页号非法",
+          msg: "获取题目 失败: 页号非法",
           type: "error",
           closefunc: () => {
             this.clickable = true;

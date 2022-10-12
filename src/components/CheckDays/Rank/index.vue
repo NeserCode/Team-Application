@@ -105,11 +105,11 @@ export default {
   z-index: 2001;
 }
 .mainContainer {
-  @apply relative py-4 my-2;
+  @apply relative py-4 my-2 max-w-xs;
 }
 
 .card {
-  @apply flex-col px-2;
+  @apply flex-col px-4;
 }
 .time {
   @apply text-xs font-bold opacity-60;

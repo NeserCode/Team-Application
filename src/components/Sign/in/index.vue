@@ -217,7 +217,7 @@ export default {
 
 .iContainer {
   @apply relative flex flex-col justify-center items-center w-1/3 h-full mx-auto pt-16 pb-12
-    mt-32 rounded-2xl shadow overflow-hidden;
+    mt-32 rounded shadow overflow-hidden;
   min-width: 650px;
 }
 
@@ -226,11 +226,11 @@ export default {
 }
 
 .btnContainer {
-  @apply flex w-1/3 justify-between;
+  @apply flex flex-col w-1/3 justify-between;
 }
 
 .signBar {
-  @apply absolute bottom-0 rounded-full inline-block bg-blue-400 w-full h-1.5 transition-all;
+  @apply absolute bottom-0 rounded-b-full inline-block bg-blue-400 w-full h-1.5 transition-all;
 }
 .signBar.loading {
   animation: loading infinite 1.5s ease-in-out;
@@ -250,8 +250,12 @@ button:focus {
   @apply outline-none;
 }
 button:focus::before {
-  content: ">";
+  content: "·";
   @apply inline-block pr-1 font-semibold;
+}
+
+.el-icon-loading {
+  @apply inline;
 }
 
 @media (prefers-color-scheme: dark) {

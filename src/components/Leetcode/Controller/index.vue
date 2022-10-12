@@ -94,7 +94,7 @@ export default {
     initLeetcodeAccount: function () {
       this.$public.emit("notice", {
         type: "loading",
-        msg: `🕹 正在尝试登入 Leetcode.cn(zh-CN)`,
+        msg: `🕹 正在尝试登入`,
       });
       this.$leetcode
         .getUserStatus()
@@ -111,7 +111,7 @@ export default {
           if (response.data.data.userStatus.isSignedIn)
             this.$public.emit("notice", {
               type: "success",
-              msg: `已登入 Leetcode.cn(zh-CN)`,
+              msg: `已成功登入`,
             });
           else
             this.$public.emit("notice", {

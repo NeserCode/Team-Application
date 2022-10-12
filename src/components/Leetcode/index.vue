@@ -32,6 +32,7 @@ export default {
 
 <style scoped lang="postcss">
 .leetcode {
-  @apply w-full h-full;
+  @apply w-full h-full
+  max-w-5xl;
 }
 </style>

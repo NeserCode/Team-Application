@@ -26,7 +26,7 @@ export default {
 
 <style scoped lang="postcss">
 .code {
-  @apply w-full h-auto py-4;
+  @apply inline-flex justify-center w-full h-auto py-4;
 }
 
 @media (prefers-color-scheme: dark) {
