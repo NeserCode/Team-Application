@@ -153,7 +153,7 @@ export default {
       else if (val <= this.totalPages && val != null && this.clickable) {
         this.$public.emit("notice", {
           type: "loading",
-          msg: "🎈 正在从获取题目...",
+          msg: "🎈 正在获取题目...",
         });
         this.clickable = false;
         this.$leetcode

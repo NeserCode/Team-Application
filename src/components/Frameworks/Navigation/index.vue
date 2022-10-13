@@ -137,10 +137,10 @@ export default {
   @apply absolute flex flex-col left-8 top-2 w-auto h-full text-left;
 }
 .netease .name {
-  @apply font-semibold inline-block;
+  @apply font-semibold inline-block overflow-ellipsis overflow-hidden whitespace-nowrap max-w-xs;
 }
 .netease .namespace {
-  @apply leading-4 font-thin text-sm;
+  @apply leading-4 font-thin text-sm overflow-ellipsis overflow-hidden whitespace-nowrap max-w-xs;
 }
 
 @media (prefers-color-scheme: dark) {
