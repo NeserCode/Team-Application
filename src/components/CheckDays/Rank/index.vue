@@ -24,11 +24,6 @@ export default {
   components: { Card },
   data() {
     return {
-      authorExample: {
-        nickname: "Jake Roylor",
-        avatar: "http://localhost/Images/q2.jpg",
-        introduce: "One to Be Success, you wanna a thing, then do it.",
-      },
       isLoading: true,
       rankers: [],
     };
