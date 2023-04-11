@@ -1,177 +1,112 @@
 <template>
-  <div
-    :class="['navigation', getUserStatus() == 'NeserCode' ? 'skin' : 'noskin']"
-  >
-    <UserAvatar
-      class="avatar"
-      @click="handleOpenUserArea"
-      v-show="isLogined"
-      :isDot="false"
-    />
-    <div class="netease">
-      <span class="name">{{
-        "🎧 " + (NeteaseMusic.name ?? "NeteaseMusic")
-      }}</span>
-      <span class="namespace"
-        ><span class="author">{{ NeteaseMusic.artist }}</span
-        >&nbsp;<span class="album">{{ NeteaseMusic.album }}</span>
-        <span class="tip" v-if="!NeteaseMusic.name">网易云音乐集成</span>
-      </span>
-    </div>
-    <router-link
-      class="areaLink"
-      tabindex="-1"
-      :ondragstart="handleKeepDrag"
-      to="/home"
-      >主页</router-link
-    >
-    <el-divider direction="vertical"></el-divider>
-    <router-link
-      class="areaLink"
-      tabindex="-1"
-      :ondragstart="handleKeepDrag"
-      to="/code"
-      >代码</router-link
-    >
-    <el-divider direction="vertical"></el-divider>
-    <router-link
-      class="areaLink"
-      tabindex="-1"
-      :ondragstart="handleKeepDrag"
-      to="/setting"
-      >设置</router-link
-    >
-    <el-divider direction="vertical" v-show="!isLogined"></el-divider>
-    <router-link
-      class="areaLink"
-      v-show="!isLogined"
-      :ondragstart="handleKeepDrag"
-      to="/userArea"
-      tabindex="-1"
-      >{{ signText }}</router-link
-    >
-  </div>
+	<div class="navigation">
+		<UserAvatar
+			class="avatar"
+			@click="handleOpenUserArea"
+			v-show="isLogined"
+			:isDot="false"
+		/>
+		<router-link
+			class="areaLink"
+			tabindex="-1"
+			:ondragstart="handleKeepDrag"
+			to="/home"
+			>主页</router-link
+		>
+		<router-link
+			class="areaLink"
+			tabindex="-1"
+			:ondragstart="handleKeepDrag"
+			to="/code"
+			>代码</router-link
+		>
+		<router-link
+			class="areaLink"
+			tabindex="-1"
+			:ondragstart="handleKeepDrag"
+			to="/setting"
+			>设置</router-link
+		>
+		<router-link
+			class="areaLink"
+			v-show="!isLogined"
+			:ondragstart="handleKeepDrag"
+			to="/userArea"
+			tabindex="-1"
+			>{{ signText }}</router-link
+		>
+	</div>
 </template>
 
 <script>
 // @ is an alias to /src
-import UserAvatar from "@/components/UserAssets/Avatar/index.vue";
+import UserAvatar from "@/components/UserAssets/Avatar/index.vue"
 
 export default {
-  name: "Navigation",
-  components: {
-    UserAvatar,
-  },
+	name: "Navigation",
+	components: {
+		UserAvatar,
+	},
 
-  data() {
-    return {
-      isLogined: false,
-      signText: "登录",
-      NeteaseMusic: {},
-    };
-  },
-  beforeCreate() {
-    this.$public.on("update-main-user-info-upto-app", () => {
-      this.isLogined = true;
-    });
-    this.$public.on("clear-user-sign-status", () => {
-      this.isLogined = false;
-    });
-    this.$public.on("change-login-or-register-view", (bool) => {
-      this.signText = bool ? "登录" : "注册";
-    });
-    this.$public.on("Netease-music-switch", (s) => {
-      this.NeteaseMusic = s;
-      console.log(s);
-    });
-  },
-  mounted() {
-    this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null));
-  },
-  methods: {
-    handleOpenUserArea: function () {
-      this.$router.push({ path: "/userArea" });
-    },
-    handleKeepDrag: () => false,
-    getUserStatus: () => localStorage.getItem("username"),
-  },
-};
+	data() {
+		return {
+			isLogined: false,
+			signText: "登录",
+		}
+	},
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", () => {
+			this.isLogined = true
+		})
+		this.$public.on("clear-user-sign-status", () => {
+			this.isLogined = false
+		})
+		this.$public.on("change-login-or-register-view", (bool) => {
+			this.signText = bool ? "登录" : "注册"
+		})
+	},
+	mounted() {
+		this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null))
+	},
+	methods: {
+		handleOpenUserArea: function () {
+			this.$router.push({ path: "/userArea" })
+		},
+		handleKeepDrag: () => false,
+	},
+}
 </script>
 
 <style scoped lang="postcss">
 .navigation {
-  @apply flex justify-center items-center h-16 text-center text-lg fixed top-8 border-b;
-  width: calc(100% - 2px);
-}
-.navigation.skin::before {
-  content: "";
-  @apply absolute left-0 top-0 h-16 w-1/2 opacity-20;
-  background: linear-gradient(to right, orange, green, cyan, lightblue);
-  z-index: -1;
-  animation: colorfy infinite 12s;
-}
-.navigation.skin::after {
-  content: "";
-  @apply absolute left-1/2 top-0 h-16 w-1/2 opacity-20;
-  background: linear-gradient(to left, orange, green, cyan, lightblue);
-  z-index: -1;
-  animation: colorfy infinite 12s;
+	@apply flex justify-center items-center h-16 text-center text-lg fixed top-12 left-1/2 transform -translate-x-1/2 z-10
+  border-2 rounded-full max-w-3xl border-gray-300 dark:border-gray-600;
+	width: calc(100% - 8rem);
 }
 .navigation .areaLink {
-  @apply font-thin inline-block mx-2;
-}
-.navigation .areaLink:hover {
-  transform: translateY(-8%);
-  transition: all ease-in-out 0.2s;
+	@apply inline-block mx-2 px-3 py-0.5 rounded
+  hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600
+  transition-all ease-in-out;
 }
 
-.router-link-active.router-link-exact-active {
-  @apply px-4 rounded-3xl border;
+.areaLink.router-link-exact-active {
+	@apply bg-green-400 text-gray-100 dark:bg-green-600 dark:text-gray-300
+  hover:text-gray-100 hover:bg-green-400
+  dark:hover:bg-green-600;
 }
 
 .avatar {
-  @apply w-11 h-11 absolute right-4;
+	@apply w-11 h-11 absolute left-2;
 }
+</style>
 
-.netease {
-  @apply absolute flex flex-col left-8 top-2 w-auto h-full text-left;
-}
-.netease .name {
-  @apply font-semibold inline-block overflow-ellipsis overflow-hidden whitespace-nowrap max-w-xs;
-}
-.netease .namespace {
-  @apply leading-4 font-thin text-sm overflow-ellipsis overflow-hidden whitespace-nowrap max-w-xs;
-}
-
+<style lang="postcss">
 @media (prefers-color-scheme: dark) {
-  .router-link-active.router-link-exact-active {
-    @apply bg-gray-600 border-gray-700;
-  }
-  :deep(.el-page-header__content) {
-    @apply text-gray-200;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .router-link-active.router-link-exact-active {
-    @apply bg-gray-200 border-gray-100;
-  }
-  :deep(.el-page-header__content) {
-    @apply text-gray-800;
-  }
-}
-
-@keyframes colorfy {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-
-  50% {
-    filter: hue-rotate(360deg);
-  }
-
-  100% {
-    filter: hue-rotate(0deg);
-  }
+	.navigation {
+		@apply border-gray-700;
+	}
+	.navigation .areaLink {
+		@apply hover:text-gray-300 hover:bg-gray-700;
+	}
 }
 </style>

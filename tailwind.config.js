@@ -807,6 +807,7 @@ module.exports = {
     },
   },
   variantOrder: [
+    'dark',
     'first',
     'last',
     'odd',
