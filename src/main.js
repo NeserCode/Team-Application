@@ -21,6 +21,7 @@ app.config.globalProperties.$utils = utils
 app.config.globalProperties.$conf = appConfig
 app.config.globalProperties.$leetcode = leetcode
 app.config.globalProperties.$public = new mitt()
+app.config.globalProperties.$router = router
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

@@ -130,6 +130,9 @@ export default {
 			this.$refs.opDomain.initOption(appInfo.domain)
 			this.$refs.opPort.initOption(appInfo.port)
 		})
+		this.$public.on("update-color-mode", (mode) => {
+			this.appTheme.value = mode
+		})
 	},
 	mounted() {},
 	methods: {

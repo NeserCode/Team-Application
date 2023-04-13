@@ -10,7 +10,6 @@
 			<span class="color-mode" @click="switchColorMode">
 				<el-icon v-if="isMatchColorMode('light')"><Sunny /></el-icon>
 				<el-icon v-else-if="isMatchColorMode('dark')"><Moon /></el-icon>
-				<el-icon v-else-if="isMatchColorMode('system')"><Setting /></el-icon>
 			</span>
 		</div>
 		<router-link
@@ -80,49 +79,40 @@ export default {
 	},
 	methods: {
 		initColorMode: function () {
-			if (window.matchMedia("(prefers-color-scheme: light)").matches)
+			if (window.matchMedia("(prefers-color-scheme: light)").matches) {
 				document.querySelector("html").classList.remove("dark")
-			else document.querySelector("html").classList.add("dark")
+				this.colorMode = "light"
+			} else {
+				document.querySelector("html").classList.add("dark")
+				this.colorMode = "dark"
+			}
+
+			console.log(
+				this.colorMode,
+				window.matchMedia("(prefers-color-scheme: light)").matches
+			)
 		},
 		handleOpenUserArea: function () {
 			this.$router.push({ path: "/userArea" })
 		},
 		handleKeepDrag: () => false,
 		isMatchColorMode: function (mode) {
+			if (this.$router.currentRoute.value.path === "/setting") return false
 			if (mode && this) return this.colorMode === mode
 			return false
 		},
 		switchColorMode: function () {
 			this.$conf.getConfPromise().then((data) => {
-				switch (this.colorMode) {
-					case "light": {
-						data.data.userSetting.colorSchemeMode = "light"
-						ipcRenderer.send("color-schemeMode-light")
-						break
-					}
-					case "dark": {
-						data.data.userSetting.colorSchemeMode = "dark"
-						ipcRenderer.send("color-schemeMode-dark")
-						break
-					}
-					case "system": {
-						data.data.userSetting.colorSchemeMode = "system"
-						ipcRenderer.send("color-schemeMode-system")
-						break
-					}
-					default:
-						break
-				}
-				if (this.colorMode === "light") {
-					this.colorMode = "dark"
-				} else if (this.colorMode === "dark") {
-					this.colorMode = "system"
-				} else if (this.colorMode === "system") {
-					this.colorMode = "light"
-				}
+				ipcRenderer.send(
+					`color-schemeMode-${this.colorMode === "light" ? "dark" : "light"}`
+				)
+
+				data.data.userSetting.colorSchemeMode = this.colorMode
 				this.handleStorgeSetting(data.data, () => {
-					this.initColorMode()
-					console.log(data.data.userSetting.colorSchemeMode)
+					setTimeout(() => {
+						this.initColorMode()
+						this.$public.emit("update-color-mode", this.colorMode)
+					}, 0)
 				})
 			})
 		},
