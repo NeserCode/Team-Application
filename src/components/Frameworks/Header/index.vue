@@ -7,42 +7,12 @@
 		<div class="headOpArea">
 			<div class="minimize option" @click="handleMinimizeWindow">
 				<a>
-					<svg
-						t="1634436877401"
-						class="icon"
-						viewBox="0 0 1024 1024"
-						version="1.1"
-						xmlns="http://www.w3.org/2000/svg"
-						p-id="3418"
-						:width="headIconSize"
-						:height="headIconSize"
-					>
-						<path
-							d="M96 768h832c17.673 0 32 14.327 32 32s-14.327 32-32 32H96c-17.673 0-32-14.327-32-32s14.327-32 32-32z"
-							p-id="3419"
-							:fill="headIconFill.normal"
-						/>
-					</svg>
+					<el-icon><Minus /></el-icon>
 				</a>
 			</div>
 			<div class="maximize option" @click="handleMaximizeWindow">
 				<a v-show="!isAppFullScreen">
-					<svg
-						t="1634294452726"
-						class="icon"
-						viewBox="0 0 1024 1024"
-						version="1.1"
-						xmlns="http://www.w3.org/2000/svg"
-						p-id="6288"
-						:width="headIconSize"
-						:height="headIconSize"
-					>
-						<path
-							d="M339.432 63.594H99.944c-19.851 0-36 16.149-36 36v239.488c0 17.673 14.327 32 32 32s32-14.327 32-32V127.594h211.487c17.673 0 32-14.327 32-32 0.001-17.673-14.326-32-31.999-32zM339.432 895.503H127.944V684.016c0-17.673-14.327-32-32-32s-32 14.327-32 32v239.487c0 19.851 16.149 36 36 36h239.487c17.673 0 32-14.327 32-32s-14.326-32-31.999-32zM928 651.915c-17.673 0-32 14.327-32 32v211.487H684.513c-17.673 0-32 14.327-32 32s14.327 32 32 32H924c19.851 0 36-16.149 36-36V683.915c0-17.673-14.327-32-32-32zM924 64.151H684.513c-17.673 0-32 14.327-32 32s14.327 32 32 32H896v211.488c0 17.673 14.327 32 32 32s32-14.327 32-32V100.151c0-19.851-16.149-36-36-36z"
-							:fill="headIconFill.normal"
-							p-id="6289"
-						/>
-					</svg>
+					<el-icon><FullScreen /></el-icon>
 				</a>
 				<a v-show="isAppFullScreen">
 					<svg
@@ -68,22 +38,7 @@
 				@click="handleCloseWindow(isSettingCloseDirect)"
 			>
 				<a>
-					<svg
-						t="1634297261959"
-						class="icon"
-						viewBox="0 0 1024 1024"
-						version="1.1"
-						xmlns="http://www.w3.org/2000/svg"
-						p-id="1584"
-						:width="headIconSize"
-						:height="headIconSize"
-					>
-						<path
-							d="M544.448 499.2l284.576-284.576a32 32 0 0 0-45.248-45.248L499.2 453.952 214.624 169.376a32 32 0 0 0-45.248 45.248l284.576 284.576-284.576 284.576a32 32 0 0 0 45.248 45.248l284.576-284.576 284.576 284.576a31.904 31.904 0 0 0 45.248 0 32 32 0 0 0 0-45.248L544.448 499.2z"
-							p-id="1585"
-							:fill="headIconFill.normal"
-						/>
-					</svg>
+					<el-icon><Close /></el-icon>
 				</a>
 			</div>
 		</div>
@@ -167,7 +122,7 @@ export default {
 	@apply float-left;
 }
 .headOpArea .option a {
-	@apply inline-block rounded-lg w-full h-full px-3 py-2 cursor-pointer mx-px;
+	@apply inline-flex justify-center items-center rounded-lg w-full h-full px-3 py-2 cursor-pointer mx-px;
 }
 .headOpArea .option a:hover {
 	@apply bg-opacity-20 bg-black dark:bg-opacity-20 dark:bg-white;

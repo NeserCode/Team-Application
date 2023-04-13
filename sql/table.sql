@@ -48,8 +48,6 @@ create table team_leetcode_submit(
     FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
 );
 
--- https://img2.woyaogexing.com/2020/12/10/7d32ba291a204ddbbe24ceb2551c922b!400x400.jpeg
-
 
 
 

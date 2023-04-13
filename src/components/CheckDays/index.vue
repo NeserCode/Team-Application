@@ -239,12 +239,14 @@ export default {
 	@apply w-full h-full;
 }
 .title {
-	@apply sticky inline-block w-full h-full top-0 mx-4 px-4 py-4 text-lg font-bold text-left font-mono;
+	@apply sticky inline-block w-full h-full top-0 px-4 py-4 text-lg font-bold text-left font-mono
+	border-2 rounded-t-sm border-gray-200 dark:border-gray-600;
 	z-index: 2001;
 }
 
 .checkDays {
-	@apply flex flex-wrap justify-center text-left;
+	@apply flex flex-wrap justify-center text-left py-4 border-2 border-t-0
+	border-gray-200 dark:border-gray-600;
 }
 .checkDays span.notSignSpan {
 	@apply inline-block text-base font-semibold;
@@ -259,11 +261,11 @@ export default {
 }
 .day {
 	@apply inline-flex w-8 h-8 rounded justify-center items-center px-2 py-1 border-2
-  mx-2 my-1
+  mx-2 my-1 border-gray-300 dark:border-gray-600
   text-base font-semibold transition border-transparent;
 }
 .today {
-	@apply border-blue-500;
+	@apply border-blue-500 dark:border-green-300;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -274,10 +276,10 @@ export default {
 		@apply bg-gray-600;
 	}
 	.day {
-		@apply bg-gray-600;
+		@apply bg-gray-800;
 	}
 	.day.checked {
-		@apply bg-gray-800;
+		@apply bg-gray-600;
 	}
 }
 

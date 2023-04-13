@@ -6,6 +6,13 @@
 			v-show="isLogined"
 			:isDot="false"
 		/>
+		<div class="shiftOperations">
+			<span class="color-mode" @click="switchColorMode">
+				<el-icon v-if="isMatchColorMode('light')"><Sunny /></el-icon>
+				<el-icon v-else-if="isMatchColorMode('dark')"><Moon /></el-icon>
+				<el-icon v-else-if="isMatchColorMode('system')"><Setting /></el-icon>
+			</span>
+		</div>
 		<router-link
 			class="areaLink"
 			tabindex="-1"
@@ -41,6 +48,7 @@
 <script>
 // @ is an alias to /src
 import UserAvatar from "@/components/UserAssets/Avatar/index.vue"
+const { ipcRenderer } = window.require("electron")
 
 export default {
 	name: "Navigation",
@@ -51,6 +59,7 @@ export default {
 	data() {
 		return {
 			isLogined: false,
+			colorMode: "light",
 			signText: "登录",
 		}
 	},
@@ -67,12 +76,64 @@ export default {
 	},
 	mounted() {
 		this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null))
+		this.initColorMode()
 	},
 	methods: {
+		initColorMode: function () {
+			if (window.matchMedia("(prefers-color-scheme: light)").matches)
+				document.querySelector("html").classList.remove("dark")
+			else document.querySelector("html").classList.add("dark")
+		},
 		handleOpenUserArea: function () {
 			this.$router.push({ path: "/userArea" })
 		},
 		handleKeepDrag: () => false,
+		isMatchColorMode: function (mode) {
+			if (mode && this) return this.colorMode === mode
+			return false
+		},
+		switchColorMode: function () {
+			this.$conf.getConfPromise().then((data) => {
+				switch (this.colorMode) {
+					case "light": {
+						data.data.userSetting.colorSchemeMode = "light"
+						ipcRenderer.send("color-schemeMode-light")
+						break
+					}
+					case "dark": {
+						data.data.userSetting.colorSchemeMode = "dark"
+						ipcRenderer.send("color-schemeMode-dark")
+						break
+					}
+					case "system": {
+						data.data.userSetting.colorSchemeMode = "system"
+						ipcRenderer.send("color-schemeMode-system")
+						break
+					}
+					default:
+						break
+				}
+				if (this.colorMode === "light") {
+					this.colorMode = "dark"
+				} else if (this.colorMode === "dark") {
+					this.colorMode = "system"
+				} else if (this.colorMode === "system") {
+					this.colorMode = "light"
+				}
+				this.handleStorgeSetting(data.data, () => {
+					this.initColorMode()
+					console.log(data.data.userSetting.colorSchemeMode)
+				})
+			})
+		},
+		handleStorgeSetting: function (setting, cb) {
+			this.$conf.updateLocalConfig(setting, (err) => {
+				if (err) {
+					console.log(err)
+				}
+			})
+			cb && cb()
+		},
 	},
 }
 </script>
@@ -97,6 +158,23 @@ export default {
 
 .avatar {
 	@apply w-11 h-11 absolute left-2;
+}
+
+.shiftOperations {
+	@apply absolute right-4 inline-flex items-center;
+}
+
+.shiftOperations .color-mode {
+	@apply inline-flex items-center justify-center w-8 h-8 p-1.5
+	hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full cursor-pointer transition-all;
+}
+
+.el-icon {
+	@apply inline-flex items-center justify-center w-full h-full;
+}
+
+.el-icon svg {
+	@apply inline-block w-full h-full;
 }
 </style>
 

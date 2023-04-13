@@ -84,7 +84,7 @@ export default {
 					{
 						id: 0,
 						value: "light",
-						choice: "☀ 日间主题",
+						choice: "日间主题",
 						fn: () => {
 							this.handleChangeAppTheme("light")
 						},
@@ -92,7 +92,7 @@ export default {
 					{
 						id: 1,
 						value: "dark",
-						choice: "🌙 夜间主题",
+						choice: "夜间主题",
 						fn: () => {
 							this.handleChangeAppTheme("dark")
 						},
@@ -100,7 +100,7 @@ export default {
 					{
 						id: 2,
 						value: "system",
-						choice: "❤ 跟随系统",
+						choice: "跟随系统",
 						fn: () => {
 							this.handleChangeAppTheme("system")
 						},
