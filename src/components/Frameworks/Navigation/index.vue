@@ -4,6 +4,7 @@
 			class="avatar"
 			@click="handleOpenUserArea"
 			v-show="isLogined"
+			:image="avatarUrl"
 			:isDot="false"
 		/>
 		<div class="shiftOperations">
@@ -60,6 +61,7 @@ export default {
 			isLogined: false,
 			colorMode: "light",
 			signText: "登录",
+			avatarUrl: "",
 		}
 	},
 	beforeCreate() {
@@ -81,21 +83,25 @@ export default {
 			localStorage.getItem("checkKey") == (undefined || null)
 		)
 		this.initColorMode()
+		this.initUserAvatar()
 	},
 	methods: {
 		initColorMode: function () {
-			if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+			this.colorMode =
+				localStorage.getItem("color-scheme-mode") ||
+				(window.matchMedia("(prefers-color-scheme: dark)").matches
+					? "dark"
+					: "light")
+			ipcRenderer.send(`color-schemeMode-${this.colorMode}`)
+			this.$public.emit("update-color-mode", this.colorMode)
+
+			if (this.colorMode === "light") {
 				document.querySelector("html").classList.remove("dark")
-				this.colorMode = "light"
 			} else {
 				document.querySelector("html").classList.add("dark")
-				this.colorMode = "dark"
 			}
 
-			console.log(
-				this.colorMode,
-				window.matchMedia("(prefers-color-scheme: light)").matches
-			)
+			console.log("colorMode", this.colorMode)
 		},
 		handleOpenUserArea: function () {
 			this.$router.push({ path: "/userArea" })
@@ -109,17 +115,15 @@ export default {
 		},
 		switchColorMode: function () {
 			this.$conf.getConfPromise().then((data) => {
-				ipcRenderer.send(
-					`color-schemeMode-${
-						this.colorMode === "light" ? "dark" : "light"
-					}`
-				)
-
 				data.data.userSetting.colorSchemeMode = this.colorMode
+				localStorage.setItem(
+					"color-scheme-mode",
+					this.colorMode === "light" ? "dark" : "light"
+				)
 				this.handleStorgeSetting(data.data, () => {
+					console.log(data.data)
 					setTimeout(() => {
 						this.initColorMode()
-						this.$public.emit("update-color-mode", this.colorMode)
 					}, 0)
 				})
 			})
@@ -131,6 +135,11 @@ export default {
 				}
 			})
 			cb && cb()
+		},
+		initUserAvatar: function () {
+			this.$conf.getConfPromise().then((data) => {
+				this.avatarUrl = data.data.userInfo.avatar
+			})
 		},
 	},
 }

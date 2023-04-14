@@ -1,5 +1,5 @@
 <template>
-	<div class="userAvatar">
+	<div class="userAvatar" v-if="userImage || image">
 		<el-badge :is-dot="isDot">
 			<div :class="{ Round: isUserImageRound, avatarSkin: true }">
 				<img
@@ -38,36 +38,13 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on("app-mounted", (setting) => {
-			this.userImage =
-				setting.userInfo.avatar ??
-				"https://github.githubassets.com/favicons/favicon.svg"
-			localStorage.setItem("avatar", this.userImage)
-		})
 		this.$public.on("update-avatar", (avatar) => {
-			this.userImage =
-				avatar ?? "https://github.githubassets.com/favicons/favicon.svg"
-			localStorage.setItem("avatar", this.userImage)
-		})
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			this.userImage =
-				detail.avatar ?? "https://github.githubassets.com/favicons/favicon.svg"
-			localStorage.setItem("avatar", this.userImage)
+			this.userImage = avatar ?? localStorage.getItem("avatar") ?? null
 		})
 	},
-	mounted() {
-		this.userImage = localStorage.getItem("avatar")
-		this.initImage()
-	},
+	mounted() {},
 	methods: {
 		keepDragPicture: () => false,
-		initImage: function () {
-			let w = window.getComputedStyle(this.$refs.image).width,
-				h = window.getComputedStyle(this.$refs.image).height
-			if (w > 2 && h > 2)
-				if (w > h) this.$refs.image.style.height = w
-				else this.$refs.image.style.width = h
-		},
 	},
 }
 </script>

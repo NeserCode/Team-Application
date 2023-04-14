@@ -6,51 +6,31 @@
 				<el-icon :size="18"><Refresh /></el-icon>
 			</span>
 		</h1>
-		<el-pagination
-			v-if="total"
-			v-model:currentPage="submitPage"
-			:total="total"
-			background
-			@current-change="getSubmitArr"
-			layout="prev, pager, next, total, jumper"
-			v-loading="loading"
-		></el-pagination
-		><br />
-		<el-table :data="subs" border :default-sort="{ order: sortByCount }">
-			<el-table-column
-				prop="timeStamp"
-				label="时间"
-				sortable
-				align="center"
-			>
-				<template #default="scope">
-					{{
-						new Date(parseInt(scope.row.timeStamp)).toLocaleString()
-					}}
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="leetName"
-				label="提交名"
-				sortable
-				align="center"
-			/>
-			<el-table-column prop="submitId" label="提交ID" align="center" />
-			<el-table-column label="操作" align="center">
-				<template #default="scope">
-					<el-link
-						type="primary"
-						@click="
-							getSubmissionDetail(
-								scope.row.submitId,
-								scope.row.userid
-							)
-						"
-						>查看</el-link
-					>
-				</template>
-			</el-table-column>
-		</el-table>
+		<!-- use div acheve a list to show subs data, do not use el-table -->
+		<div v-if="subs.length" class="sub-list">
+			<div v-for="item in subs" :key="item.submitId" class="sub-item">
+				<div class="sub-item-content">
+					<span class="no-wrap">
+						<span
+							class="id"
+							@click="
+								getSubmissionDetail(item.submitId, item.userid)
+							"
+							>{{ item.submitId }}</span
+						>
+						<span class="leetName">{{
+							item.leetName + "a long fix"
+						}}</span>
+					</span>
+					<span class="time">{{
+						getComputedTime(item.timeStamp)
+					}}</span>
+				</div>
+			</div>
+		</div>
+		<div v-else class="empty">
+			<el-empty description="暂无提交记录"></el-empty>
+		</div>
 		<Detail
 			class="detail"
 			ref="detail"
@@ -73,6 +53,7 @@ export default {
 			loading: true,
 			loadingClass: "",
 			subs: [],
+			submissionStatus: {},
 			submissionDetail: {},
 			submitPage: 1,
 			pageLimit: 10,
@@ -98,10 +79,11 @@ export default {
 				.getSubmissionStatus(`${id}`)
 				.then((result) => {
 					const { submissionDetail } = result.data.data
+					console.log(submissionDetail, result)
 					if (!submissionDetail) {
 						this.$public.emit("notice", {
 							type: "error",
-							msg: `❌ 检测到未登入 LeetCode 无法获取题解详情`,
+							msg: `无法获取题解详情 ERRCODE: -3`,
 						})
 						return 0
 					}
@@ -109,13 +91,13 @@ export default {
 					this.submissionDetail = submissionDetail
 					this.$public.emit("notice", {
 						type: "success",
-						msg: `✔ 提交返回数据`,
+						msg: `提交返回数据`,
 					})
 				})
-				.catch((e) => {
+				.catch(() => {
 					this.$public.emit("notice", {
 						type: "error",
-						msg: `获取提交返回数据失败 ${e.message}`,
+						msg: `获取提交返回数据失败 ERRCODE: -2`,
 					})
 				})
 		}, 300),
@@ -134,13 +116,18 @@ export default {
 						this.total = result.data.all
 						this.submitPage = val
 						this.loading = false
+						console.log(this.subs)
+
 						this.$public.emit("notice", {
 							type: "success",
-							msg: "✔ 获取提交列表",
+							msg: "获取提交列表",
 						})
 					})
-					.catch((err) => {
-						console.log(err.message)
+					.catch(() => {
+						this.$public.emit("notice", {
+							type: "error",
+							msg: `获取提交返回数据失败 ERRCODE: -2`,
+						})
 					})
 			})
 		}, 400),
@@ -169,10 +156,26 @@ export default {
 				},
 			})
 		}, 500),
-		getQuestionPage: function () {},
 		initTables: function () {
 			this.submitPage = 1
 			this.getSubmitArr()
+		},
+		getComputedTime: function (timestamp) {
+			function addzero(num) {
+				return num < 10 ? "0" + num : num
+			}
+
+			const date = new Date(parseInt(timestamp))
+			const Y = date.getFullYear() + "-"
+			const M =
+				(date.getMonth() + 1 < 10
+					? "0" + (date.getMonth() + 1)
+					: date.getMonth() + 1) + "-"
+			const D = addzero(date.getDate()) + " "
+			const h = addzero(date.getHours()) + ":"
+			const m = addzero(date.getMinutes()) + ":"
+			const s = addzero(date.getSeconds())
+			return Y + M + D + h + m + s
 		},
 	},
 }
@@ -190,8 +193,43 @@ h1 {
 h1 span {
 	@apply flex items-center py-2;
 }
-.el-pagination {
-	@apply inline-block w-full pt-4;
+
+.sub-list {
+	@apply inline-flex justify-center flex-col w-full flex-grow my-4;
+}
+
+.sub-list .sub-item {
+	@apply flex items-center justify-between w-full my-1 px-4 py-2 text-base border-2 rounded-lg
+	border-gray-200 dark:border-gray-700
+	hover:border-gray-300 dark:hover:border-gray-500
+	hover:shadow
+	hover:bg-gray-50 dark:hover:bg-gray-600 transition-all;
+}
+
+.sub-list .sub-item-content {
+	@apply inline-flex justify-between w-full;
+}
+
+.sub-item-content .no-wrap {
+	@apply truncate;
+}
+
+.sub-item-content .id {
+	@apply inline-flex items-center justify-center pr-2 border-r-2
+	border-gray-200 dark:border-gray-700
+	transition-all cursor-pointer;
+}
+.sub-item:hover .id {
+	@apply border-gray-300 dark:border-gray-500;
+}
+
+.sub-item-content .leetName {
+	@apply inline-flex items-center mx-2;
+}
+
+.sub-item-content .time {
+	@apply inline-flex items-center
+	whitespace-nowrap;
 }
 
 .op {

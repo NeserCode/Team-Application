@@ -33,7 +33,7 @@ var sqlMap = {
         checkDay: {
             check: 'insert into team_user_checkday(userid,appKey,timestamp) values (?,?,?)',
             get: 'select * from team_user_checkday where userid = ?',
-            all: 'select * from team_user_checkday where timeStamp > ?'
+            all: 'select * from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC'
         },
         get: {
             uid: "select id from team_user_info where username = ?",

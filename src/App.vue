@@ -1,10 +1,16 @@
 <template>
 	<div id="AppView">
 		<Controller />
-		<appViewHead :isSettingCloseDirect="needs.isSettingCloseDirect" :title="appTitle"></appViewHead>
+		<appViewHead
+			:isSettingCloseDirect="needs.isSettingCloseDirect"
+			:title="appTitle"
+		></appViewHead>
 		<Navigation />
 		<AppMainContainer />
-		<appViewFoot :status="statusReal.status" :statusText="statusReal.text"></appViewFoot>
+		<appViewFoot
+			:status="statusReal.status"
+			:statusText="statusReal.text"
+		></appViewFoot>
 	</div>
 </template>
 
@@ -75,19 +81,6 @@ export default {
 			if (this.needs.setting.userSetting.alwaysOnTop)
 				ipcRenderer.send("setting-always-on-top")
 			else ipcRenderer.send("setting-always-not-top")
-
-			if (this.needs.setting.userSetting.colorSchemeMode == "light") {
-				ipcRenderer.send("color-schemeMode-light")
-				document.querySelector("html").classList.remove("dark")
-			} else if (this.needs.setting.userSetting.colorSchemeMode == "dark") {
-				ipcRenderer.send("color-schemeMode-dark")
-				document.querySelector("html").classList.add("dark")
-			} else ipcRenderer.send("color-schemeMode-system")
-
-			const themeMedia = window.matchMedia("(prefers-color-scheme: light)")
-			if (themeMedia.matches)
-				document.querySelector("html").classList.remove("dark")
-			else document.querySelector("html").classList.add("dark")
 		},
 
 		initApp: function () {
@@ -111,7 +104,8 @@ export default {
 	z-index: 2009;
 }
 
-.appViewHead {}
+.appViewHead {
+}
 
 :deep().el-message {
 	z-index: 10000;

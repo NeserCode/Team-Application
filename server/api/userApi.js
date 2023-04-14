@@ -195,7 +195,7 @@ router.post('/checkDay/all', (req, res) => {
     })
 })
 
-// leetcode提交id | username,leetName,a ppKey,submitId,submitDay,submitMonth
+// leetcode提交id | username,leetName,appKey,submitId,submitDay,submitMonth
 
 router.post('/leetcode/add', (req, res) => {
     let sql = $sql.user.leetcode.add
