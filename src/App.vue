@@ -1,16 +1,10 @@
 <template>
 	<div id="AppView">
 		<Controller />
-		<appViewHead
-			:isSettingCloseDirect="needs.isSettingCloseDirect"
-			:title="appTitle"
-		></appViewHead>
+		<appViewHead :isSettingCloseDirect="needs.isSettingCloseDirect" :title="appTitle"></appViewHead>
 		<Navigation />
 		<AppMainContainer />
-		<appViewFoot
-			:status="statusReal.status"
-			:statusText="statusReal.text"
-		></appViewFoot>
+		<appViewFoot :status="statusReal.status" :statusText="statusReal.text"></appViewFoot>
 	</div>
 </template>
 
@@ -116,8 +110,8 @@ export default {
 .navigation {
 	z-index: 2009;
 }
-.appViewHead {
-}
+
+.appViewHead {}
 
 :deep().el-message {
 	z-index: 10000;
@@ -135,16 +129,20 @@ pre {
 	#AppView {
 		@apply text-gray-100 bg-gray-800 border-gray-400;
 	}
+
 	.appViewHead {
 		@apply bg-gray-800 text-gray-200;
 	}
+
 	.navigation {
 		@apply bg-gray-700 text-gray-200;
 	}
+
 	.AppMainContainer,
 	.UserArea {
 		@apply bg-gray-800;
 	}
+
 	:deep(.el-divider__text) {
 		@apply bg-gray-800 text-gray-200;
 	}
@@ -154,12 +152,15 @@ pre {
 	#AppView {
 		@apply text-gray-800 bg-gray-100 border-gray-400;
 	}
+
 	.appViewHead {
 		@apply bg-transparent text-gray-800;
 	}
+
 	.navigation {
 		@apply bg-white text-gray-800;
 	}
+
 	.AppMainContainer,
 	.UserArea {
 		@apply bg-gray-100;
@@ -181,13 +182,20 @@ pre {
 /* 已经废弃，需要重新制作拟态滚动条 */
 
 @font-face {
-	font-family: Canger_xwz;
-	src: url("../src/assets/fonts/Canger_xwz.ttf");
+	font-family: CangerXS;
+	src: url("../src/assets/fonts/CangerXuansanM-W03.ttf");
 }
+
 @font-face {
-	font-family: Canger_zkzdbs;
-	src: url("../src/assets/fonts/Canger_zkzdbs.ttf");
+	font-family: HanYiWH;
+	src: url("../src/assets/fonts/HYWenHei-55S.ttf");
 }
+
+@font-face {
+	font-family: HanSerif;
+	src: url("../src/assets/fonts/SourceHanSerifCN-Medium-6.otf");
+}
+
 @font-face {
 	font-family: Helvetica_otf;
 	src: url("../src/assets/fonts/Helvetica.otf");

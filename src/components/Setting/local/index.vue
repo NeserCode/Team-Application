@@ -149,7 +149,8 @@ export default {
 				this.$conf.getConfPromise().then((data) => {
 					let temp = data.data
 					temp.appInfo.domain = e.value
-					temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port
+					temp.appInfo.host =
+						temp.appInfo.domain + ":" + temp.appInfo.port
 
 					this.handleChangeSettingAction(temp, () => {
 						if (localStorage.getItem("username")) {
@@ -173,7 +174,8 @@ export default {
 				this.$conf.getConfPromise().then((data) => {
 					let temp = data.data
 					temp.appInfo.port = e.value
-					temp.appInfo.host = temp.appInfo.domain + ":" + temp.appInfo.port
+					temp.appInfo.host =
+						temp.appInfo.domain + ":" + temp.appInfo.port
 
 					this.handleChangeSettingAction(temp, () => {
 						this.$router.push("UserArea")
@@ -193,7 +195,8 @@ export default {
 				this.isClickable = false
 				this.appOnTop.value = !this.appOnTop.value
 
-				if (this.appOnTop.value) ipcRenderer.send("setting-always-on-top")
+				if (this.appOnTop.value)
+					ipcRenderer.send("setting-always-on-top")
 				else ipcRenderer.send("setting-always-not-top")
 				this.$conf
 					.getConfPromise()
@@ -216,7 +219,8 @@ export default {
 				this.$conf
 					.getConfPromise()
 					.then((data) => {
-						data.data.userSetting.alwaysCloseDirect = this.appCloseAction.value
+						data.data.userSetting.alwaysCloseDirect =
+							this.appCloseAction.value
 						this.handleChangeSettingAction(data.data)
 					})
 					.catch((e) => {
@@ -232,14 +236,19 @@ export default {
 				this.$conf
 					.getConfPromise()
 					.then((data) => {
-						data.data.userSetting.colorSchemeMode = this.appTheme.value
+						data.data.userSetting.colorSchemeMode =
+							this.appTheme.value
 						this.handleChangeSettingAction(data.data)
+						this.$public.emit("update-color-mode", theme)
 						const themeMedia = window.matchMedia(
 							"(prefers-color-scheme: light)"
 						)
 						if (themeMedia.matches)
-							document.querySelector("html").classList.remove("dark")
-						else document.querySelector("html").classList.add("dark")
+							document
+								.querySelector("html")
+								.classList.remove("dark")
+						else
+							document.querySelector("html").classList.add("dark")
 					})
 					.catch((e) => {
 						console.log(e.message)

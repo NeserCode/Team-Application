@@ -1,6 +1,6 @@
 <template>
 	<div class="checkContainer">
-		<span class="title">Sign Check</span>
+		<span class="title">签到</span>
 		<div class="checkDays" v-show="userStatus">
 			<span
 				:class="[
@@ -95,7 +95,9 @@ export default {
 					days.push({
 						m: T.getMonth() - 1,
 						d:
-							formatDay[T.getMonth() - 1 >= 0 ? T.getMonth() - 1 : 11] +
+							formatDay[
+								T.getMonth() - 1 >= 0 ? T.getMonth() - 1 : 11
+							] +
 							T.getDate() -
 							(7 - j),
 						isChecked: false,
@@ -156,12 +158,15 @@ export default {
 								})
 								.then((res) => {
 									this.checkObject.isLoading = false
-									this.checkObject.isCheck = res.status == 200 ?? false
+									this.checkObject.isCheck =
+										res.status == 200 ?? false
 									this.$public.emit("notice", {
 										type: "success",
 										msg: `签到成功`,
 										fn: () => {
-											this.$public.emit("update-user-check")
+											this.$public.emit(
+												"update-user-check"
+											)
 										},
 									})
 									this.getCheckedDay()
@@ -172,7 +177,9 @@ export default {
 										msg: `更新签到状态失败`,
 										fn: () => {
 											this.checkObject.isLoading = false
-											this.$public.emit("update-user-check")
+											this.$public.emit(
+												"update-user-check"
+											)
 										},
 									})
 								})
@@ -209,14 +216,18 @@ export default {
 
 							for (let i = 0; i < this.checkedDays.length; i++) {
 								if (
-									this.checkedDays[i].m == this.checkObject.checkMonth &&
-									this.checkedDays[i].d == this.checkObject.checkDay
+									this.checkedDays[i].m ==
+										this.checkObject.checkMonth &&
+									this.checkedDays[i].d ==
+										this.checkObject.checkDay
 								)
 									this.checkObject.isCheck = true
 								for (let j = 0; j < this.checkDays.length; j++)
 									if (
-										this.checkDays[j].m == this.checkedDays[i].m &&
-										this.checkDays[j].d == this.checkedDays[i].d
+										this.checkDays[j].m ==
+											this.checkedDays[i].m &&
+										this.checkDays[j].d ==
+											this.checkedDays[i].d
 									)
 										this.checkDays[j].isChecked = true
 							}
@@ -238,32 +249,39 @@ export default {
 .checkContainer {
 	@apply w-full h-full;
 }
+
 .title {
-	@apply sticky inline-block w-full h-full top-0 px-4 py-4 text-lg font-bold text-left font-mono
-	border-2 rounded-t-sm border-gray-200 dark:border-gray-600;
+	@apply sticky inline-block w-full h-full top-0 px-4 py-4 text-lg font-extralight text-left border-2 rounded-t-sm
+	border-gray-200 dark:border-gray-600;
 	z-index: 2001;
+
+	font-family: "HanSerif";
 }
 
 .checkDays {
-	@apply flex flex-wrap justify-center text-left py-4 border-2 border-t-0
+	@apply flex flex-wrap justify-center text-left py-4 border-2 border-t-0 
 	border-gray-200 dark:border-gray-600;
 }
+
 .checkDays span.notSignSpan {
 	@apply inline-block text-base font-semibold;
 	line-height: 3rem;
 }
+
 .message {
 	@apply block w-32 h-12 px-3 my-4 text-center font-thin text-sm transition rounded-lg;
 	line-height: 3rem;
 }
+
 .message.checked {
 	@apply bg-green-400;
 }
+
 .day {
-	@apply inline-flex w-8 h-8 rounded justify-center items-center px-2 py-1 border-2
-  mx-2 my-1 border-gray-300 dark:border-gray-600
-  text-base font-semibold transition border-transparent;
+	@apply inline-flex w-8 h-8 rounded justify-center items-center px-2 py-1 border-2 mx-2 my-1 
+	border-gray-300 dark:border-gray-600 text-base font-semibold transition border-transparent;
 }
+
 .today {
 	@apply border-blue-500 dark:border-green-300;
 }
@@ -272,12 +290,15 @@ export default {
 	.title {
 		@apply bg-gray-800;
 	}
+
 	.message {
 		@apply bg-gray-600;
 	}
+
 	.day {
 		@apply bg-gray-800;
 	}
+
 	.day.checked {
 		@apply bg-gray-600;
 	}
@@ -287,12 +308,15 @@ export default {
 	.title {
 		@apply bg-gray-100;
 	}
+
 	.message {
 		@apply bg-blue-400;
 	}
+
 	.day {
 		@apply bg-gray-200;
 	}
+
 	.day.checked {
 		@apply bg-green-300;
 	}

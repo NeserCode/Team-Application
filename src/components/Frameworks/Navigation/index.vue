@@ -72,9 +72,14 @@ export default {
 		this.$public.on("change-login-or-register-view", (bool) => {
 			this.signText = bool ? "登录" : "注册"
 		})
+		this.$public.on("update-color-mode", (mode) => {
+			this.colorMode = mode
+		})
 	},
 	mounted() {
-		this.isLogined = !(localStorage.getItem("checkKey") == (undefined || null))
+		this.isLogined = !(
+			localStorage.getItem("checkKey") == (undefined || null)
+		)
 		this.initColorMode()
 	},
 	methods: {
@@ -97,14 +102,17 @@ export default {
 		},
 		handleKeepDrag: () => false,
 		isMatchColorMode: function (mode) {
-			if (this.$router.currentRoute.value.path === "/setting") return false
+			if (this.$router.currentRoute.value.path === "/setting")
+				return false
 			if (mode && this) return this.colorMode === mode
 			return false
 		},
 		switchColorMode: function () {
 			this.$conf.getConfPromise().then((data) => {
 				ipcRenderer.send(
-					`color-schemeMode-${this.colorMode === "light" ? "dark" : "light"}`
+					`color-schemeMode-${
+						this.colorMode === "light" ? "dark" : "light"
+					}`
 				)
 
 				data.data.userSetting.colorSchemeMode = this.colorMode
@@ -136,12 +144,15 @@ export default {
 }
 .navigation .areaLink {
 	@apply inline-block mx-2 px-3 py-0.5 rounded
+	dark:text-gray-50
   hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600
   transition-all ease-in-out;
+
+	font-family: "HanSerif";
 }
 
 .areaLink.router-link-exact-active {
-	@apply bg-green-400 text-gray-100 dark:bg-green-600 dark:text-gray-300
+	@apply bg-green-400 text-gray-100 dark:bg-green-600
   hover:text-gray-100 hover:bg-green-400
   dark:hover:bg-green-600;
 }
