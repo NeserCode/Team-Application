@@ -251,7 +251,7 @@ export default {
 }
 
 .title {
-	@apply sticky inline-block w-full h-full top-0 px-4 py-4 text-lg font-extralight text-left border-2 rounded-t-sm
+	@apply sticky inline-block w-full h-full top-0 py-4 text-lg font-extralight text-left border-b-2
 	border-gray-200 dark:border-gray-600;
 	z-index: 2001;
 
@@ -259,8 +259,7 @@ export default {
 }
 
 .checkDays {
-	@apply flex flex-wrap justify-center text-left py-4 border-2 border-t-0 
-	border-gray-200 dark:border-gray-600;
+	@apply flex flex-wrap justify-center text-left py-4;
 }
 
 .checkDays span.notSignSpan {

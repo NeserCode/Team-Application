@@ -8,7 +8,9 @@
 			v-loading="isLoading.single"
 		>
 			<Card class="card" :author="item" />
-			<span class="time">{{ new Date(item.timeStamp).toLocaleString() }}</span>
+			<span class="time">{{
+				new Date(item.timeStamp).toLocaleString()
+			}}</span>
 			<span class="th"
 				>{{ index + 1 }}&nbsp;<sup>{{ thString(index + 1) }}</sup></span
 			>
@@ -53,18 +55,29 @@ export default {
 								this.$conf.getHost().then((h) => {
 									this.$conf
 										.getUserDetailById({
-											host: this.$conf.getHttpString(h.host),
+											host: this.$conf.getHttpString(
+												h.host
+											),
 											id: element.userid,
 										})
 										.then((data) => {
-											const { nickname, avatar, introduce } = data.data[0]
+											const {
+												nickname,
+												avatar,
+												introduce,
+											} = data.data[0]
 											this.rankers.push({
 												nickname,
 												avatar,
 												introduce,
-												timeStamp: Number(element.timeStamp),
+												timeStamp: Number(
+													element.timeStamp
+												),
 											})
-											this.rankers.sort((a, b) => a.timeStamp - b.timeStamp)
+											this.rankers.sort(
+												(a, b) =>
+													a.timeStamp - b.timeStamp
+											)
 											this.isLoading = false
 										})
 								})
@@ -94,8 +107,11 @@ export default {
 }
 
 .title {
-	@apply sticky inline-block w-full h-full top-0 px-4 py-4 text-lg font-bold text-left font-mono;
+	@apply sticky inline-block w-full h-full top-0 py-4 text-lg text-left border-b-2
+	border-gray-200 dark:border-gray-600;
 	z-index: 2001;
+
+	font-family: "HanSerif";
 }
 .mainContainer {
 	@apply relative py-4 my-2 max-w-xs;
