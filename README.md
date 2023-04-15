@@ -77,4 +77,4 @@ $ pm2 log
 
 ## 许可
 
-本项目持有并遵守 [MIT 许可](https://github.com/NeserCode/Team-Application/blob/NeserCode/LICENSE)
+本项目持有并遵守 [GUNv3.0 许可](https://github.com/NeserCode/Team-Application/blob/NeserCode/LICENSE)
