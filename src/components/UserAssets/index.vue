@@ -7,14 +7,20 @@
 			:visible="popoverSwitch"
 		>
 			<template #reference>
-				<div :class="{ Round: isUserImageRound }">
-					<img
-						@click="handleShowPopover"
-						:ondragstart="keepDragPicture"
-						:src="userImage"
-						:class="{ Round: isUserImageRound, imgBody: true }"
-					/>
-				</div>
+				<el-icon
+					class="icon"
+					v-if="!userImage"
+					@click="handleShowPopover"
+					><User
+				/></el-icon>
+				<Avatar
+					@click="handleShowPopover"
+					:ondragstart="keepDragPicture"
+					:image="userImage"
+					:is-dot="false"
+					class="avatar"
+					v-else
+				/>
 			</template>
 			<img
 				class="preImage"
@@ -54,9 +60,13 @@
 
 <script>
 // @ is an alias to /src
+import Avatar from "@/components/UserAssets/Avatar/index.vue"
 
 export default {
-	name: "User",
+	name: "UserAssets",
+	components: {
+		Avatar,
+	},
 	props: {
 		isUserImageRound: {
 			type: Boolean,
@@ -81,15 +91,11 @@ export default {
 	},
 	mounted() {
 		this.$public.on("app-mounted", (setting) => {
-			this.userImage =
-				setting.userInfo.avatar ??
-				"https://github.githubassets.com/favicons/favicon.svg"
+			this.userImage = setting.userInfo.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
 		this.$public.on("update-main-user-info-upto-app", (data) => {
-			this.userImage =
-				data.detail.avatar ??
-				"https://github.githubassets.com/favicons/favicon.svg"
+			this.userImage = data.detail.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
 	},
@@ -148,7 +154,10 @@ export default {
 							let rt = data.data
 							rt.userInfo.avatar = this.userImage
 							this.$conf.updateLocalConfig(rt, () => {
-								this.$public.emit("update-avatar", this.userImage)
+								this.$public.emit(
+									"update-avatar",
+									this.userImage
+								)
 							})
 						})
 					})
@@ -162,12 +171,13 @@ export default {
 .userAssets {
 	@apply flex justify-center items-center;
 }
-.userAssets img {
-	@apply border border-gray-400 w-32 h-32;
+
+.avatar {
+	@apply w-32 h-32;
 }
-.userAssets img.Round {
-	@apply rounded-full;
-	animation: unblur 1.5s linear infinite;
+
+.icon {
+	@apply text-8xl;
 }
 .preImage {
 	@apply w-40 block mx-auto mb-4;
@@ -180,8 +190,5 @@ export default {
 }
 .el-input {
 	@apply pr-14;
-}
-.imgBody {
-	@apply bg-gray-50;
 }
 </style>

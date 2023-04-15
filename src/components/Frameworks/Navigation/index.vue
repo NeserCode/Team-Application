@@ -1,12 +1,17 @@
 <template>
 	<div class="navigation">
 		<UserAvatar
-			class="avatar"
+			class="avatar comp"
 			@click="handleOpenUserArea"
 			v-show="isLogined"
 			:image="avatarUrl"
 			:isDot="false"
+			:isMe="true"
+			v-if="avatarUrl"
 		/>
+		<span class="avatar icon" @click="handleOpenUserArea" v-else>
+			<el-icon><User /></el-icon
+		></span>
 		<div class="shiftOperations">
 			<span class="color-mode" @click="switchColorMode">
 				<el-icon v-if="isMatchColorMode('light')"><Sunny /></el-icon>
@@ -65,8 +70,9 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", () => {
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
 			this.isLogined = true
+			this.avatarUrl = detail.avatar ?? localStorage.getItem("avatar")
 		})
 		this.$public.on("clear-user-sign-status", () => {
 			this.isLogined = false
@@ -167,7 +173,15 @@ export default {
 }
 
 .avatar {
-	@apply w-11 h-11 absolute left-2;
+	@apply inline-flex justify-center items-center w-11 h-11 absolute left-2
+	hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full cursor-pointer transition-all;
+}
+
+.avatar:not(.comp) {
+	@apply inline-flex justify-center items-center w-11 h-11 p-2.5 absolute left-2
+	hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full
+	border-2 border-gray-300 dark:border-gray-600
+	cursor-pointer transition-all;
 }
 
 .shiftOperations {

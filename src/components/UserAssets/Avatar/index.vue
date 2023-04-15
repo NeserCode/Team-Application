@@ -1,7 +1,7 @@
 <template>
-	<div class="userAvatar" v-if="userImage || image">
+	<div class="userAvatar" v-if="image || userImage">
 		<el-badge :is-dot="isDot">
-			<div :class="{ Round: isUserImageRound, avatarSkin: true }">
+			<div :class="{ Round: isUserImageRound }">
 				<img
 					ref="image"
 					:ondragstart="keepDragPicture"
@@ -42,7 +42,6 @@ export default {
 			this.userImage = avatar ?? localStorage.getItem("avatar") ?? null
 		})
 	},
-	mounted() {},
 	methods: {
 		keepDragPicture: () => false,
 	},

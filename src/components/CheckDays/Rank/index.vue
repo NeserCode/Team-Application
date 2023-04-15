@@ -5,25 +5,31 @@
 			class="mainContainer"
 			v-for="(item, index) in rankers"
 			:key="item.nickname"
-			v-loading="isLoading.single"
+			v-loading="isLoading"
 		>
-			<Card class="card" :author="item" />
-			<span class="time">{{
-				new Date(item.timeStamp).toLocaleString()
-			}}</span>
 			<span class="th"
-				>{{ index + 1 }}&nbsp;<sup>{{ thString(index + 1) }}</sup></span
+				>{{ index + 1 }}<sup>{{ thString(index + 1) }}</sup></span
 			>
+			<el-icon class="icon avatar" v-if="!item.avatar"><User /></el-icon>
+			<Avatar
+				class="avatar"
+				:image="item.avatar"
+				:is-dot="false"
+				v-else
+			/>
+			<span class="info">
+				<span class="nickname">{{ item.nickname }}</span>
+			</span>
 		</div>
 	</div>
 </template>
 
 <script>
-import Card from "@/components/UserAssets/Card/index.vue"
+import Avatar from "@/components/UserAssets/Avatar/index.vue"
 
 export default {
 	name: "Rank",
-	components: { Card },
+	components: { Avatar },
 	data() {
 		return {
 			isLoading: true,
@@ -114,29 +120,31 @@ export default {
 	font-family: "HanSerif";
 }
 .mainContainer {
-	@apply relative py-4 my-2 max-w-xs;
+	@apply relative inline-flex justify-center items-center py-4 w-full;
 }
 
-.card {
-	@apply flex-col px-4;
+.avatar {
+	@apply inline-block w-24 ml-2;
 }
-.time {
-	@apply text-xs font-bold opacity-60;
+.icon {
+	@apply text-4xl inline-block h-full px-2;
+}
+.info {
+	@apply relative inline-flex flex-col justify-center w-full ml-2;
+}
+
+.info .nickname {
+	@apply block text-base truncate font-semibold;
+	max-width: 12ch;
 }
 
 .th {
-	@apply inline-block absolute top-0 right-8 font-semibold text-lg;
+	@apply inline-block text-xl w-6;
 }
 
 @media (prefers-color-scheme: dark) {
-	.title {
-		@apply bg-gray-800;
-	}
 }
 
 @media (prefers-color-scheme: light) {
-	.title {
-		@apply bg-gray-100;
-	}
 }
 </style>
