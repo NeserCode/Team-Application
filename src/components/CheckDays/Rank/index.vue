@@ -10,13 +10,6 @@
 			<span class="th"
 				>{{ index + 1 }}<sup>{{ thString(index + 1) }}</sup></span
 			>
-			<el-icon class="icon avatar" v-if="!item.avatar"><User /></el-icon>
-			<Avatar
-				class="avatar"
-				:image="item.avatar"
-				:is-dot="false"
-				v-else
-			/>
 			<span class="info">
 				<span class="nickname">{{ item.nickname }}</span>
 			</span>
@@ -25,11 +18,8 @@
 </template>
 
 <script>
-import Avatar from "@/components/UserAssets/Avatar/index.vue"
-
 export default {
 	name: "Rank",
-	components: { Avatar },
 	data() {
 		return {
 			isLoading: true,
@@ -113,7 +103,7 @@ export default {
 }
 
 .title {
-	@apply sticky inline-block w-full h-full top-0 py-4 text-lg text-left border-b-2
+	@apply sticky inline-block w-full h-full top-0 py-4 text-lg font-extralight text-left border-b-2
 	border-gray-200 dark:border-gray-600;
 	z-index: 2001;
 
@@ -121,6 +111,8 @@ export default {
 }
 .mainContainer {
 	@apply relative inline-flex justify-center items-center py-4 w-full;
+
+	font-family: "HanyiWH";
 }
 
 .avatar {
@@ -139,12 +131,18 @@ export default {
 }
 
 .th {
-	@apply inline-block text-xl w-6;
+	@apply inline-block text-xl w-6 font-mono;
 }
 
 @media (prefers-color-scheme: dark) {
+	.title {
+		@apply bg-gray-800;
+	}
 }
 
 @media (prefers-color-scheme: light) {
+	.title {
+		@apply bg-gray-100;
+	}
 }
 </style>

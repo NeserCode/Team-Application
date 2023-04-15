@@ -25,7 +25,7 @@ var sqlMap = {
 
         },
         leetcode: {
-            add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,timestamp) values (?,?,?,?,?)',
+            add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,status,timestamp) values (?,?,?,?,?,?)',
             get: 'select * from team_leetcode_submit where userid = ? ORDER BY submitId DESC limit ?,?',
             count: 'select count(*) from team_leetcode_submit',
             all: 'select * from team_leetcode_submit ORDER BY submitId DESC limit ?,?'

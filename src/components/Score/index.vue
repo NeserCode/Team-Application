@@ -18,9 +18,8 @@
 							"
 							>{{ item.submitId }}</span
 						>
-						<span class="leetName">{{
-							item.leetName + "a long fix"
-						}}</span>
+						<span class="status">{{ item.status }}</span>
+						<span class="leetName">{{ item.leetName }}</span>
 					</span>
 					<span class="time">{{
 						getComputedTime(item.timeStamp)
@@ -116,7 +115,7 @@ export default {
 						this.total = result.data.all
 						this.submitPage = val
 						this.loading = false
-						console.log(this.subs)
+						console.log(result)
 
 						this.$public.emit("notice", {
 							type: "success",
@@ -195,7 +194,7 @@ h1 span {
 }
 
 .sub-list {
-	@apply inline-flex justify-center flex-col w-full flex-grow my-4;
+	@apply inline-flex justify-center flex-col w-full flex-grow my-4 font-mono;
 }
 
 .sub-list .sub-item {
@@ -219,7 +218,15 @@ h1 span {
 	border-gray-200 dark:border-gray-700
 	transition-all cursor-pointer;
 }
-.sub-item:hover .id {
+
+.sub-item-content .status {
+	@apply inline-flex items-center justify-center px-2 border-r-2
+	border-gray-200 dark:border-gray-700
+	transition-all;
+}
+
+.sub-item:hover .id,
+.sub-item:hover .status {
 	@apply border-gray-300 dark:border-gray-500;
 }
 

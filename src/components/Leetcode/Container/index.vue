@@ -14,10 +14,11 @@
 						<el-divider direction="vertical"></el-divider>
 						<span class="title">{{
 							isContentEng
-							? questions.title
-							: questions.translatedTitle
+								? questions.title
+								: questions.translatedTitle
 						}}</span>
-						<el-divider direction="vertical"></el-divider><span class="difficulty">{{
+						<el-divider direction="vertical"></el-divider
+						><span class="difficulty">{{
 							questions.difficulty
 						}}</span>
 					</div>
@@ -27,10 +28,16 @@
 		</div>
 		<div class="codeContainer">
 			<div class="appCodeEditer">
-				<Codemirror class="codeView" :value="
-					questions.codeSnippets[langCode == -1 ? 0 : langCode]
-						.code
-				" :options="cmOptions" border ref="codeEditor">
+				<Codemirror
+					class="codeView"
+					:value="
+						questions.codeSnippets[langCode == -1 ? 0 : langCode]
+							.code
+					"
+					:options="cmOptions"
+					border
+					ref="codeEditor"
+				>
 				</Codemirror>
 			</div>
 		</div>
@@ -99,7 +106,7 @@ export default {
 			this.getQuestionSubmit()
 		})
 	},
-	mounted() { },
+	mounted() {},
 	activated() {
 		this.initTheme()
 	},
@@ -108,9 +115,9 @@ export default {
 			return (
 				(this.isContentEng
 					? this.questions.content +
-					"<br/><p><b>Sample Example InputCase:</b></p>"
+					  "<br/><p><b>Sample Example InputCase:</b></p>"
 					: this.questions.translatedContent +
-					"<br/><p><b>测试用例例如:</b></p>") +
+					  "<br/><p><b>测试用例例如:</b></p>") +
 				this.questions.exampleTestcases
 			)
 		},
@@ -166,7 +173,7 @@ export default {
 						this.$refs.codeEditor.content,
 						this.questions.titleSlug
 					)
-					.then(async (response) => {
+					.then((response) => {
 						const { submission_id } = response.data
 						this.$public.emit(
 							"leetcode-submit-back-id",
@@ -178,7 +185,7 @@ export default {
 						this.$public.emit("notice", {
 							type: "error",
 							time: 4500,
-							msg: `❌ ${e.message} 未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,
+							msg: `${e.message} 未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,
 						})
 					})
 			})
@@ -234,7 +241,6 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
-
 	.question,
 	.topSpan {
 		@apply bg-gray-900;
@@ -242,7 +248,6 @@ export default {
 }
 
 @media (prefers-color-scheme: light) {
-
 	.question,
 	.topSpan {
 		@apply bg-white;

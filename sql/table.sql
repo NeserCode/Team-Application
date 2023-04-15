@@ -44,6 +44,7 @@ create table team_leetcode_submit(
     leetName varchar(60),
     appKey varchar(60) not null,
     submitId varchar(30) not null,
+    status varchar(30),
 	timeStamp varchar(30) not null,
     FOREIGN KEY fk_userid(userid) REFERENCES team_user_info(id)
 );
