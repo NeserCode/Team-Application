@@ -194,7 +194,8 @@ h1 span {
 }
 
 .sub-list {
-	@apply inline-flex justify-center flex-col w-full flex-grow my-4 font-mono;
+	@apply inline-flex justify-center flex-col w-full flex-grow my-4;
+	font-family: Consolas, "HanSerif";
 }
 
 .sub-list .sub-item {

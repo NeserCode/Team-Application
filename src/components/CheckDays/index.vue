@@ -23,7 +23,7 @@
 			</a>
 		</div>
 		<div class="checkDays" v-show="!userStatus">
-			<span class="notSignSpan">用户未登录</span>
+			<span class="notSignSpan">请先登录</span>
 		</div>
 	</div>
 </template>
@@ -263,13 +263,15 @@ export default {
 }
 
 .checkDays span.notSignSpan {
-	@apply inline-block text-base font-semibold;
+	@apply inline-block text-base;
 	line-height: 3rem;
+	font-family: "HanSerif";
 }
 
 .message {
 	@apply block w-32 h-12 px-3 my-4 text-center font-thin text-sm transition rounded-lg;
 	line-height: 3rem;
+	font-family: "HanSerif";
 }
 
 .message.checked {

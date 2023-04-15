@@ -1,62 +1,63 @@
 <template>
-  <div class="setting">
-    <div class="allSettings">
-      <LocalSetting />
-      <el-divider>Leetcode Setting</el-divider>
-      <LeetcodeSetting />
-      <el-divider>Other Setting</el-divider>
-      <OtherSetting />
-      <el-divider>About</el-divider>
-      <About />
-    </div>
-  </div>
+	<div class="setting">
+		<div class="allSettings">
+			<LocalSetting />
+			<el-divider>Leetcode Setting</el-divider>
+			<LeetcodeSetting />
+			<el-divider>Other Setting</el-divider>
+			<OtherSetting />
+			<el-divider>About</el-divider>
+			<About />
+		</div>
+	</div>
 </template>
 
 <script>
-import LocalSetting from "@/components/Setting/local/index.vue";
-import LeetcodeSetting from "@/components/Setting/leetcode/index.vue";
-import OtherSetting from "@/components/Setting/other/index.vue";
-import About from "@/components/Setting/About/index.vue";
+import LocalSetting from "@/components/Setting/local/index.vue"
+import LeetcodeSetting from "@/components/Setting/leetcode/index.vue"
+import OtherSetting from "@/components/Setting/other/index.vue"
+import About from "@/components/Setting/About/index.vue"
 
 export default {
-  name: "Setting",
-  mounted() {},
-  components: {
-    LocalSetting,
-    LeetcodeSetting,
-    OtherSetting,
-    About,
-  },
-  data() {
-    return {};
-  },
-  methods: {},
-};
+	name: "Setting",
+	mounted() {},
+	components: {
+		LocalSetting,
+		LeetcodeSetting,
+		OtherSetting,
+		About,
+	},
+	data() {
+		return {}
+	},
+	methods: {},
+}
 </script>
 
 <style scoped lang="postcss">
 .setting {
-  @apply w-full;
+	@apply w-full;
+	font-family: Consolas, "HanSerif";
 }
 .allSettings {
-  @apply w-4/5 h-full mx-auto py-4;
+	@apply w-4/5 h-full mx-auto py-4;
 }
 
 @media (prefers-color-scheme: dark) {
-  .setting {
-    @apply bg-gray-800;
-  }
-  :deep(.el-divider__text) {
-    @apply bg-gray-800 text-gray-200;
-  }
+	.setting {
+		@apply bg-gray-800;
+	}
+	:deep(.el-divider__text) {
+		@apply bg-gray-800 text-gray-200;
+	}
 }
 
 @media (prefers-color-scheme: light) {
-  .setting {
-    @apply bg-gray-100;
-  }
-  :deep(.el-divider__text) {
-    @apply bg-gray-100 text-gray-700;
-  }
+	.setting {
+		@apply bg-gray-100;
+	}
+	:deep(.el-divider__text) {
+		@apply bg-gray-100 text-gray-700;
+	}
 }
 </style>
