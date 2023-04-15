@@ -1,6 +1,6 @@
 # Team Application
 
-![Team-Application](https://img.shields.io/badge/Team--Application-v1.2.1-000.svg) ![Electron](https://img.shields.io/badge/Electron-v13.0.0-faf.svg) ![Vue](https://img.shields.io/badge/Vue-v3.2.31-eee.svg) ![Element Plus](https://img.shields.io/badge/ElementPlus-v1.0.2--beta.28-234894.svg) ![Tailwind Css](https://img.shields.io/badge/TailwindCss-v3.0.2-678111.svg)
+![Team-Application](https://img.shields.io/badge/Team--Application-v1.5.0-000.svg) ![Electron](https://img.shields.io/badge/Electron-v13.0.0-faf.svg) ![Vue](https://img.shields.io/badge/Vue-v3.2.31-eee.svg) ![Element Plus](https://img.shields.io/badge/ElementPlus-v1.0.2--beta.28-234894.svg) ![Tailwind Css](https://img.shields.io/badge/TailwindCss-v3.0.2-678111.svg)
 
 ## 应用概述
 
@@ -16,6 +16,16 @@ Team 是一个基于 Vue.js 与 Electron 的 Windows 桌面应用。
 🎃 尝试新的领域与框架（Electron）
 
 ⚽ 为自己实验室下的伙伴提供更好的考勤与日常刷题的解决方案
+
+## 为什么使用 Team
+
+👓 与同一区域内的所有人共享 Leetcode 刷题记录
+
+💎 持久化的登录，不需要多次于网页上进行登录验证
+
+🏀 集成 Leetcode 刷题，无需额外地打开浏览器
+
+🎾 与同一区域内的所有人共享考勤记录
 
 ## 如何使用
 
@@ -51,7 +61,7 @@ $ pm2 log
 
 Ⅳ 启动 Team，转到顶部的设置界面，填写目标服务器地址（不含端口）和服务端口号。尝试注册并登录，若失败则重复 Ⅱ 到 Ⅳ 。
 
-Ⅴ 成功登录后，此时只可使用 Team 的考勤系统，若想使用 Leetcode 刷题集成需要获取 Leetcode Cookie 键值并填入对应的位置。键值获取方式：在浏览器中成功登录 Leetcode 后按下 F12 打开开发人员工具转至 网络 选项卡，进行刷新，查看相应名为 graphql 的响应体表头，找到 x-csrftoken 与 LEETCODE_SESSION对应的值并填入对应的设置中，之后转到 Team 顶部的代码界面，此时会自动进行一次 Leetcode 登录，如上述步骤产生错误则重新开始 Ⅴ 步骤。
+Ⅴ 成功登录后，此时只可使用 Team 的考勤系统，若想使用 Leetcode 刷题集成需要获取 Leetcode Cookie 键值并填入对应的位置。键值获取方式：在浏览器中成功登录 Leetcode 后按下 F12 打开开发人员工具转至 网络 选项卡，进行刷新，查看相应名为 graphql 的响应体表头，找到 x-csrftoken 与 LEETCODE_SESSION 对应的值并填入对应的设置中，之后转到 Team 顶部的代码界面，此时会自动进行一次 Leetcode 登录，如上述步骤产生错误则重新开始 Ⅴ 步骤。
 
 Ⅵ 欢迎体验 Team。目前可能还有一些地方有不足，也欢迎各位提出 issue 。
 
@@ -67,4 +77,4 @@ $ pm2 log
 
 ## 许可
 
-本项目持有并遵守 [MIT许可](https://github.com/NeserCode/Team-Application/blob/NeserCode/LICENSE)
+本项目持有并遵守 [MIT 许可](https://github.com/NeserCode/Team-Application/blob/NeserCode/LICENSE)
