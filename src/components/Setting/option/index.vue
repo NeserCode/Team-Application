@@ -196,7 +196,7 @@ span.opTitle {
 }
 
 span.opTip {
-	@apply inline-block text-gray-400 text-sm whitespace-pre;
+	@apply inline-block text-gray-400 text-sm whitespace-pre-line;
 }
 
 .titleContainer,

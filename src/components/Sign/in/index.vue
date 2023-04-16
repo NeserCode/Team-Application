@@ -230,6 +230,7 @@ export default {
 <style scoped lang="postcss">
 .login {
 	@apply w-full h-auto;
+	font-family: Consolas, "HanSerif";
 }
 
 .iContainer {

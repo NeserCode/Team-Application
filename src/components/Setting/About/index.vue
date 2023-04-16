@@ -46,7 +46,7 @@ export default {
 				this.newestVersion = res.data.tag_name
 				this.versionTip += `\n当前版本：${app.getVersion()} 最新版本：${
 					this.newestVersion
-				}`
+				}\n\n Latest Version\n ${res.data.body}`
 			})
 	},
 	methods: {
