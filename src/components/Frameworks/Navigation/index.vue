@@ -99,7 +99,6 @@ export default {
 					? "dark"
 					: "light")
 			ipcRenderer.send(`color-schemeMode-${this.colorMode}`)
-			this.$public.emit("update-color-mode", this.colorMode)
 
 			if (this.colorMode === "light") {
 				document.querySelector("html").classList.remove("dark")
@@ -107,6 +106,7 @@ export default {
 				document.querySelector("html").classList.add("dark")
 			}
 
+			this.$public.emit("update-color-mode", this.colorMode)
 			console.log("colorMode", this.colorMode)
 		},
 		handleOpenUserArea: function () {

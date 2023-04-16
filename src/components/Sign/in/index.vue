@@ -233,21 +233,21 @@ export default {
 }
 
 .iContainer {
-	@apply relative flex flex-col justify-center items-center w-1/3 h-full mx-auto pt-16 pb-12
-    mt-32 rounded shadow overflow-hidden;
+	@apply relative flex flex-col justify-center items-center w-1/3 h-full mx-auto pt-16 pb-8
+	rounded overflow-hidden;
 	min-width: 650px;
 }
 
 .iIn {
-	@apply w-1/3 inline-block my-8;
+	@apply w-1/3 inline-block my-2;
 }
 
 .btnContainer {
-	@apply flex flex-col w-1/3 justify-between;
+	@apply inline-flex w-1/3 justify-between;
 }
 
 .signBar {
-	@apply absolute bottom-0 rounded-b-full inline-block bg-blue-400 w-full h-1.5 transition-all;
+	@apply absolute top-0 rounded-b-full inline-block bg-blue-400 w-full h-0 transition-all;
 }
 .signBar.loading {
 	animation: loading infinite 1.5s ease-in-out;
@@ -261,41 +261,25 @@ export default {
 }
 
 button {
-	@apply bg-transparent px-4 py-2 rounded-full transition-colors border border-transparent;
-}
-button:focus {
-	@apply outline-none;
-}
-button:focus::before {
-	content: "·";
-	@apply inline-block pr-1 font-semibold;
+	@apply inline-flex justify-center items-center px-4 py-2 rounded-md
+	border-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200
+	border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600
+	transition-all shadow;
 }
 
 .el-icon-loading {
-	@apply inline;
+	@apply inline-block ml-1;
 }
 
 @media (prefers-color-scheme: dark) {
-	.iContainer {
-		@apply bg-gray-900;
-	}
-	button:hover {
-		@apply bg-gray-700 text-gray-200;
-	}
 }
 
 @media (prefers-color-scheme: light) {
-	.iContainer {
-		@apply bg-white;
-	}
-	button:hover {
-		@apply bg-gray-200 text-gray-700;
-	}
 }
 
 @keyframes loading {
 	0% {
-		@apply bg-blue-400 w-full opacity-100 bottom-0 h-1.5;
+		@apply bg-blue-400 w-full opacity-100 bottom-0 h-0;
 	}
 	5% {
 		@apply bg-blue-400 w-1.5 opacity-0 bottom-4;
@@ -313,7 +297,7 @@ button:focus::before {
 		@apply bg-blue-400 h-px;
 	}
 	100% {
-		@apply bg-blue-400 h-1.5;
+		@apply bg-blue-400 h-0;
 	}
 }
 </style>

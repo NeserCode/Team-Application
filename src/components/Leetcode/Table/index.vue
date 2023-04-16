@@ -270,7 +270,7 @@ export default {
 						.then((res) => {
 							this.idList = res.data
 							this.$public.emit("notice", {
-								msg: "✔ 获取提交列表",
+								msg: "获取提交列表",
 								type: "success",
 							})
 						})

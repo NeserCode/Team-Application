@@ -57,6 +57,7 @@
 
 <script>
 import SettingOption from "@/components/Setting/option/index.vue"
+import { nextTick } from "vue"
 const { ipcRenderer } = window.require("electron")
 
 export default {
@@ -134,7 +135,12 @@ export default {
 			this.appTheme.value = mode
 		})
 	},
-	mounted() {},
+	mounted() {
+		nextTick(() => {
+			this.appTheme.value =
+				localStorage.getItem("color-scheme-mode") ?? "system"
+		})
+	},
 	methods: {
 		domainInput: function (temp) {
 			this.appHostDomain.value = temp

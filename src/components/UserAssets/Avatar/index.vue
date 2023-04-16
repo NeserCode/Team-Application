@@ -50,7 +50,7 @@ export default {
 
 <style scoped lang="postcss">
 .userAvatar {
-	@apply w-full h-full;
+	@apply inline-flex justify-center items-center w-full h-full;
 }
 .userAvatar img {
 	@apply relative block border border-gray-400 w-full h-full rounded;

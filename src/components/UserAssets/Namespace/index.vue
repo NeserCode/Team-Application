@@ -1,9 +1,20 @@
 <template>
 	<div class="nameSpace">
-		<span class="nick" @dblclick="getClipText(this.nickspace)" v-show="!editable.nickname">{{ nickspace }}
-			<i class="el-icon-edit" v-if="isMe" @click="handleEditNickname"></i></span>
-		<el-input class="inick" spellcheck="false" v-model="nickspace" v-show="editable.nickname" maxlength="10"
-				show-word-limit>
+		<span
+			class="nick"
+			@dblclick="getClipText(this.nickspace)"
+			v-show="!editable.nickname"
+			>{{ nickspace }}
+			<i class="el-icon-edit" v-if="isMe" @click="handleEditNickname"></i
+		></span>
+		<el-input
+			class="inick"
+			spellcheck="false"
+			v-model="nickspace"
+			v-show="editable.nickname"
+			maxlength="10"
+			show-word-limit
+		>
 			<template #append>
 				<span class="confirm" @click="handleChangeNickname">修改</span>
 				<el-divider direction="vertical"></el-divider>
@@ -13,10 +24,23 @@
 		<span class="name" @dblclick="getClipText(this.namespace)">{{
 			namespace
 		}}</span>
-		<span class="introduce" @dblclick="getClipText(this.introduce)" v-show="!editable.introduce">{{ introduce }}
-			<i class="el-icon-edit" v-if="isMe" @click="handleEditIntroduce"></i>
+		<span
+			class="introduce"
+			@dblclick="getClipText(this.introduce)"
+			v-show="!editable.introduce"
+			>{{ introduce }}
+			<i
+				class="el-icon-edit"
+				v-if="isMe"
+				@click="handleEditIntroduce"
+			></i>
 		</span>
-		<el-input class="iintro" spellcheck="false" v-model="introduce" v-show="editable.introduce">
+		<el-input
+			class="iintro"
+			spellcheck="false"
+			v-model="introduce"
+			v-show="editable.introduce"
+		>
 			<template #append>
 				<span class="confirm" @click="handleChangeIntroduce">修改</span>
 				<el-divider direction="vertical"></el-divider>
@@ -78,7 +102,7 @@ export default {
 				clipboard.writeText(t)
 				this.$public.emit("notice", {
 					type: "success",
-					msg: `✔ 已复制到剪切板`,
+					msg: `已复制到剪切板`,
 					fn: () => {
 						this.clickable = true
 					},
@@ -102,17 +126,18 @@ export default {
 						.then(() => {
 							this.$public.emit("notice", {
 								type: "success",
-								msg: `✔ 同步到网络数据成功`,
+								msg: `同步到网络数据成功`,
 							})
 							this.$conf
 								.getConfPromise()
 								.then((data) => {
-									data.data.userInfo.introduce = this.introduce
+									data.data.userInfo.introduce =
+										this.introduce
 									this.$conf
 										.updateLocalConfig(data.data, () => {
 											this.$public.emit("notice", {
 												type: "success",
-												msg: `✔ 同步到本地数据成功`,
+												msg: `同步到本地数据成功`,
 												fn: () => {
 													this.handleEditIntroduce()
 												},
@@ -167,7 +192,7 @@ export default {
 						.then(() => {
 							this.$public.emit("notice", {
 								type: "success",
-								msg: `✔ 同步到网络数据成功`,
+								msg: `同步到网络数据成功`,
 							})
 							this.$conf
 								.getConfPromise()
@@ -177,7 +202,7 @@ export default {
 										.updateLocalConfig(data.data, () => {
 											this.$public.emit("notice", {
 												type: "success",
-												msg: `✔ 同步到本地数据成功`,
+												msg: `同步到本地数据成功`,
 												fn: () => {
 													this.handleEditNickname()
 												},
