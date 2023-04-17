@@ -8,6 +8,16 @@
 		</h1>
 		<!-- use div acheve a list to show subs data, do not use el-table -->
 		<div v-if="subs.length" class="sub-list">
+			<div class="sub-item list-header">
+				<div class="sub-item-content">
+					<span class="no-wrap">
+						<span class="id">提交ID</span>
+						<span class="status">状态</span>
+						<span class="leetName">LeetCode 用户名</span>
+					</span>
+					<span class="time">提交时间</span>
+				</div>
+			</div>
 			<div v-for="item in subs" :key="item.submitId" class="sub-item">
 				<div class="sub-item-content">
 					<span class="no-wrap">
@@ -26,6 +36,13 @@
 					}}</span>
 				</div>
 			</div>
+			<Pagination
+				v-model="submitPage"
+				:total="total"
+				:size="pageLimit"
+				:prev="prevPage"
+				:next="nextPage"
+			/>
 		</div>
 		<div v-else class="empty">
 			<el-empty description="暂无提交记录"></el-empty>
@@ -43,10 +60,11 @@
 <script>
 import { _debounce } from "@/plugins/utils"
 import Detail from "@/components/Score/Detail/index.vue"
+import Pagination from "@/components/Frameworks/Pagination/index.vue"
 
 export default {
 	name: "Score",
-	components: { Detail },
+	components: { Detail, Pagination },
 	data() {
 		return {
 			loading: true,
@@ -67,6 +85,11 @@ export default {
 		this.$public.on("leetcode-local-submit", () => {
 			this.initTables()
 		})
+	},
+	watch: {
+		submitPage: function () {
+			this.getSubmitArr()
+		},
 	},
 	mounted() {
 		this.initTables()
@@ -100,7 +123,7 @@ export default {
 					})
 				})
 		}, 300),
-		getSubmitArr: _debounce(function (val) {
+		getSubmitArr: _debounce(function () {
 			this.loading = true
 			this.submissionDetail = {}
 			this.$conf.getHost().then((h) => {
@@ -113,7 +136,7 @@ export default {
 					.then((result) => {
 						this.subs = result.data.arr
 						this.total = result.data.all
-						this.submitPage = val
+
 						this.loading = false
 						console.log(result)
 
@@ -156,8 +179,14 @@ export default {
 			})
 		}, 500),
 		initTables: function () {
-			this.submitPage = 1
-			this.getSubmitArr()
+			if (this.submitPage === 1) this.getSubmitArr()
+			else this.submitPage = 1
+		},
+		prevPage: function () {
+			this.submitPage--
+		},
+		nextPage: function () {
+			this.submitPage++
 		},
 		getComputedTime: function (timestamp) {
 			function addzero(num) {
@@ -199,7 +228,7 @@ h1 span {
 }
 
 .sub-list .sub-item {
-	@apply flex items-center justify-between w-full my-1 px-4 py-2 text-base border-2 rounded-lg
+	@apply flex items-center justify-between w-full my-1 px-4 py-2 text-base border-2 rounded-md
 	border-gray-200 dark:border-gray-700
 	hover:border-gray-300 dark:hover:border-gray-500
 	hover:shadow
@@ -238,6 +267,11 @@ h1 span {
 .sub-item-content .time {
 	@apply inline-flex items-center
 	whitespace-nowrap;
+}
+
+.sub-item.list-header {
+	@apply pointer-events-none border-gray-300 dark:border-gray-600
+	bg-gray-50 dark:bg-gray-900;
 }
 
 .op {
