@@ -20,6 +20,8 @@
 	},
 	"main": "background.js",
 	"dependencies": {
+		"@codemirror/lang-javascript": "^6.1.7",
+		"@codemirror/theme-one-dark": "^6.1.2",
 		"@element-plus/icons-vue": "^1.1.4",
 		"@tailwindcss/postcss7-compat": "^2.0.2",
 		"autoprefixer": "^9",
@@ -29,6 +31,7 @@
 		"core-js": "^3.21.1",
 		"element-plus": "^2.3.3",
 		"md5": "^2.3.0",
+		"mitt": "^3.0.0",
 		"mysql": "^2.18.1",
 		"postcss": "^7",
 		"tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",

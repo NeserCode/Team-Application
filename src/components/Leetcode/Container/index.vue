@@ -30,12 +30,11 @@
 			<div class="appCodeEditer">
 				<Codemirror
 					class="codeView"
-					:value="
+					v-model="
 						questions.codeSnippets[langCode == -1 ? 0 : langCode]
 							.code
 					"
-					:options="cmOptions"
-					border
+					:extensions="ext"
 					ref="codeEditor"
 				>
 				</Codemirror>
@@ -47,40 +46,9 @@
 <script>
 // @ is an alias to /src
 import Slider from "@/components/Frameworks/Slider/index.vue"
-
-import Codemirror from "codemirror-editor-vue3"
-// styles
-import "codemirror-editor-vue3/dist/style.css"
-import "@/assets/codeMirrorStyle/github.css"
-import "@/assets/codeMirrorStyle/solarized.css"
-// functions
-import "codemirror/addon/selection/active-line.js"
-import "codemirror/addon/selection/mark-selection.js"
-import "codemirror/addon/scroll/annotatescrollbar.js"
-import "codemirror/addon/search/matchesonscrollbar.js"
-import "codemirror/addon/search/match-highlighter.js"
-import "codemirror/addon/hint/show-hint.js"
-import "codemirror/addon/hint/sql-hint.js"
-import "codemirror/addon/hint/show-hint.css"
-import "codemirror/addon/hint/javascript-hint.js"
-import "codemirror/addon/edit/closebrackets"
-import "codemirror/addon/edit/closetag"
-import "codemirror/addon/edit/continuelist"
-import "codemirror/addon/edit/matchbrackets"
-import "codemirror/addon/edit/matchtags"
-import "codemirror/addon/edit/trailingspace"
-import "codemirror/addon/search/search"
-import "codemirror/addon/dialog/dialog.css"
-import "codemirror/addon/fold/foldgutter.css"
-import "codemirror/addon/fold/brace-fold.js"
-import "codemirror/addon/fold/comment-fold.js"
-import "codemirror/addon/fold/foldcode.js"
-import "codemirror/addon/fold/foldgutter.js"
-import "codemirror/addon/fold/indent-fold.js"
-import "codemirror/addon/fold/markdown-fold.js"
-import "codemirror/addon/fold/xml-fold.js"
-// langs
-import "codemirror/mode/javascript/javascript.js"
+import { Codemirror } from "vue-codemirror"
+import { javascript } from "@codemirror/lang-javascript"
+import { oneDark } from "@codemirror/theme-one-dark"
 
 export default {
 	name: "LeetcodeContainer",
@@ -107,9 +75,6 @@ export default {
 		})
 	},
 	mounted() {},
-	activated() {
-		this.initTheme()
-	},
 	computed: {
 		questionContent() {
 			return (
@@ -130,40 +95,10 @@ export default {
 			inputedCode: null,
 			questions: {},
 			langCode: 0,
-			cmOptions: {
-				tabSize: 4, // Tab键空格数
-				mode: "javascript", //模式
-				theme: "solarized-light", // 主题 solarized-dark / *light / github / default
-				smartIndent: true, // 智能缩进
-				indentUnit: 4, // 智能缩进单位为4个空格长度
-				foldGutter: true, // 启用行槽中的代码折叠
-				matchBrackets: true, // 匹配结束符号，比如"]、}"
-				autoCloseBrackets: true, // 自动闭合符号
-				autoCloseTags: true,
-				gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-				highlightSelectionMatches: {
-					showToken: /\w/,
-					annotateScrollbar: true,
-				}, // 可以启用该选项来突出显示当前选中的内容的所有实例
-				lineNumbers: true, //是否显示行号
-				showCursorWhenSelecting: true,
-				styleActiveLine: false, // 显示选中行的样式
-				hintOptions: {
-					// 当匹配只有一项的时候是否自动补全
-					completeSingle: true,
-				},
-				extraKeys: { Ctrl: "autocomplete" }, // 可以用于为编辑器指定额外的键绑定，以及keyMap定义的键绑定
-			},
+			ext: [oneDark, javascript()],
 		}
 	},
 	methods: {
-		initTheme: function () {
-			setTimeout(() => {
-				if (window.matchMedia("(prefers-color-scheme: dark)").matches)
-					this.cmOptions.theme = "solarized-dark"
-				else this.cmOptions.theme = "solarized-light"
-			}, 10)
-		},
 		getQuestionSubmit: function () {
 			this.$leetcode.setBeforeSubmit(this.questions.titleSlug, () => {
 				this.$leetcode
