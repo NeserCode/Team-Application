@@ -27,18 +27,13 @@
 			</div>
 		</div>
 		<div class="codeContainer">
-			<div class="appCodeEditer">
-				<Codemirror
-					class="codeView"
-					v-model="
-						questions.codeSnippets[langCode == -1 ? 0 : langCode]
-							.code
-					"
-					:extensions="ext"
-					ref="codeEditor"
-				>
-				</Codemirror>
-			</div>
+			<MonacoEditer
+				ref="codeEditor"
+				:language="questions.codeSnippets[langCode].langSlug"
+				v-model="
+					questions.codeSnippets[langCode == -1 ? 0 : langCode].code
+				"
+			/>
 		</div>
 	</div>
 </template>
@@ -46,15 +41,13 @@
 <script>
 // @ is an alias to /src
 import Slider from "@/components/Frameworks/Slider/index.vue"
-import { Codemirror } from "vue-codemirror"
-import { javascript } from "@codemirror/lang-javascript"
-import { oneDark } from "@codemirror/theme-one-dark"
+import MonacoEditer from "../Editor/MonacoEditor.vue"
 
 export default {
 	name: "LeetcodeContainer",
 	components: {
-		Codemirror,
 		Slider,
+		MonacoEditer,
 	},
 	props: {},
 	beforeCreate() {
@@ -77,6 +70,7 @@ export default {
 	mounted() {},
 	computed: {
 		questionContent() {
+			console.log(this.questions)
 			return (
 				(this.isContentEng
 					? this.questions.content +
@@ -95,7 +89,6 @@ export default {
 			inputedCode: null,
 			questions: {},
 			langCode: 0,
-			ext: [oneDark, javascript()],
 		}
 	},
 	methods: {
