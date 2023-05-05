@@ -37,7 +37,6 @@
 			</div>
 			<el-input
 				maxlength="120"
-				size="medium"
 				@input="handleConfirmSrc"
 				placeholder="输入图片直链"
 				show-word-limit

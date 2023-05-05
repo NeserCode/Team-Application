@@ -5,7 +5,11 @@
 			@dblclick="getClipText(this.nickspace)"
 			v-show="!editable.nickname"
 			>{{ nickspace }}
-			<i class="el-icon-edit" v-if="isMe" @click="handleEditNickname"></i
+			<el-icon
+				class="el-icon-edit"
+				v-if="isMe"
+				@click="handleEditNickname"
+				><Edit /></el-icon
 		></span>
 		<el-input
 			class="inick"
@@ -29,11 +33,13 @@
 			@dblclick="getClipText(this.introduce)"
 			v-show="!editable.introduce"
 			>{{ introduce }}
-			<i
+
+			<el-icon
 				class="el-icon-edit"
 				v-if="isMe"
 				@click="handleEditIntroduce"
-			></i>
+				><Edit
+			/></el-icon>
 		</span>
 		<el-input
 			class="iintro"
@@ -145,8 +151,8 @@ export default {
 										})
 										.catch((e) => {
 											this.$public.emit("notice", {
-												type: "success",
-												msg: `❌ 同步到本地数据失败 ${e.message}`,
+												type: "error",
+												msg: `同步到本地数据失败 ${e.message}`,
 												fn: () => {
 													this.handleEditIntroduce()
 												},
@@ -155,8 +161,8 @@ export default {
 								})
 								.catch((e) => {
 									this.$public.emit("notice", {
-										type: "success",
-										msg: `❌ 读取本地数据失败 ${e.message}`,
+										type: "error",
+										msg: `读取本地数据失败 ${e.message}`,
 										fn: () => {
 											this.handleEditIntroduce()
 										},
@@ -165,8 +171,8 @@ export default {
 						})
 						.catch((e) => {
 							this.$public.emit("notice", {
-								type: "success",
-								msg: `❌ 同步到网络数据失败 ${e.message}`,
+								type: "error",
+								msg: `同步到网络数据失败 ${e.message}`,
 								fn: () => {
 									this.handleEditIntroduce()
 								},
@@ -210,8 +216,8 @@ export default {
 										})
 										.catch((e) => {
 											this.$public.emit("notice", {
-												type: "success",
-												msg: `❌ 同步到本地数据失败 ${e.message}`,
+												type: "error",
+												msg: `同步到本地数据失败 ${e.message}`,
 												fn: () => {
 													this.handleEditNickname()
 												},
@@ -220,8 +226,8 @@ export default {
 								})
 								.catch((e) => {
 									this.$public.emit("notice", {
-										type: "success",
-										msg: `❌ 读取本地数据失败 ${e.message}`,
+										type: "error",
+										msg: `读取本地数据失败 ${e.message}`,
 										fn: () => {
 											this.handleEditNickname()
 										},
@@ -230,8 +236,8 @@ export default {
 						})
 						.catch((e) => {
 							this.$public.emit("notice", {
-								type: "success",
-								msg: `❌ 同步到网络数据失败 ${e.message}`,
+								type: "error",
+								msg: `同步到网络数据失败 ${e.message}`,
 								fn: () => {
 									this.handleEditNickname()
 								},
@@ -254,12 +260,12 @@ export default {
 }
 
 .nick {
-	@apply text-xl font-thin tracking-widest;
+	@apply inline-flex items-center text-xl font-thin tracking-widest;
 	font-family: "HanYiWH";
 }
 
 .introduce {
-	@apply text-lg font-thin tracking-wide opacity-80;
+	@apply inline-flex items-center text-lg font-thin tracking-wide opacity-80;
 	font-family: "HanYiWH";
 }
 
@@ -269,5 +275,9 @@ export default {
 
 .inick {
 	@apply w-5/12;
+}
+
+.el-icon-edit {
+	@apply inline-flex justify-center items-center w-4 h-4 mx-2;
 }
 </style>
