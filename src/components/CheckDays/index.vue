@@ -19,7 +19,9 @@
 				<span v-show="!checkObject.isLoading"
 					>{{ checkObject.isCheck ? "已" : "未" }}签到</span
 				>
-				<i class="el-icon-loading" v-show="checkObject.isLoading"></i>
+				<el-icon class="el-icon-loading" v-show="checkObject.isLoading"
+					><Loading
+				/></el-icon>
 			</a>
 		</div>
 		<div class="checkDays" v-show="!userStatus">

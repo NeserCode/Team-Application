@@ -61,7 +61,9 @@
 			<div class="btnContainer">
 				<button @click="handleSignUp">
 					<span>注册</span>
-					<i class="el-icon-loading" v-show="!clickable"></i>
+					<el-icon class="el-icon-loading" v-show="!clickable">
+						<Loading />
+					</el-icon>
 				</button>
 				<button @click="toggleSignModeToIn">切换到登录</button>
 			</div>
