@@ -110,4 +110,7 @@ export default defineComponent({
 .slider .container .monaco-sash.vertical {
 	@apply w-px;
 }
+.slider .presentation {
+	z-index: 30;
+}
 </style>

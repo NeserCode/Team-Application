@@ -20,12 +20,16 @@ export default function useMonaco(language = 'javascript') {
     monacoEditor = el && monaco.editor.create(el, {
       language,
       minimap: { enabled: false },
+      fontSize: 16,
+      links: false,
+      formatOnPaste: true,
+      formatOnType: true,
       multiCursorModifier: 'ctrlCmd',
       scrollbar: {
-        verticalScrollbarSize: 12,
+        verticalScrollbarSize: 0,
         horizontalScrollbarSize: 12,
       },
-      tabSize: 2,
+      tabSize: 4,
       automaticLayout: true, // 自适应宽高
       ...editorOption
     })
