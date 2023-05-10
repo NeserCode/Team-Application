@@ -40,5 +40,23 @@ var sqlMap = {
             all: "select * from team_user_info where id = ?"
         }
     },
+    oganization: {
+        create: {
+            init: {
+                info: "insert into team_oganization_info(id, appKey, hostId, name, oganizationKey) values (?,?,?,?,?)",
+            },
+        },
+        detail: {
+            update: 'update team_oganization_info set name = ?, introduce = ?, avatar = ? where id = ?',
+            change: 'update team_oganization_info set hostId = ? where id = ?',
+            get: 'select * from team_oganization_info where id = ?',
+        },
+        query: {
+            all: 'select * from team_oganization_info ORDER BY id ASC',
+            name: "select * from team_oganization_info where name like '%?%' ORDER BY id ASC",
+            hid: 'select * from team_oganization_info where hostId = ?',
+            members: 'select * from team_user_info where id in (select id from team_user_detail where access_team = ?)',
+        },
+    },
 }
 module.exports = sqlMap;

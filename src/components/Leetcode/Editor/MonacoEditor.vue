@@ -1,26 +1,10 @@
 <template>
-	<div
-		class="editor-area"
-		:class="isFull ? 'full' : ''"
-		:style="{ width, height }"
-	>
-		<div class="tools">
-			<div class="expand" @click="isFull = !isFull">
-				<i
-					:class="isFull ? 'el-icon-close' : 'el-icon-full-screen'"
-				></i>
-			</div>
-
-			<div class="expand" @click="onFormatDoc">
-				<i class="el-icon-finished"></i>
-			</div>
-		</div>
-	</div>
+	<div class="editor-area" :style="{ width, height }"></div>
 </template>
 
 <script>
 import useMonaco from "@/plugins/monaco"
-import { defineComponent, ref } from "vue"
+import { defineComponent } from "vue"
 
 export default defineComponent({
 	props: {
@@ -34,7 +18,7 @@ export default defineComponent({
 		},
 		language: {
 			type: String,
-			default: "json",
+			default: "JavaScript",
 		},
 		preComment: {
 			type: String,
@@ -53,19 +37,25 @@ export default defineComponent({
 		modelValue(val) {
 			val !== this.getEditor()?.getValue() && this.updateMonacoVal(val)
 		},
+		language(val) {
+			this.updateLanguage(val)
+		},
 	},
 	setup(props) {
-		const { updateVal, getEditor, createEditor, onFormatDoc } = useMonaco(
-			props.language
-		)
-		const isFull = ref(false)
-
-		return {
-			isFull,
+		const {
 			updateVal,
 			getEditor,
 			createEditor,
 			onFormatDoc,
+			updateLanguage,
+		} = useMonaco(props.language)
+
+		return {
+			updateVal,
+			getEditor,
+			createEditor,
+			onFormatDoc,
+			updateLanguage,
 		}
 	},
 	methods: {
@@ -113,4 +103,11 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style lang="postcss">
+.slider .container .monaco-sash.horizontal {
+	@apply h-px;
+}
+.slider .container .monaco-sash.vertical {
+	@apply w-px;
+}
+</style>

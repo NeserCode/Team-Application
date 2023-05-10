@@ -9,7 +9,7 @@ export default function useMonaco(language = 'javascript') {
       initReadOnly && monacoEditor?.updateOptions({ readOnly: false })
       await monacoEditor?.getAction('editor.action.formatDocument').run()
       initReadOnly && monacoEditor?.updateOptions({ readOnly: true })
-    }, 100)
+    }, 0)
   }
 
   const createEditor = (el, editorOption = {}) => {
@@ -34,8 +34,15 @@ export default function useMonaco(language = 'javascript') {
   const onFormatDoc = () => {
     monacoEditor?.getAction('editor.action.formatDocument').run()
   }
+  const updateLanguage = (language) => {
+    setTimeout(async () => {
+      monaco.editor.setModelLanguage(monacoEditor.getModel(), language)
+    }, 0)
+  }
+
   return {
     updateVal,
+    updateLanguage,
     getEditor: () => monacoEditor,
     createEditor,
     onFormatDoc

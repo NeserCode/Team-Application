@@ -98,7 +98,9 @@ export default {
 					.getSubmissionID(
 						this.questions.questionId,
 						this.questions.codeSnippets[this.langCode].langSlug,
-						this.$refs.codeEditor.content,
+						this.questions.codeSnippets[
+							this.langCode == -1 ? 0 : this.langCode
+						].code,
 						this.questions.titleSlug
 					)
 					.then((response) => {
