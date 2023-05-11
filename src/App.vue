@@ -195,3 +195,12 @@ pre {
 	src: url("../src/assets/fonts/Helvetica.otf");
 }
 </style>
+
+<style lang="postcss">
+button.btn {
+	@apply inline-flex justify-center items-center px-4 py-2 rounded-md
+	border-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200
+	border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600
+	transition-all shadow;
+}
+</style>

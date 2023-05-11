@@ -1,32 +1,35 @@
 <template>
-	<div class="innerContainer" v-if="questions.content && isShowQuestion">
-		<div class="questionContainer">
+	<Splitpanes
+		class="innerContainer"
+		v-if="questions.content && isShowQuestion"
+	>
+		<Pane class="questionContainer" min-size="20">
 			<div class="question">
 				<Slider :vertical="true" :horizontal="true">
 					<div class="topSpan">
-						<span class="categoryTitle">{{
-							questions.categoryTitle
-						}}</span>
-						<el-divider direction="vertical"></el-divider>
-						<span class="questionId">{{
-							questions.questionId
-						}}</span>
-						<el-divider direction="vertical"></el-divider>
-						<span class="title">{{
-							isContentEng
-								? questions.title
-								: questions.translatedTitle
-						}}</span>
-						<el-divider direction="vertical"></el-divider
-						><span class="difficulty">{{
-							questions.difficulty
-						}}</span>
+						<span class="title"
+							>{{
+								isContentEng
+									? questions.title
+									: questions.translatedTitle
+							}},</span
+						>
+						<span class="questionId">
+							${{ questions.questionId }}</span
+						>
+						<br />
+						<span class="categoryTitle"
+							>{{ questions.categoryTitle }},</span
+						>
+						<span class="difficulty">
+							Level${{ questions.difficulty }}</span
+						>
 					</div>
 					<div class="content" v-html="questionContent"></div>
 				</Slider>
 			</div>
-		</div>
-		<div class="codeContainer">
+		</Pane>
+		<Pane class="codeContainer" min-size="20">
 			<MonacoEditer
 				ref="codeEditor"
 				:language="questions.codeSnippets[langCode].langSlug"
@@ -34,8 +37,8 @@
 					questions.codeSnippets[langCode == -1 ? 0 : langCode].code
 				"
 			/>
-		</div>
-	</div>
+		</Pane>
+	</Splitpanes>
 </template>
 
 <script>
@@ -43,11 +46,16 @@
 import Slider from "@/components/Frameworks/Slider/index.vue"
 import MonacoEditer from "../Editor/MonacoEditor.vue"
 
+import { Splitpanes, Pane } from "splitpanes"
+import "splitpanes/dist/splitpanes.css"
+
 export default {
 	name: "LeetcodeContainer",
 	components: {
 		Slider,
 		MonacoEditer,
+		Splitpanes,
+		Pane,
 	},
 	props: {},
 	beforeCreate() {
@@ -126,26 +134,26 @@ export default {
 
 <style scoped lang="postcss">
 .innerContainer {
-	@apply w-full h-full float-left;
+	@apply w-full h-full float-left border rounded
+	border-gray-300 dark:border-gray-700;
 }
 
 .questionContainer {
-	@apply relative w-1/2 h-full float-left;
-	min-height: 70vh;
-	max-height: 70vh;
+	@apply relative w-1/2 float-left border rounded
+	border-gray-300 dark:border-gray-700;
+	height: 65vh;
 }
 
 .question {
-	@apply absolute flex flex-col w-full items-center h-full border border-gray-300;
-}
-
-.topSpan {
-	@apply w-full h-12 mt-4 mb-2 text-center font-semibold text-xl;
-	line-height: 3rem;
+	@apply absolute inline-flex flex-col w-full items-center h-full;
 }
 
 .question .content {
 	@apply inline-block w-full h-full text-base select-text p-4 mx-auto;
+}
+
+.topSpan {
+	@apply inline-block text-base p-4 font-semibold;
 }
 
 :deep(.question .content a[href]) {
@@ -153,21 +161,21 @@ export default {
 }
 
 :deep(.question .content img) {
-	@apply inline-block my-2;
+	@apply hidden;
 }
 
 .codeContainer {
-	@apply relative w-1/2 h-full float-left;
+	@apply w-1/2 h-full float-left border rounded
+	border-gray-300 dark:border-gray-700;
+	max-height: 65vh;
 }
 
 .appCodeEditer {
-	@apply relative w-full mx-auto pr-4;
-	max-height: 70vh;
+	@apply w-full mx-auto pr-4;
 }
 
 .codeView {
 	@apply block w-full text-base overflow-y-auto;
-	max-height: 70vh;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -186,5 +194,12 @@ export default {
 
 .question::-webkit-scrollbar {
 	display: none;
+}
+</style>
+
+<style lang="postcss">
+.splitpanes.innerContainer.splitpanes--vertical > .splitpanes__splitter {
+	@apply w-0.5;
+	min-width: 0.5rem;
 }
 </style>

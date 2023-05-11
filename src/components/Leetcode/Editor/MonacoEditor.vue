@@ -14,7 +14,7 @@ export default defineComponent({
 		},
 		height: {
 			type: String,
-			default: "70vh",
+			default: "65vh",
 		},
 		language: {
 			type: String,

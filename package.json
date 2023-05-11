@@ -33,6 +33,7 @@
 		"monaco-editor-webpack-plugin": "^6.0.0",
 		"mysql": "^2.18.1",
 		"postcss": "^7",
+		"splitpanes": "^3.1.5",
 		"tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
 		"vue": "^3.2.31",
 		"vue-router": "^4.0.14"
