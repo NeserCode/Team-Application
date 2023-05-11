@@ -13,7 +13,11 @@
 			<el-icon><User /></el-icon
 		></span>
 		<div class="shiftOperations">
-			<span class="color-mode" @click="switchColorMode">
+			<span
+				class="color-mode"
+				@click="switchColorMode"
+				v-if="isMatchColorMode('light') || isMatchColorMode('dark')"
+			>
 				<el-icon v-if="isMatchColorMode('light')"><Sunny /></el-icon>
 				<el-icon v-else-if="isMatchColorMode('dark')"><Moon /></el-icon>
 			</span>

@@ -149,15 +149,14 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
-	:deep(.el-descriptions__body),
-	:deep(.el-descriptions__label) {
-		@apply bg-transparent;
+	:deep(.el-descriptions__label.el-descriptions__cell.is-bordered-label) {
+		@apply bg-gray-800 border-gray-500 text-gray-200;
 	}
-	:deep(.el-descriptions__label) {
-		@apply text-gray-200;
+	:deep(.el-descriptions__content.el-descriptions__cell.is-bordered-content) {
+		@apply bg-gray-700 border-gray-500 text-gray-300;
 	}
-	:deep(.el-descriptions__content) {
-		@apply text-gray-300;
+	:deep(.el-descriptions__body) {
+		@apply bg-gray-700;
 	}
 }
 

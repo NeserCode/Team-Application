@@ -80,7 +80,7 @@ export default {
 				.emit("notice", {
 					type: "warning",
 					time: 5000,
-					msg: `⚙ 检测到新生成的应用键值 正在为您挂载`,
+					msg: `检测到新生成的应用键值 正在为您挂载`,
 					fn: () => {
 						this.$public.emit("notice", {
 							type: "success",

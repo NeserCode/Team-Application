@@ -152,7 +152,7 @@ export default {
 }
 
 .topSpan {
-	@apply inline-block text-base p-4 font-semibold;
+	@apply inline-block text-base p-4 font-semibold select-text;
 }
 
 :deep(.question .content a[href]) {
