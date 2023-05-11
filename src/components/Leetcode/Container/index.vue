@@ -119,11 +119,10 @@ export default {
 						)
 					})
 					.catch((e) => {
-						console.log()
+						console.log("e_request-submission-id", e)
 						this.$public.emit("notice", {
-							type: "error",
 							time: 4500,
-							msg: `${e.message} 未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,
+							msg: `未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,
 						})
 					})
 			})

@@ -43,7 +43,7 @@
 				:rModel="signUp.sex"
 				class="rUp"
 				rPreText="性别"
-				rTip="个人信息基本项, 没有非人选项! 按下 Tab 可以使用左右键更换选项"
+				rTip="个人信息基本项 按下 Tab 可以使用左右键更换选项"
 			/>
 			<SignInput
 				ref="ibd"
@@ -244,7 +244,7 @@ export default {
 									console.log(response.data)
 									this.$public.emit("notice", {
 										type: "success",
-										msg: `😎 注册成功, 欢迎您, ${this.signUp.username} 赶紧登录一下试试`,
+										msg: `注册成功, 欢迎您!`,
 										time: 2500,
 										fn: () => {
 											this.toggleSignModeToIn()
@@ -274,7 +274,7 @@ export default {
 
 <style scoped lang="postcss">
 .register {
-	@apply w-full h-auto pb-12;
+	@apply w-full h-auto;
 	font-family: Consolas, "HanSerif";
 }
 
@@ -285,7 +285,7 @@ export default {
 }
 
 .iUp {
-	@apply w-1/3 inline-block my-2;
+	@apply w-1/3 inline-block my-4;
 }
 
 .rUp {

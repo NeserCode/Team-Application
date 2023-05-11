@@ -1,5 +1,5 @@
 <template>
-	<div class="userDetail">
+	<div class="userDetail" ref="container">
 		<div class="userInfo">
 			<UserAssets />
 			<Namespace />

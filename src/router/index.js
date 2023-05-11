@@ -20,9 +20,19 @@ const routes = [
     component: () => import('../views/Setting.vue')
   },
   {
+    path: '/sign',
+    name: 'SignPage',
+    component: () => import('../views/SignPage.vue')
+  },
+  {
     path: '/userArea',
     name: 'UserArea',
-    component: ()=>import('../views/UserArea.vue')
+    component: () => import('../views/UserArea.vue')
+  },
+  {
+    path: '/oganization',
+    name: 'Oganization',
+    component: () => import('../views/Oganization.vue')
   }
   , { path: '/', redirect: '/home' }
 ]

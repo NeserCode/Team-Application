@@ -192,9 +192,10 @@ export default {
 
 								this.$public.emit("notice", {
 									type: "success",
-									msg: `欢迎您，${detail.nickname}`,
+									msg: `欢迎您，${info.username}`,
 									time: 3000,
 									fn: () => {
+										console.log(detail)
 										this.$public.emit(
 											"update-main-user-info-upto-app",
 											{
@@ -208,6 +209,7 @@ export default {
 										this.options.isShowPassword = false
 
 										this.clickable = true
+										this.$router.push("/userArea")
 									},
 								})
 							})
@@ -242,7 +244,7 @@ export default {
 }
 
 .iIn {
-	@apply w-1/3 inline-block my-2;
+	@apply w-1/3 inline-block my-4;
 }
 
 .btnContainer {

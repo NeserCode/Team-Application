@@ -43,9 +43,17 @@
 			class="areaLink"
 			v-show="!isLogined"
 			:ondragstart="handleKeepDrag"
-			to="/userArea"
+			to="/sign"
 			tabindex="-1"
 			>{{ signText }}</router-link
+		>
+		<router-link
+			class="areaLink"
+			v-show="isLogined"
+			:ondragstart="handleKeepDrag"
+			to="/oganization"
+			tabindex="-1"
+			>Oganization</router-link
 		>
 	</div>
 </template>
