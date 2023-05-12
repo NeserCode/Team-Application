@@ -260,5 +260,19 @@ router.post('/detail/all', (req, res) => {
 
 })
 
+// 组织管理者 获取所管理组织
+router.post('/oganization/query/hid', (req, res) => {
+    let sql = $sql.oganization.query.hid
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[oganization query hid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
 
 module.exports = router

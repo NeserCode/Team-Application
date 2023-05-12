@@ -7,7 +7,7 @@
 			<div class="operateContainer" v-if="opType == 'switch'">
 				<el-switch
 					:disabled="opDisabled"
-					:value="opBindValue"
+					:model-value="opBindValue"
 					@click="opCallbackFn"
 				></el-switch>
 			</div>

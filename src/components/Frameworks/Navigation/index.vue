@@ -57,7 +57,15 @@
 			:ondragstart="handleKeepDrag"
 			to="/oganization"
 			tabindex="-1"
-			>Oganization</router-link
+			>组织</router-link
+		>
+		<router-link
+			class="areaLink"
+			v-show="isLogined"
+			:ondragstart="handleKeepDrag"
+			to="/oganization"
+			tabindex="-1"
+			>管理</router-link
 		>
 	</div>
 </template>
@@ -79,6 +87,8 @@ export default {
 			colorMode: "light",
 			signText: "登录",
 			avatarUrl: "",
+			superUser: false,
+			hostUser: false,
 		}
 	},
 	beforeCreate() {

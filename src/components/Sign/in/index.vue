@@ -195,7 +195,7 @@ export default {
 									msg: `欢迎您，${info.username}`,
 									time: 3000,
 									fn: () => {
-										console.log(detail)
+										console.log(detail, info)
 										this.$public.emit(
 											"update-main-user-info-upto-app",
 											{

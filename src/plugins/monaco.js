@@ -24,7 +24,13 @@ export default function useMonaco(language = 'javascript') {
       links: false,
       formatOnPaste: true,
       formatOnType: true,
+      overviewRulerBorder: false, // 是否应围绕概览标尺绘制边框
+      renderLineHighlight: 'all', // 当前行突出显示方式
+      scrollBeyondLastLine: false, // 设置编辑器是否可以滚动到最后一行之后
       multiCursorModifier: 'ctrlCmd',
+      guides: {
+        indentation: false,
+      },
       scrollbar: {
         verticalScrollbarSize: 0,
         horizontalScrollbarSize: 12,

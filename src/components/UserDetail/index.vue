@@ -86,6 +86,8 @@ export default {
 					tempSetting.userInfo.name = info.username
 					// User Key
 					tempSetting.userInfo.key = info.userKey
+					// Super User
+					tempSetting.userInfo.super = !!info.super
 
 					this.$conf
 						.updateLocalConfig(tempSetting, () => {

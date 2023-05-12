@@ -104,6 +104,9 @@ const appConfig = {
     , checkUsername: ({ host, username }) => {
         return Axios.post(`${host}/api/user/signin/username`, { username })
     }
+    , queryHostOganizationById: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/oganization/query/hid`, { id })
+    }
 
 }
 
