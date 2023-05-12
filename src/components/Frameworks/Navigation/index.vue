@@ -63,7 +63,7 @@
 			class="areaLink"
 			v-show="isLogined"
 			:ondragstart="handleKeepDrag"
-			to="/oganization"
+			to="/manage"
 			tabindex="-1"
 			>管理</router-link
 		>
@@ -98,7 +98,11 @@ export default {
 				this.isLogined = true
 				this.avatarUrl = detail.avatar ?? localStorage.getItem("avatar")
 
-				this.ensureHostorSuperUser(info, info.id)
+				this.ensureHostorSuperUser(info, info.id, () => {
+					console.log(
+						`Host(${this.hostUser}) or Super(${this.superUser})`
+					)
+				})
 			}
 		)
 		this.$public.on("clear-user-sign-status", () => {
@@ -174,8 +178,8 @@ export default {
 				this.avatarUrl = data.data.userInfo.avatar
 			})
 		},
-		ensureHostorSuperUser: function (info, id) {
-			this.superUser = info.super
+		ensureHostorSuperUser: function (info, id, cb) {
+			this.superUser = !!info.super
 			this.$conf.getHost().then((h) => {
 				this.$conf
 					.queryHostOganizationById({
@@ -184,6 +188,9 @@ export default {
 					})
 					.then((res) => {
 						console.log(res.data)
+						this.hostUser = res.data.length > 0
+
+						cb && cb()
 					})
 			})
 		},

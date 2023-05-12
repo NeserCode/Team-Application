@@ -56,6 +56,7 @@ var sqlMap = {
             name: "select * from team_oganization_info where name like '%?%' ORDER BY id ASC",
             hid: 'select * from team_oganization_info where hostId = ?',
             members: 'select * from team_user_info where id in (select id from team_user_detail where access_team = ?)',
+            membersDetail: 'select * from team_user_detail where id in (select id from team_user_detail where access_team = ?)',
         },
     },
 }

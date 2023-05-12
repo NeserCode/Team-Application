@@ -68,8 +68,8 @@ export default {
 
 					// User Access
 					tempSetting.userInfo.access = detail.access_status
-					tempSetting.userInfo.orgnization = detail.access_team
-					tempSetting.userInfo.orPosition = detail.access_position
+					tempSetting.userInfo.oganization = detail.access_team
+					tempSetting.userInfo.oPosition = detail.access_position
 					// User Sex
 					tempSetting.userInfo.sex = detail.sex
 					// User Avatar

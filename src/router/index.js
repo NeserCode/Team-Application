@@ -33,6 +33,11 @@ const routes = [
     path: '/oganization',
     name: 'Oganization',
     component: () => import('../views/Oganization.vue')
+  },
+  {
+    path: '/manage',
+    name: 'ManagePage',
+    component: () => import('../views/ManagePage.vue')
   }
   , { path: '/', redirect: '/home' }
 ]

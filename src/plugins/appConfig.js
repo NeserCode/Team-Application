@@ -68,7 +68,7 @@ const appConfig = {
         })
     }
     , allCheckToday: async (host) => {
-        return Axios.post(`${host}/api/user/checkDay/all`)
+        return Axios.get(`${host}/api/user/checkDay/all`)
     }
     , getLocalIP: async () => {
         //https://api.ipify.org?format=json
@@ -106,6 +106,12 @@ const appConfig = {
     }
     , queryHostOganizationById: ({ host, id }) => {
         return Axios.post(`${host}/api/user/oganization/query/hid`, { id })
+    }
+    , getOganizationById: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/oganization/detail/get`, { id })
+    }
+    , getMembersByOganizationId: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/oganization/query/members`, { id })
     }
 
 }

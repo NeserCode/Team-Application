@@ -184,8 +184,9 @@ router.post('/checkDay/get', (req, res) => {
     })
 })
 
-router.post('/checkDay/all', (req, res) => {
+router.get('/checkDay/all', (req, res) => {
     let sql = $sql.user.checkDay.all
+
     conn.query(sql, [new Date(new Date().toLocaleDateString()).getTime()], (err, result) => {
         if (err) return res.status(502).send(err)
         else {
@@ -260,6 +261,20 @@ router.post('/detail/all', (req, res) => {
 
 })
 
+// 获取所有组织
+router.get('/oganization/query/all', (req, res) => {
+    let sql = $sql.oganization.query.all
+
+    conn.query(sql, (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[oganization query all √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+
 // 组织管理者 获取所管理组织
 router.post('/oganization/query/hid', (req, res) => {
     let sql = $sql.oganization.query.hid
@@ -273,6 +288,46 @@ router.post('/oganization/query/hid', (req, res) => {
         }
     })
 })
+
+// 获取组织信息
+router.post('/oganization/detail/get', (req, res) => {
+    let sql = $sql.oganization.detail.get
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[oganization query oid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+// 获取组织成员
+router.post('/oganization/query/members', (req, res) => {
+    let sql = $sql.oganization.query.members
+    let params = req.body
+    let sql2 = $sql.oganization.query.membersDetail
+    let all = { members: [], detail: [] }
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[oganization query members ${params.id} √]`);
+            all.members = result
+            conn.query(sql2, [params.id], (err2, result2) => {
+                if (err2) return res.status(502).send({ message: err2.sqlMessage, errorCode: err2.errno })
+                else {
+                    console.log(`[oganization query members detail ${params.id} √]`);
+                    all.detail = result2
+                    res.status(200).send(all)
+                }
+            })
+        }
+    })
+})
+
+//
 
 
 module.exports = router
