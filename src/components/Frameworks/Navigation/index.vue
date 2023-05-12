@@ -92,10 +92,15 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			this.isLogined = true
-			this.avatarUrl = detail.avatar ?? localStorage.getItem("avatar")
-		})
+		this.$public.on(
+			"update-main-user-info-upto-app",
+			({ detail, info }) => {
+				this.isLogined = true
+				this.avatarUrl = detail.avatar ?? localStorage.getItem("avatar")
+
+				this.ensureHostorSuperUser(info, info.id)
+			}
+		)
 		this.$public.on("clear-user-sign-status", () => {
 			this.isLogined = false
 		})
@@ -167,6 +172,19 @@ export default {
 		initUserAvatar: function () {
 			this.$conf.getConfPromise().then((data) => {
 				this.avatarUrl = data.data.userInfo.avatar
+			})
+		},
+		ensureHostorSuperUser: function (info, id) {
+			this.superUser = info.super
+			this.$conf.getHost().then((h) => {
+				this.$conf
+					.queryHostOganizationById({
+						host: this.$conf.getHttpString(h.host),
+						id,
+					})
+					.then((res) => {
+						console.log(res.data)
+					})
 			})
 		},
 	},
