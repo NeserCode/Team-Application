@@ -104,17 +104,20 @@ const appConfig = {
     , checkUsername: ({ host, username }) => {
         return Axios.post(`${host}/api/user/signin/username`, { username })
     }
-    , queryHostOganizationById: ({ host, id }) => {
-        return Axios.post(`${host}/api/user/oganization/query/hid`, { id })
+    , allOrganization: ({ host }) => {
+        return Axios.get(`${host}/api/user/organization/query/all`)
     }
-    , getOganizationById: ({ host, id }) => {
-        return Axios.post(`${host}/api/user/oganization/detail/get`, { id })
+    , queryHostOrganizationById: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/query/hid`, { id })
     }
-    , getMembersByOganizationId: ({ host, id }) => {
-        return Axios.post(`${host}/api/user/oganization/query/members`, { id })
+    , getOrganizationById: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/detail/get`, { id })
     }
-    , handleCreateOganization: ({ host, appKey, hostId, name, oganizationKey }) => {
-        return Axios.post(`${host}/api/user/oganization/create/init`, { appKey, hostId, name, oganizationKey })
+    , getMembersByOrganizationId: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/query/members`, { id })
+    }
+    , handleCreateOrganization: ({ host, appKey, hostId, name, organizationKey }) => {
+        return Axios.post(`${host}/api/user/organization/create/init`, { appKey, hostId, name, organizationKey })
     }
 
 }

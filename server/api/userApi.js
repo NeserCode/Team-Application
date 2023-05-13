@@ -262,13 +262,13 @@ router.post('/detail/all', (req, res) => {
 })
 
 // 获取所有组织 | get method
-router.get('/oganization/query/all', (req, res) => {
-    let sql = $sql.oganization.query.all
+router.get('/organization/query/all', (req, res) => {
+    let sql = $sql.organization.query.all
 
     conn.query(sql, (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[oganization query all √]`);
+            console.log(`[organization query all √]`);
             res.status(200).send(result)
         }
     })
@@ -276,49 +276,49 @@ router.get('/oganization/query/all', (req, res) => {
 
 
 // 组织管理者 获取所管理组织 | hid
-router.post('/oganization/query/hid', (req, res) => {
-    let sql = $sql.oganization.query.hid
+router.post('/organization/query/hid', (req, res) => {
+    let sql = $sql.organization.query.hid
     let params = req.body
 
     conn.query(sql, [params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[oganization query hid ${params.id} √]`);
+            console.log(`[organization query hid ${params.id} √]`);
             res.status(200).send(result)
         }
     })
 })
 
 // 获取组织信息 | oid
-router.post('/oganization/detail/get', (req, res) => {
-    let sql = $sql.oganization.detail.get
+router.post('/organization/detail/get', (req, res) => {
+    let sql = $sql.organization.detail.get
     let params = req.body
 
     conn.query(sql, [params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[oganization query oid ${params.id} √]`);
+            console.log(`[organization query oid ${params.id} √]`);
             res.status(200).send(result)
         }
     })
 })
 
 // 获取组织成员 | id
-router.post('/oganization/query/members', (req, res) => {
-    let sql = $sql.oganization.query.members
+router.post('/organization/query/members', (req, res) => {
+    let sql = $sql.organization.query.members
     let params = req.body
-    let sql2 = $sql.oganization.query.membersDetail
+    let sql2 = $sql.organization.query.membersDetail
     let all = { members: [], detail: [] }
 
     conn.query(sql, [params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[oganization query members ${params.id} √]`);
+            console.log(`[organization query members ${params.id} √]`);
             all.members = result
             conn.query(sql2, [params.id], (err2, result2) => {
                 if (err2) return res.status(502).send({ message: err2.sqlMessage, errorCode: err2.errno })
                 else {
-                    console.log(`[oganization query members detail ${params.id} √]`);
+                    console.log(`[organization query members detail ${params.id} √]`);
                     all.detail = result2
                     res.status(200).send(all)
                 }
@@ -327,15 +327,15 @@ router.post('/oganization/query/members', (req, res) => {
     })
 })
 
-// 新建组织 | appKey, hostId, name, oganizationKey
-router.post('/oganization/create/init', (req, res) => {
-    let sql = $sql.oganization.create.init
+// 新建组织 | appKey, hostId, name, organizationKey
+router.post('/organization/create/init', (req, res) => {
+    let sql = $sql.organization.create.init
     let params = req.body
 
-    conn.query(sql, [parms.appKey, params.hostId, params.name, params.oganizationKey], (err, result) => {
+    conn.query(sql, [parms.appKey, params.hostId, params.name, params.organizationKey], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[oganization create hid ${params.hostId} √]`);
+            console.log(`[organization create hid ${params.hostId} √]`);
             res.status(200).send(result)
         }
     })

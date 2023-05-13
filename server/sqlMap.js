@@ -40,19 +40,19 @@ var sqlMap = {
             all: "select * from team_user_info where id = ?"
         }
     },
-    oganization: {
+    organization: {
         create: {
-            init: "insert into team_oganization_info(appKey, hostId, name, oganizationKey) values (?,?,?,?)",
+            init: "insert into team_organization_info(appKey, hostId, name, organizationKey) values (?,?,?,?)",
         },
         detail: {
-            update: 'update team_oganization_info set name = ?, introduce = ?, avatar = ? where id = ?',
-            change: 'update team_oganization_info set hostId = ? where id = ?',
-            get: 'select * from team_oganization_info where id = ?',
+            update: 'update team_organization_info set name = ?, introduce = ?, avatar = ? where id = ?',
+            change: 'update team_organization_info set hostId = ? where id = ?',
+            get: 'select * from team_organization_info where id = ?',
         },
         query: {
-            all: 'select * from team_oganization_info ORDER BY id ASC',
-            name: "select * from team_oganization_info where name like '%?%' ORDER BY id ASC",
-            hid: 'select * from team_oganization_info where hostId = ?',
+            all: 'select * from team_organization_info ORDER BY id ASC',
+            name: "select * from team_organization_info where name like '%?%' ORDER BY id ASC",
+            hid: 'select * from team_organization_info where hostId = ?',
             members: 'select * from team_user_info where id in (select id from team_user_detail where access_team = ?)',
             membersDetail: 'select * from team_user_detail where id in (select id from team_user_detail where access_team = ?)',
         },

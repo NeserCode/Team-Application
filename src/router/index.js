@@ -30,9 +30,9 @@ const routes = [
     component: () => import('../views/UserArea.vue')
   },
   {
-    path: '/oganization',
-    name: 'Oganization',
-    component: () => import('../views/Oganization.vue')
+    path: '/organization',
+    name: 'Organization',
+    component: () => import('../views/Organization.vue')
   },
   {
     path: '/manage',

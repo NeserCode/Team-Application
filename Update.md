@@ -2,7 +2,7 @@
 
 -   新增组织表、公告表
 
-    -   组织表包含 id, status, appKey, hostId, name, exp, oganizationKey
+    -   组织表包含 id, status, appKey, hostId, name, exp, organizationKey
     -   公告表包含 id, oid, open, content, timeStamp
 
 -   其他表改动

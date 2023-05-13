@@ -55,7 +55,7 @@
 			class="areaLink"
 			v-show="isLogined"
 			:ondragstart="handleKeepDrag"
-			to="/oganization"
+			to="/organization"
 			tabindex="-1"
 			>组织</router-link
 		>
@@ -182,7 +182,7 @@ export default {
 			this.superUser = !!info.super
 			this.$conf.getHost().then((h) => {
 				this.$conf
-					.queryHostOganizationById({
+					.queryHostOrganizationById({
 						host: this.$conf.getHttpString(h.host),
 						id,
 					})
