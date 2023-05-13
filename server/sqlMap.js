@@ -22,7 +22,7 @@ var sqlMap = {
                 sex: 'update team_user_detail set sex = ? where id = ?',
                 access: 'update team_user_detail set access_status = ?, access_team = ?, access_position = ? where id = ?',
             },
-
+            get: "select * from team_user_detail where id = ?"
         },
         leetcode: {
             add: 'insert into team_leetcode_submit(userid,leetName,appKey,submitId,status,timestamp) values (?,?,?,?,?,?)',
@@ -37,7 +37,11 @@ var sqlMap = {
         },
         get: {
             uid: "select id from team_user_info where username = ?",
-            all: "select * from team_user_info where id = ?"
+            all: "select * from team_user_info where id = ?",
+            checkKey: "select * from team_user_info where userkey = ? AND checkKey = ?"
+        },
+        access: {
+            update: "update team_user_detail set access_status = ?, access_team = ?, access_position = ? where id = ?"
         }
     },
     organization: {

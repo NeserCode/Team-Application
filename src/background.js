@@ -130,7 +130,9 @@ async function createWindow() {
   })
 
   globalShortcut.register('CommandOrControl+Q', () => {
-    mainWindow.webContents.openDevTools()
+    if (!mainWindow.webContents.isDevToolsOpened())
+      mainWindow.webContents.openDevTools()
+    else mainWindow.webContents.closeDevTools()
     // loadingWindow.webContents.openDevTools()
   })
   globalShortcut.register('CommandOrControl+M', () => {

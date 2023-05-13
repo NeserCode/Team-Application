@@ -122,6 +122,12 @@ const appConfig = {
     , checkOrganizationName: ({ host, name }) => {
         return Axios.post(`${host}/api/user/organization/check/oname`, { name })
     }
+    , updateUserAccess: ({ host, oid, uid }) => {
+        return Axios.post(`${host}/api/user/access/update`, { oid, uid })
+    }
+    , getDetailByKeys: ({ host, userKey, checkKey }) => {
+        return Axios.post(`${host}/api/user/detail/key`, { userKey, checkKey })
+    }
 
 }
 

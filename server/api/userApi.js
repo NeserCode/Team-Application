@@ -332,7 +332,7 @@ router.post('/organization/create/init', (req, res) => {
     let sql = $sql.organization.create.init
     let params = req.body
 
-    conn.query(sql, [parms.appKey, params.hostId, params.name, params.organizationKey], (err, result) => {
+    conn.query(sql, [params.appKey, params.hostId, params.name, params.organizationKey], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
             console.log(`[organization create hid ${params.hostId} √]`);
@@ -351,6 +351,52 @@ router.post('/organization/check/oname', (req, res) => {
         else {
             console.log(`[organization check name ${params.name} √]`);
             res.status(200).send(result)
+        }
+    })
+})
+
+// 更新用户认证状态
+router.post('/access/update', (req, res) => {
+    let osql = $sql.organization.detail.get
+    let sql = $sql.user.access.update
+    let params = req.body
+
+    conn.query(osql, [params.oid], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            conn.query(sql, [Number(1), params.oid, result[0].hostId == params.uid ? "HOST" : "JOIN", params.uid], (err, result) => {
+                if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+                else {
+                    console.log(`[organization check name ${params.name} √]`);
+                    res.status(200).send(result)
+                }
+            })
+        }
+    })
+})
+
+// 获取用户信息
+router.post('/detail/key', (req, res) => {
+    let csql = $sql.user.get.checkKey
+    let sql = $sql.user.detail.get
+    let params = req.body
+    let all = {
+        detail: {},
+        info: {}
+    }
+
+    conn.query(csql, [params.userKey, params.checkKey], (cerr, cresult) => {
+        if (cerr) return res.status(502).send({ message: cerr.sqlMessage, errorCode: cerr.errno })
+        else {
+            conn.query(sql, [cresult[0].id], (err, result) => {
+                if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+                else {
+                    all.info = cresult[0]
+                    all.detail = result[0]
+                    console.log(`[detail get by key [√]`);
+                    res.status(200).send(all)
+                }
+            })
         }
     })
 })

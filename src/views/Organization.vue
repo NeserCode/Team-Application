@@ -11,7 +11,8 @@ export default {
 			this.getAllOrganization()
 		})
 	},
-	created() {
+	created() {},
+	mounted() {
 		this.$conf.getConfPromise().then((conf) => {
 			this.getOrganizationInfo(conf.data.userInfo.organization)
 			this.getMembersInfo(conf.data.userInfo.organization)
@@ -19,7 +20,6 @@ export default {
 			this.getAllOrganization()
 		})
 	},
-	mounted() {},
 	components: {
 		createOrganization,
 	},
@@ -74,16 +74,17 @@ export default {
 			// Update the user's access status
 			this.updateUserAccessStatus(oid)
 		},
-		async getAllOrganization() {
-			try {
-				const h = await this.$conf.getHost()
-				const res = await this.$conf.allOrganization({
-					host: this.$conf.getHttpString(h.host),
-				})
-				this.allOrganization = res.data
-			} catch (e) {
-				console.log(e)
-			}
+		getAllOrganization() {
+			console.log("?")
+			this.$conf.getHost().then((h) => {
+				this.$conf
+					.allOrganization({
+						host: this.$conf.getHttpString(h.host),
+					})
+					.then((res) => {
+						this.allOrganization = res.data
+					})
+			})
 		},
 		updateUserAccessStatus: function (bool) {
 			this.hasOrganization = !!bool
@@ -93,6 +94,25 @@ export default {
 		},
 		updateVisibleCreateOrganization: function (bool) {
 			this.visible.createOrganization = bool
+		},
+		updateUserOrganization: async function ({ oid, uid }) {
+			const h = await this.$conf.getHost()
+			await this.$conf
+				.updateUserAccess({
+					host: this.$conf.getHttpString(h.host),
+					oid,
+					uid,
+				})
+				.then((res) => {
+					console.log(res)
+				})
+
+			this.$conf.getConfPromise().then((conf) => {
+				this.getOrganizationInfo(conf.data.userInfo.organization)
+				this.getMembersInfo(conf.data.userInfo.organization)
+
+				this.getAllOrganization()
+			})
 		},
 	},
 }
@@ -159,6 +179,7 @@ export default {
 		<create-organization
 			:visible="visible.createOrganization"
 			@update:visible="updateVisibleCreateOrganization"
+			@create:success="updateUserOrganization"
 		/>
 	</div>
 </template>
