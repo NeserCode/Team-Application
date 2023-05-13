@@ -61,7 +61,7 @@
 		>
 		<router-link
 			class="areaLink"
-			v-show="isLogined"
+			v-show="isLogined && (superUser || hostUser)"
 			:ondragstart="handleKeepDrag"
 			to="/manage"
 			tabindex="-1"

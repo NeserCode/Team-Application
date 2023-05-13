@@ -1,7 +1,11 @@
 <script>
 export default {
 	name: "Oganization",
-	beforeCreate() {},
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+			this.updateUserAccessStatus(detail.access_team)
+		})
+	},
 	created() {
 		this.$conf.getConfPromise().then((conf) => {
 			this.getOganizationInfo(conf.data.userInfo.oganization)
@@ -13,6 +17,7 @@ export default {
 	data() {
 		return {
 			oganizationInfo: {},
+			hasOganization: false,
 		}
 	},
 	methods: {
@@ -26,15 +31,17 @@ export default {
 					})
 					.then((res) => {
 						this.oganizationInfo = res.data[0] || {}
+
+						console.log(this.oganizationInfo)
 					})
 			})
 		},
-		getMembersInfo: function (id) {
+		getMembersInfo: function (oid) {
 			this.$conf.getHost().then((h) => {
 				this.$conf
 					.getMembersByOganizationId({
 						host: this.$conf.getHttpString(h.host),
-						id,
+						oid,
 					})
 					.then((res) => {
 						// this.oganizationInfo = res.data[0] || {}
@@ -42,6 +49,11 @@ export default {
 						console.log(detail, members)
 					})
 			})
+
+			this.updateUserAccessStatus(oid)
+		},
+		updateUserAccessStatus: function (bool) {
+			this.hasOganization = !!bool
 		},
 	},
 }
@@ -49,7 +61,7 @@ export default {
 
 <template>
 	<div class="oganization">
-		<div class="oganization-info">
+		<div class="oganization-info" v-if="hasOganization">
 			<span class="name">{{ oganizationInfo.name }}</span>
 			<span
 				:class="[
@@ -60,12 +72,17 @@ export default {
 			>
 		</div>
 		<div class="members-info"></div>
+		<div class="oganization-list">
+			<span class="title">{{
+				hasOganization ? "其他组织" : "组织列表"
+			}}</span>
+		</div>
 	</div>
 </template>
 
 <style scoped lang="postcss">
 .oganization {
-	@apply inline-flex justify-center w-full h-auto py-4;
+	@apply inline-flex flex-col items-center w-full h-auto py-4;
 	font-family: "Consolas", "HanSerif";
 }
 
@@ -77,7 +94,7 @@ export default {
 }
 .oganization-info .status {
 	@apply inline-flex justify-center items-center px-1 py-0.5 mx-2 rounded
-	font-bold text-gray-50 dark:text-gray-800
+	font-bold text-gray-50 dark:text-gray-800 bg-gray-400 dark:bg-gray-500
 	transition-all shadow;
 }
 .oganization-info .status.access {

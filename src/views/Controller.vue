@@ -102,12 +102,12 @@ export default {
 				.then((data) => {
 					if (
 						data.data.appInfo.key != null &&
-						localStorage.getItem("appKey") == null
+						localStorage.getItem("appKey") == (null || "")
 					)
 						this.handleSaveAppkey(data.data.appInfo.key)
-					else if (data.data.appInfo.key == null)
+					else if (data.data.appInfo.key == (null || ""))
 						this.handleRebuildKey("appkey")
-					else if (data.data.userInfo.key == null)
+					else if (data.data.userInfo.key == (null || ""))
 						this.handleRebuildKey("userkey")
 				})
 				.catch((e) => {

@@ -37,8 +37,8 @@ export default {
 			this.statusLightColor.real =
 				this.status == "Loading" || this.status == "loading"
 					? this.statusLightColor.loading
-					: this.status == "Warn" || this.status == "warn"
-					? this.statusLightColor.warn
+					: this.status == "warning" || this.status == "warning"
+					? this.statusLightColor.warning
 					: this.status == "Error" || this.status == "error"
 					? this.statusLightColor.error
 					: this.status == "Success" || this.status == "success"
@@ -53,7 +53,7 @@ export default {
 		return {
 			timer: null,
 			statusLightColor: {
-				warn: "rgb(240, 128, 76)",
+				warning: "rgb(240, 128, 76)",
 				success: "rgb(27, 190, 68)",
 				error: "rgb(185, 29, 29)",
 				loading: "rgb(199, 233, 77)",

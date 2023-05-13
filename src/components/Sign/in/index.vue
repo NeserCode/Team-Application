@@ -174,7 +174,7 @@ export default {
 								const { info, detail } = response.data
 								if (info.userKey.length < 16)
 									this.$public.emit("notice", {
-										type: "warn",
+										type: "warning",
 										msg: "用户键值缺失异常",
 										fn: () => {
 											this.clickable = true
@@ -182,7 +182,7 @@ export default {
 									})
 								else if (info.appKey.length < 16) {
 									this.$public.emit("notice", {
-										type: "warn",
+										type: "warning",
 										msg: "应用键值缺失异常",
 										fn: () => {
 											this.clickable = true

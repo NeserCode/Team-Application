@@ -125,7 +125,7 @@ export default {
 		getQuestionContent: _debounce(function (slug) {
 			this.$public.emit("notice", {
 				type: "loading",
-				msg: "🎈 正在获取题目详情...",
+				msg: "正在获取题目详情...",
 			})
 			this.$leetcode
 				.getCookie("https://leetcode-cn.com/graphql/")
@@ -150,7 +150,7 @@ export default {
 					)
 					this.$public.emit("notice", {
 						type: "success",
-						msg: `获取题目详情 成功 -${this.question.title}`,
+						msg: `已获取题目详情`,
 					})
 				})
 			}, 200)

@@ -113,6 +113,9 @@ const appConfig = {
     , getMembersByOganizationId: ({ host, id }) => {
         return Axios.post(`${host}/api/user/oganization/query/members`, { id })
     }
+    , handleCreateOganization: ({ host, appKey, hostId, name, oganizationKey }) => {
+        return Axios.post(`${host}/api/user/oganization/create/init`, { appKey, hostId, name, oganizationKey })
+    }
 
 }
 

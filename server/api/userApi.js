@@ -246,7 +246,7 @@ router.post('/leetcode/all', (req, res) => {
     })
 })
 
-// 获取用户信息 | username, uid
+// 获取用户信息 | uid
 router.post('/detail/all', (req, res) => {
     let sql = $sql.user.login.detail
     let params = req.body
@@ -261,7 +261,7 @@ router.post('/detail/all', (req, res) => {
 
 })
 
-// 获取所有组织
+// 获取所有组织 | get method
 router.get('/oganization/query/all', (req, res) => {
     let sql = $sql.oganization.query.all
 
@@ -275,7 +275,7 @@ router.get('/oganization/query/all', (req, res) => {
 })
 
 
-// 组织管理者 获取所管理组织
+// 组织管理者 获取所管理组织 | hid
 router.post('/oganization/query/hid', (req, res) => {
     let sql = $sql.oganization.query.hid
     let params = req.body
@@ -289,7 +289,7 @@ router.post('/oganization/query/hid', (req, res) => {
     })
 })
 
-// 获取组织信息
+// 获取组织信息 | oid
 router.post('/oganization/detail/get', (req, res) => {
     let sql = $sql.oganization.detail.get
     let params = req.body
@@ -303,7 +303,7 @@ router.post('/oganization/detail/get', (req, res) => {
     })
 })
 
-// 获取组织成员
+// 获取组织成员 | id
 router.post('/oganization/query/members', (req, res) => {
     let sql = $sql.oganization.query.members
     let params = req.body
@@ -327,7 +327,19 @@ router.post('/oganization/query/members', (req, res) => {
     })
 })
 
-//
+// 新建组织 | appKey, hostId, name, oganizationKey
+router.post('/oganization/create/init', (req, res) => {
+    let sql = $sql.oganization.create.init
+    let params = req.body
+
+    conn.query(sql, [parms.appKey, params.hostId, params.name, params.oganizationKey], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[oganization create hid ${params.hostId} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
 
 
 module.exports = router

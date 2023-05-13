@@ -42,9 +42,7 @@ var sqlMap = {
     },
     oganization: {
         create: {
-            init: {
-                info: "insert into team_oganization_info(id, appKey, hostId, name, oganizationKey) values (?,?,?,?,?)",
-            },
+            init: "insert into team_oganization_info(appKey, hostId, name, oganizationKey) values (?,?,?,?)",
         },
         detail: {
             update: 'update team_oganization_info set name = ?, introduce = ?, avatar = ? where id = ?',
