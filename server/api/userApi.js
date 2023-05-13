@@ -341,5 +341,19 @@ router.post('/organization/create/init', (req, res) => {
     })
 })
 
+// 组织名重复检查
+router.post('/organization/check/oname', (req, res) => {
+    let sql = $sql.organization.check.oname
+    let params = req.body
+
+    conn.query(sql, [params.name], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization check name ${params.name} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
 
 module.exports = router

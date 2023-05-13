@@ -199,8 +199,12 @@ pre {
 <style lang="postcss">
 button.btn {
 	@apply inline-flex justify-center items-center px-4 py-2 rounded-md
-	border-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200
+	border-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200
 	border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600
+	focus:bg-gray-200 dark:focus:bg-gray-600 focus:ring-2
 	transition-all shadow;
+}
+button.btn:active {
+	@apply bg-gray-400 dark:bg-gray-500;
 }
 </style>

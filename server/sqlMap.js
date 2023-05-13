@@ -56,6 +56,9 @@ var sqlMap = {
             members: 'select * from team_user_info where id in (select id from team_user_detail where access_team = ?)',
             membersDetail: 'select * from team_user_detail where id in (select id from team_user_detail where access_team = ?)',
         },
+        check: {
+            oname: 'select count(*) from team_organization_info where name = ?'
+        }
     },
 }
 module.exports = sqlMap;

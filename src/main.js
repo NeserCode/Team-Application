@@ -23,6 +23,13 @@ app.config.globalProperties.$leetcode = leetcode
 app.config.globalProperties.$public = new mitt()
 app.config.globalProperties.$router = router
 
+app.provide('$axios', Axios)
+app.provide('$utils', utils)
+app.provide('$conf', appConfig)
+app.provide('$leetcode', leetcode)
+app.provide('$public', new mitt())
+app.provide('$router', router)
+
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }

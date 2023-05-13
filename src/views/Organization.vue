@@ -1,4 +1,6 @@
 <script>
+import createOrganization from "@/components/Dialogs/createOrganization.vue"
+
 export default {
 	name: "Organization",
 	beforeCreate() {
@@ -18,13 +20,19 @@ export default {
 		})
 	},
 	mounted() {},
-	components: {},
+	components: {
+		createOrganization,
+	},
 	data() {
 		return {
 			organizationInfo: {},
 			hasOrganization: false,
 			allOrganization: [],
 			membersInfo: {},
+			visible: {
+				createOrganization: false,
+				joinOrganization: false,
+			},
 		}
 	},
 	methods: {
@@ -80,6 +88,12 @@ export default {
 		updateUserAccessStatus: function (bool) {
 			this.hasOrganization = !!bool
 		},
+		handleCreateOrganization: function () {
+			this.visible.createOrganization = true
+		},
+		updateVisibleCreateOrganization: function (bool) {
+			this.visible.createOrganization = bool
+		},
 	},
 }
 </script>
@@ -100,7 +114,10 @@ export default {
 			</span>
 			<div class="member-list">
 				<span class="count"
-					>组织人数 {{ membersInfo.detail.length }}</span
+					>组织人数
+					{{
+						membersInfo.detail ? membersInfo.detail.length : NaN
+					}}</span
 				>
 				<span
 					class="item"
@@ -116,7 +133,12 @@ export default {
 			</div>
 		</div>
 		<div class="organization-list">
-			<span class="title">组织列表</span>
+			<span class="title">
+				<span>组织列表</span>
+				<button class="btn" @click="handleCreateOrganization">
+					<el-icon><Plus /></el-icon>
+				</button>
+			</span>
 			<span
 				:class="['item']"
 				v-for="item in allOrganization"
@@ -129,11 +151,15 @@ export default {
 						{{ item.status ? "已认证" : "未认证" }}
 					</span>
 				</span>
-				<button class="btn">
-					<el-icon><Plus /></el-icon>
+				<button class="btn" title="向该组织提交申请">
+					<el-icon><Promotion /></el-icon>
 				</button>
 			</span>
 		</div>
+		<create-organization
+			:visible="visible.createOrganization"
+			@update:visible="updateVisibleCreateOrganization"
+		/>
 	</div>
 </template>
 
@@ -189,5 +215,12 @@ export default {
 }
 .organization-list .item .status {
 	@apply inline-block mx-1;
+}
+
+.btn {
+	@apply dark:border-gray-700;
+}
+.title .btn {
+	@apply mx-2 text-base rounded-full p-1.5;
 }
 </style>

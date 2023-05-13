@@ -115,6 +115,12 @@ export default {
 			this.colorMode = mode
 		})
 	},
+	created() {
+		this.$conf.getConfPromise().then((conf) => {
+			const { userInfo: info } = conf.data
+			this.ensureHostorSuperUser(info, info.id)
+		})
+	},
 	mounted() {
 		this.isLogined = !(
 			localStorage.getItem("checkKey") == (undefined || null)
@@ -145,8 +151,12 @@ export default {
 		},
 		handleKeepDrag: () => false,
 		isMatchColorMode: function (mode) {
+			// If we are on the setting page, we don't want to show the color mode.
 			if (this.$router.currentRoute.value.path === "/setting")
 				return false
+
+			// If a mode is passed as a parameter, then we check that the color mode matches that parameter.
+			// If no mode is passed, we just check that the color mode is not null.
 			if (mode && this) return this.colorMode === mode
 			return false
 		},
@@ -187,7 +197,6 @@ export default {
 						id,
 					})
 					.then((res) => {
-						console.log(res.data)
 						this.hostUser = res.data.length > 0
 
 						cb && cb()

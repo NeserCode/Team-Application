@@ -119,6 +119,9 @@ const appConfig = {
     , handleCreateOrganization: ({ host, appKey, hostId, name, organizationKey }) => {
         return Axios.post(`${host}/api/user/organization/create/init`, { appKey, hostId, name, organizationKey })
     }
+    , checkOrganizationName: ({ host, name }) => {
+        return Axios.post(`${host}/api/user/organization/check/oname`, { name })
+    }
 
 }
 

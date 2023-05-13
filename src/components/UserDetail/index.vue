@@ -67,6 +67,8 @@ export default {
 					let tempSetting = data.data
 
 					// User Access
+					tempSetting.userInfo = {}
+					tempSetting.userInfo.id = detail.id
 					tempSetting.userInfo.access = detail.access_status
 					tempSetting.userInfo.organization = detail.access_team
 					tempSetting.userInfo.oPosition = detail.access_position
