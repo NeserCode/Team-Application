@@ -1,25 +1,177 @@
 <script>
+// import { _debounce } from "@/plugins/utils"
+
 export default {
-	name: "manage-page",
-	beforeCreate() {},
+	name: "Manage",
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+			this.getOrganizationInfo(detail.access_team)
+			this.getMembersInfo(detail.access_team)
+
+			this.getAllOrganization()
+		})
+
+		this.$public.on("update-from-keys-failed", () => {
+			this.$conf.getConfPromise().then((conf) => {
+				this.getOrganizationInfo(conf.data.userInfo.organization)
+				this.getMembersInfo(conf.data.userInfo.organization)
+
+				this.getAllOrganization()
+			})
+		})
+	},
+	created() {
+		this.$conf.getConfPromise().then((conf) => {
+			// this.getOrganizationInfo(conf.data.userInfo.organization)
+			// this.getMembersInfo(conf.data.userInfo.organization)
+			// this.getAllOrganization()
+
+			this.ensureHostorSuperUser(
+				conf.data.userInfo,
+				conf.data.userInfo.id
+			)
+		})
+	},
 	mounted() {},
 	components: {},
 	data() {
-		return {}
+		return {
+			organizationInfo: {},
+			hasOrganization: false,
+			allOrganization: [],
+			membersInfo: {},
+			superUser: false,
+			hostUser: false,
+		}
 	},
-	methods: {},
+	methods: {
+		computedStatusClass: (status) => (status ? "access" : null),
+		getOrganizationInfo: function (id) {
+			// Get the host
+			this.$conf.getHost().then((h) => {
+				// Get the organization information
+				this.$conf
+					.getOrganizationById({
+						// Use the host to get the full URL
+						host: this.$conf.getHttpString(h.host),
+						id,
+					})
+					.then((res) => {
+						// Save the organization information
+						this.organizationInfo = res.data[0] || {}
+					})
+			})
+		},
+		getMembersInfo: function (oid) {
+			// Get the host address first
+			this.$conf.getHost().then((h) => {
+				// Get the organization member information through the organization ID
+				this.$conf
+					.getMembersByOrganizationId({
+						host: this.$conf.getHttpString(h.host),
+						id: oid,
+					})
+					.then((res) => {
+						// Get the user's information
+						this.$conf.getConfPromise().then((data) => {
+							// Sort by access status
+							function sortByStr(array, key) {
+								return array.sort(function (a, b) {
+									if (a[key] === "HOST") return -1
+									else if (b[key] === "HOST") return 1
+									else if (
+										a[key] === "JOIN" &&
+										b[key] === "APPLY"
+									)
+										return -1
+									else if (
+										b[key] === "JOIN" &&
+										a[key] === "APPLY"
+									)
+										return 1
+								})
+							}
+							const { detail, members } = res.data
+							let i = detail.findIndex(
+								(detail) => detail.id === data.data.userInfo.id
+							)
+							if (i !== -1) detail[i].self = true
+
+							this.membersInfo.detail = sortByStr(
+								detail,
+								"access_position"
+							)
+
+							console.log(this.membersInfo)
+							this.membersInfo.members = members
+						})
+					})
+			})
+
+			// Update the user's access status
+			this.updateUserAccessStatus(oid)
+		},
+		updateUserAccessStatus: function (id) {
+			this.hasOrganization = !!id
+		},
+		getAllOrganization() {
+			this.$conf.getHost().then((h) => {
+				this.$conf
+					.allOrganization({
+						host: this.$conf.getHttpString(h.host),
+					})
+					.then((res) => {
+						let i = res.data.findIndex(
+							(item) => item.id === this.organizationInfo.id
+						)
+						if (i !== -1) res.data[i].own = true
+						this.allOrganization = res.data
+					})
+			})
+		},
+		ensureHostorSuperUser: function (info, id, cb) {
+			this.superUser = !!info.super
+			this.$conf.getHost().then((h) => {
+				this.$conf
+					.queryHostOrganizationById({
+						host: this.$conf.getHttpString(h.host),
+						id,
+					})
+					.then((res) => {
+						this.hostUser = res.data.length > 0
+
+						cb && cb()
+					})
+			})
+		},
+	},
 }
 </script>
 
 <template>
 	<div class="organization">
-		<div class="organization-info">
+		<div
+			class="organization-info"
+			v-if="hasOrganization && (superUser || hostUser)"
+		>
 			<span class="title">
-				<span class="name">Name</span>
-				<span class="id">编号 ?</span>
+				<span class="name">{{ organizationInfo.name }}</span>
+				<span class="id">编号{{ `#${organizationInfo.id}` }}</span>
+				<span
+					:class="[
+						'status',
+						computedStatusClass(!!organizationInfo.status),
+					]"
+					>{{ !!organizationInfo.status ? "已认证" : "未认证" }}</span
+				>
 			</span>
 			<div class="member-list">
-				<span class="count">组织人数 ?</span>
+				<span class="count"
+					>组织人数
+					{{
+						membersInfo.detail ? membersInfo.detail.length : NaN
+					}}</span
+				>
 				<span
 					class="item"
 					v-for="detail in membersInfo.detail"
@@ -33,18 +185,14 @@ export default {
 				</span>
 			</div>
 		</div>
-		<div class="organization-list">
+		<div class="organization-list" v-if="superUser">
 			<span class="title">
 				<span>组织列表</span>
-				<button class="btn" @click="handleCreateOrganization">
+				<button class="btn">
 					<el-icon><Plus /></el-icon>
 				</button>
 			</span>
-			<span
-				:class="['item', computedOwnOgnizationClass(item)]"
-				v-for="item in allOrganization"
-				:key="item.id"
-			>
+			<span class="item" v-for="item in allOrganization" :key="item.id">
 				<span class="info">
 					<span class="id">{{ `#${item.id}` }}</span>
 					<span class="name">{{ item.name }}</span>
@@ -52,26 +200,11 @@ export default {
 						{{ item.status ? "已认证" : "未认证" }}
 					</span>
 				</span>
-				<button
-					class="btn"
-					title="向该组织提交申请"
-					@click="handleJoinOrganization(item)"
-				>
+				<button class="btn" title="向该组织提交申请">
 					<el-icon><Promotion /></el-icon>
 				</button>
 			</span>
 		</div>
-		<create-organization
-			:visible="visible.createOrganization"
-			@update:visible="updateVisibleCreateOrganization"
-			@create:success="updateUserOrganization"
-		/>
-		<join-organization
-			:visible="visible.joinOrganization"
-			:organization="willJoinOrganization"
-			@update:visible="updateVisibleJoinOrganization"
-			@join:success="updateUserOrganization"
-		/>
 	</div>
 </template>
 
