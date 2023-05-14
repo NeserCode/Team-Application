@@ -104,9 +104,13 @@ export default {
 										type: "info",
 										msg: `自动信息更新失败 ${res.data.message}`,
 									})
+									this.$public.emit("update-from-keys-failed")
 								} else {
 									const { detail, info } = res.data
 
+									console.log(
+										"Auto CheckKey to Update Datails"
+									)
 									this.$public.emit(
 										"update-main-user-info-upto-app",
 										{ detail, info }
@@ -128,7 +132,6 @@ export default {
 			this.$conf.getConfPromise().then((data) => {
 				let tempSetting = data.data
 
-				console.log("Auto CheckKey to Update Datails")
 				// User Access
 				tempSetting.userInfo = {}
 				tempSetting.userInfo.id = detail.id
@@ -160,7 +163,7 @@ export default {
 							type: "success",
 							msg: "用户信息同步成功",
 						})
-						localStorage.setItem("checkKey", info.checkKey)
+
 						localStorage.setItem("userKey", info.userKey)
 						localStorage.setItem("appKey", tempSetting.appInfo.key)
 						localStorage.setItem("username", info.username)

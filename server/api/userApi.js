@@ -186,12 +186,31 @@ router.post('/checkDay/get', (req, res) => {
 
 router.get('/checkDay/all', (req, res) => {
     let sql = $sql.user.checkDay.all
+    let ssql = $sql.user.checkDay.order
+    const t = new Date(new Date().toLocaleDateString()).getTime()
+    let all = {}
 
-    conn.query(sql, [new Date(new Date().toLocaleDateString()).getTime()], (err, result) => {
+    conn.query(sql, [t], (err, result) => {
         if (err) return res.status(502).send(err)
         else {
-            console.log(`[${new Date().toLocaleDateString()} check all √]`);
-            res.status(200).send(result)
+            // need sort by timestamp
+            conn.query(ssql, [t], (serr, sresult) => {
+                if (serr) return res.status(502).send(serr)
+                else {
+                    let orders = []
+                    for (let i = 0; i < sresult.length; i++) {
+                        orders.push(sresult[i].userid)
+                    }
+
+                    all = {
+                        detail: result,
+                        order: orders
+                    }
+
+                    console.log(`[checkDay all √]`);
+                    res.status(200).send(all)
+                }
+            })
         }
     })
 })
@@ -354,6 +373,36 @@ router.post('/organization/check/oname', (req, res) => {
         }
     })
 })
+
+// 加入组织 | uid, oid
+router.post('/organization/join', (req, res) => {
+    let sql = $sql.organization.action.join
+    let params = req.body
+
+    conn.query(sql, [params.oid, params.uid], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization join oid ${params.oid} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+// 退出组织 | uid
+router.post('/organization/quit', (req, res) => {
+    let sql = $sql.organization.action.quit
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization quit uid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+
 
 // 更新用户认证状态
 router.post('/access/update', (req, res) => {

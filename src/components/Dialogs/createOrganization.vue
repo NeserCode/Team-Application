@@ -108,6 +108,7 @@ const createOrganization = async () => {
 				$emit("create:success", {
 					oid: res.data.insertId,
 					uid: form.hostId,
+					type: "HOST",
 				})
 		})
 }

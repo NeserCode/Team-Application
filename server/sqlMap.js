@@ -33,12 +33,13 @@ var sqlMap = {
         checkDay: {
             check: 'insert into team_user_checkday(userid,appKey,timestamp) values (?,?,?)',
             get: 'select * from team_user_checkday where userid = ?',
-            all: 'select * from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC'
+            order: 'select * from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC',
+            all: `select * from team_user_detail where id in (select userid from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC)`
         },
         get: {
             uid: "select id from team_user_info where username = ?",
             all: "select * from team_user_info where id = ?",
-            checkKey: "select * from team_user_info where userkey = ? AND checkKey = ?"
+            checkKey: "select * from team_user_info where userkey = ? AND checkKey = ?",
         },
         access: {
             update: "update team_user_detail set access_status = ?, access_team = ?, access_position = ? where id = ?"
@@ -62,6 +63,10 @@ var sqlMap = {
         },
         check: {
             oname: 'select count(*) from team_organization_info where name = ?'
+        },
+        action: {
+            join: 'update team_user_detail set access_status = 0, access_team = ?, access_position = "APPLY" where id = ?',
+            quit: 'update team_user_detail set access_status = 0, access_team = NULL, access_position = NULL where id = ?',
         }
     },
 }

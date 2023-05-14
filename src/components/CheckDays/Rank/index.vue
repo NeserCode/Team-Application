@@ -46,38 +46,12 @@ export default {
 					this.$conf
 						.allCheckToday(this.$conf.getHttpString(h.host))
 						.then((adata) => {
-							this.rankers = []
-							adata.data.forEach((element) => {
-								this.$conf.getHost().then((h) => {
-									this.$conf
-										.getUserDetailById({
-											host: this.$conf.getHttpString(
-												h.host
-											),
-											id: element.userid,
-										})
-										.then((data) => {
-											const {
-												nickname,
-												avatar,
-												introduce,
-											} = data.data[0]
-											this.rankers.push({
-												nickname,
-												avatar,
-												introduce,
-												timeStamp: Number(
-													element.timeStamp
-												),
-											})
-											this.rankers.sort(
-												(a, b) =>
-													a.timeStamp - b.timeStamp
-											)
-											this.isLoading = false
-										})
-								})
+							const { detail, order } = adata.data
+							this.rankers = detail.sort((a, b) => {
+								return order.indexOf(a.id) - order.indexOf(b.id)
 							})
+
+							this.isLoading = false
 						})
 						.catch((e) => {
 							console.log(e.messgae)

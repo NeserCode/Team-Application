@@ -1,5 +1,6 @@
 <script>
 import createOrganization from "@/components/Dialogs/createOrganization.vue"
+import joinOrganization from "@/components/Dialogs/joinOrganization.vue"
 
 import { _debounce } from "@/plugins/utils"
 
@@ -12,17 +13,35 @@ export default {
 
 			this.getAllOrganization()
 		})
+
+		this.$public.on("update-from-keys-failed", () => {
+			this.$conf.getConfPromise().then((conf) => {
+				this.getOrganizationInfo(conf.data.userInfo.organization)
+				this.getMembersInfo(conf.data.userInfo.organization)
+
+				this.getAllOrganization()
+			})
+		})
 	},
-	created() {},
+	created() {
+		this.$conf.getConfPromise().then((conf) => {
+			this.getOrganizationInfo(conf.data.userInfo.organization)
+			this.getMembersInfo(conf.data.userInfo.organization)
+
+			this.getAllOrganization()
+		})
+	},
 	mounted() {},
 	components: {
 		createOrganization,
+		joinOrganization,
 	},
 	data() {
 		return {
 			organizationInfo: {},
 			hasOrganization: false,
 			allOrganization: [],
+			willJoinOrganization: {},
 			membersInfo: {},
 			visible: {
 				createOrganization: false,
@@ -32,8 +51,14 @@ export default {
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
-		computedOwnOgnizationClass: (item) => (item.own ? "own" : null),
-		computedOwnUserClass: (detail) => (detail.self ? "self" : null),
+		computedOwnOgnizationClass: (item) => {
+			if (!item) return null
+			return item.own ? "own" : null
+		},
+		computedOwnUserClass: (detail) => {
+			if (!detail) return null
+			return detail.self ? "self" : null
+		},
 		getOrganizationInfo: function (id) {
 			// Get the host
 			this.$conf.getHost().then((h) => {
@@ -61,13 +86,34 @@ export default {
 					})
 					.then((res) => {
 						this.$conf.getConfPromise().then((data) => {
+							function sortByStr(array, key) {
+								return array.sort(function (a, b) {
+									if (a[key] === "HOST") return -1
+									else if (b[key] === "HOST") return 1
+									else if (
+										a[key] === "JOIN" &&
+										b[key] === "APPLY"
+									)
+										return -1
+									else if (
+										b[key] === "JOIN" &&
+										a[key] === "APPLY"
+									)
+										return 1
+								})
+							}
 							const { detail, members } = res.data
 							let i = detail.findIndex(
 								(detail) => detail.id === data.data.userInfo.id
 							)
-							detail[i].self = true
+							if (i !== -1) detail[i].self = true
 
-							this.membersInfo.detail = detail
+							this.membersInfo.detail = sortByStr(
+								detail,
+								"access_position"
+							)
+
+							console.log(this.membersInfo)
 							this.membersInfo.members = members
 						})
 					})
@@ -86,7 +132,7 @@ export default {
 						let i = res.data.findIndex(
 							(item) => item.id === this.organizationInfo.id
 						)
-						res.data[i].own = true
+						if (i !== -1) res.data[i].own = true
 						this.allOrganization = res.data
 					})
 			})
@@ -108,24 +154,42 @@ export default {
 		updateVisibleCreateOrganization: function (bool) {
 			this.visible.createOrganization = bool
 		},
-		updateUserOrganization: async function ({ oid, uid }) {
-			const h = await this.$conf.getHost()
-			await this.$conf
-				.updateUserAccess({
-					host: this.$conf.getHttpString(h.host),
-					oid,
-					uid,
+		handleJoinOrganization: _debounce(function (organization) {
+			if (this.hasOrganization) {
+				this.$public.emit("notice", {
+					type: "warning",
+					msg: "加入其他组织需要退出当前组织",
 				})
-				.then((res) => {
-					console.log(res)
-				})
+				return
+			}
 
-			this.$conf.getConfPromise().then((conf) => {
-				this.getOrganizationInfo(conf.data.userInfo.organization)
-				this.getMembersInfo(conf.data.userInfo.organization)
+			this.willJoinOrganization = organization
+			this.visible.joinOrganization = true
+		}, 800),
+		updateVisibleJoinOrganization: function (bool) {
+			this.visible.joinOrganization = bool
+		},
+		updateUserOrganization: async function ({ oid, uid, type }) {
+			// network
+			this.getOrganizationInfo(oid)
+			this.getMembersInfo(oid)
 
-				this.getAllOrganization()
-			})
+			this.getAllOrganization()
+			// local
+			if (type === "HOST") {
+				const h = await this.$conf.getHost()
+				await this.$conf
+					.updateUserAccess({
+						host: this.$conf.getHttpString(h.host),
+						oid,
+						uid,
+					})
+					.then((res) => {
+						console.log(res)
+					})
+			} else if (type === "JOIN") {
+				this.hasOrganization = !!oid
+			}
 		},
 	},
 }
@@ -184,7 +248,11 @@ export default {
 						{{ item.status ? "已认证" : "未认证" }}
 					</span>
 				</span>
-				<button class="btn" title="向该组织提交申请">
+				<button
+					class="btn"
+					title="向该组织提交申请"
+					@click="handleJoinOrganization(item)"
+				>
 					<el-icon><Promotion /></el-icon>
 				</button>
 			</span>
@@ -193,6 +261,12 @@ export default {
 			:visible="visible.createOrganization"
 			@update:visible="updateVisibleCreateOrganization"
 			@create:success="updateUserOrganization"
+		/>
+		<join-organization
+			:visible="visible.joinOrganization"
+			:organization="willJoinOrganization"
+			@update:visible="updateVisibleJoinOrganization"
+			@join:success="updateUserOrganization"
 		/>
 	</div>
 </template>

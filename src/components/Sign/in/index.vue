@@ -162,6 +162,9 @@ export default {
 				} else {
 					this.$conf.getHost().then((h) => {
 						this.clickable = false
+						let ck = this.$conf.getMd5String(
+							this.IpAddress ?? h.host
+						)
 						this.$conf
 							.handleUserSignIn({
 								host: this.$conf.getHttpString(h.host),
@@ -170,12 +173,11 @@ export default {
 									this.signIn.password
 								),
 								appkey: localStorage.getItem("appKey"),
-								checkkey: this.$conf.getMd5String(
-									this.IpAddress ?? h.host
-								),
+								checkkey: ck,
 							})
 							.then((response) => {
 								const { info, detail } = response.data
+								localStorage.setItem("checkKey", ck)
 								if (info.userKey.length < 16)
 									this.$public.emit("notice", {
 										type: "warning",
