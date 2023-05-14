@@ -123,7 +123,11 @@ export default {
 			IpAddress: null,
 		}
 	},
-	mounted() {},
+	mounted() {
+		if (localStorage.getItem("username") && localStorage.getItem("userKey"))
+			this.$router.push("/userArea")
+	},
+	activated() {},
 	unmounted() {
 		this.clickable = true
 	},
@@ -195,7 +199,6 @@ export default {
 									msg: `欢迎您，${info.username}`,
 									time: 3000,
 									fn: () => {
-										console.log(detail, info)
 										this.$public.emit(
 											"update-main-user-info-upto-app",
 											{
@@ -203,9 +206,10 @@ export default {
 												detail,
 											}
 										)
+
 										this.signIn.username = ""
 										this.signIn.password = ""
-										this.options.isOnlineSignIn = false
+										this.options.isOnlineSignIn = true
 										this.options.isShowPassword = false
 
 										this.clickable = true

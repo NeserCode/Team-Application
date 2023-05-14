@@ -364,7 +364,7 @@ router.post('/access/update', (req, res) => {
     conn.query(osql, [params.oid], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            conn.query(sql, [Number(1), params.oid, result[0].hostId == params.uid ? "HOST" : "JOIN", params.uid], (err, result) => {
+            conn.query(sql, [Number(0), params.oid, result[0].hostId == params.uid ? "HOST" : "JOIN", params.uid], (err, result) => {
                 if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
                 else {
                     console.log(`[organization check name ${params.name} √]`);
@@ -386,7 +386,9 @@ router.post('/detail/key', (req, res) => {
     }
 
     conn.query(csql, [params.userKey, params.checkKey], (cerr, cresult) => {
-        if (cerr) return res.status(502).send({ message: cerr.sqlMessage, errorCode: cerr.errno })
+        if (cerr || !cresult[0]) {
+            return res.status(201).send({ message: 'No Such Key', errorCode: 201 })
+        }
         else {
             conn.query(sql, [cresult[0].id], (err, result) => {
                 if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })

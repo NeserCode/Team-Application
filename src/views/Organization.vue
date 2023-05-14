@@ -1,6 +1,8 @@
 <script>
 import createOrganization from "@/components/Dialogs/createOrganization.vue"
 
+import { _debounce } from "@/plugins/utils"
+
 export default {
 	name: "Organization",
 	beforeCreate() {
@@ -12,14 +14,7 @@ export default {
 		})
 	},
 	created() {},
-	mounted() {
-		this.$conf.getConfPromise().then((conf) => {
-			this.getOrganizationInfo(conf.data.userInfo.organization)
-			this.getMembersInfo(conf.data.userInfo.organization)
-
-			this.getAllOrganization()
-		})
-	},
+	mounted() {},
 	components: {
 		createOrganization,
 	},
@@ -37,8 +32,8 @@ export default {
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
-		computedOwnOgnizationClass: (item, id) =>
-			item.id === id ? "own" : null,
+		computedOwnOgnizationClass: (item) => (item.own ? "own" : null),
+		computedOwnUserClass: (detail) => (detail.self ? "self" : null),
 		getOrganizationInfo: function (id) {
 			// Get the host
 			this.$conf.getHost().then((h) => {
@@ -65,9 +60,16 @@ export default {
 						id: oid,
 					})
 					.then((res) => {
-						const { detail, members } = res.data
-						this.membersInfo.detail = detail
-						this.membersInfo.members = members
+						this.$conf.getConfPromise().then((data) => {
+							const { detail, members } = res.data
+							let i = detail.findIndex(
+								(detail) => detail.id === data.data.userInfo.id
+							)
+							detail[i].self = true
+
+							this.membersInfo.detail = detail
+							this.membersInfo.members = members
+						})
 					})
 			})
 
@@ -75,13 +77,16 @@ export default {
 			this.updateUserAccessStatus(oid)
 		},
 		getAllOrganization() {
-			console.log("?")
 			this.$conf.getHost().then((h) => {
 				this.$conf
 					.allOrganization({
 						host: this.$conf.getHttpString(h.host),
 					})
 					.then((res) => {
+						let i = res.data.findIndex(
+							(item) => item.id === this.organizationInfo.id
+						)
+						res.data[i].own = true
 						this.allOrganization = res.data
 					})
 			})
@@ -89,9 +94,17 @@ export default {
 		updateUserAccessStatus: function (bool) {
 			this.hasOrganization = !!bool
 		},
-		handleCreateOrganization: function () {
+		handleCreateOrganization: _debounce(function () {
+			if (this.hasOrganization) {
+				this.$public.emit("notice", {
+					type: "warning",
+					msg: "创建组织需要退出当前组织",
+				})
+				return
+			}
+
 			this.visible.createOrganization = true
-		},
+		}, 800),
 		updateVisibleCreateOrganization: function (bool) {
 			this.visible.createOrganization = bool
 		},
@@ -140,7 +153,7 @@ export default {
 					}}</span
 				>
 				<span
-					class="item"
+					:class="['item', computedOwnUserClass(detail)]"
 					v-for="detail in membersInfo.detail"
 					:key="detail.id"
 				>
@@ -160,7 +173,7 @@ export default {
 				</button>
 			</span>
 			<span
-				:class="['item']"
+				:class="['item', computedOwnOgnizationClass(item)]"
 				v-for="item in allOrganization"
 				:key="item.id"
 			>
@@ -222,6 +235,11 @@ export default {
 	hover:shadow
 	hover:bg-gray-50 dark:hover:bg-gray-600 transition-all;
 }
+.item.own,
+.item.self {
+	@apply bg-green-100 dark:bg-green-800;
+}
+
 .organization-list {
 	@apply flex flex-col w-full max-w-2xl justify-center;
 }

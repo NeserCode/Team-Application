@@ -99,13 +99,21 @@ export default {
 								checkKey: localStorage.getItem("checkKey"),
 							})
 							.then((res) => {
-								const { detail, info } = res.data
-								this.updateConfig({ detail, info })
+								if (res.status !== 200) {
+									this.$public.emit("notice", {
+										type: "info",
+										msg: `自动信息更新失败 ${res.data.message}`,
+									})
+								} else {
+									const { detail, info } = res.data
+
+									this.$public.emit(
+										"update-main-user-info-upto-app",
+										{ detail, info }
+									)
+								}
 							})
 					})
-				})
-				.catch((e) => {
-					console.log(e)
 				})
 		},
 		initUser: function () {
@@ -120,6 +128,7 @@ export default {
 			this.$conf.getConfPromise().then((data) => {
 				let tempSetting = data.data
 
+				console.log("Auto CheckKey to Update Datails")
 				// User Access
 				tempSetting.userInfo = {}
 				tempSetting.userInfo.id = detail.id

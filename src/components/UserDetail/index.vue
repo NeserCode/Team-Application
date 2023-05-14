@@ -23,7 +23,7 @@
 				:opTitle="accessObj.title"
 				opType="tag"
 				:opDisabled="accessObj.disabled"
-				:opTagValue="accessStr"
+				:opTagValue="accessObj.text"
 				:opCallbackFn="accessObj.fn"
 				opTip="已记录的用户身份认证结果 用于决定管理某些功能或是某些信息"
 			/>
@@ -59,18 +59,6 @@ import { clipboard } from "electron"
 export default {
 	name: "userDetail",
 	components: { UserAssets, UserDetailOption, Namespace },
-	watch: {
-		accessOgz: {
-			handler() {
-				this.accessObj.text = `${
-					this.accessOgz.access ? "已" : "未"
-				}认证 
-        ${this.accessOgz.ogz} 
-        ${this.accessOgz.position}`
-			},
-			deep: true,
-		},
-	},
 	computed: {
 		isMe() {
 			return this.thisUsername == localStorage.getItem("username")
@@ -79,9 +67,6 @@ export default {
 			if (this.thisUsername == localStorage.getItem("username"))
 				return "About me"
 			else return `About ${this.thisUsername}`
-		},
-		accessStr() {
-			return this.accessOgz.access ? this.accessObj.text : "未认证"
 		},
 	},
 	data() {
@@ -101,15 +86,16 @@ export default {
 			},
 			accessObj: {
 				title: "认证",
-				text: "",
+				text: ``,
 				disabled: false,
 				fn: () => {
 					if (!this.accessObj.disabled) {
 						this.accessObj.disabled = true
 						this.$public.emit("notice", {
-							msg: "👀 暂未开启这项功能",
+							msg: "加入组织以获取身份认证",
 							fn: () => {
 								this.accessObj.disabled = false
+								this.$router.push("/organization")
 							},
 						})
 					}
@@ -132,6 +118,11 @@ export default {
 				},
 			},
 		}
+	},
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", () => {
+			this.initComponent()
+		})
 	},
 	mounted() {
 		// console.log(this.$conf.getUserPath("userData"));
@@ -182,10 +173,13 @@ export default {
 				const { userInfo } = data.data
 				// 处理认证条目
 				this.accessOgz.access = userInfo.access == 1
-				if (this.accessOgz.access) {
-					this.accessOgz.ogz = userInfo.orgnization
-					this.accessOgz.position = userInfo.orPosition
-				}
+				this.accessOgz.ogz = userInfo.organization
+				this.accessOgz.position = userInfo.oPosition
+
+				this.accessObj.text = `${
+					this.accessOgz.access ? "已" : "未"
+				}认证 #${this.accessOgz.ogz} ${this.accessOgz.position}`
+
 				// 处理性别条目
 				this.sexObj.text =
 					(userInfo.sex == "m"
