@@ -134,6 +134,15 @@ const appConfig = {
     , getDetailByKeys: ({ host, userKey, checkKey }) => {
         return Axios.post(`${host}/api/user/detail/key`, { userKey, checkKey })
     }
+    , handleRenameOrganization: ({ host, name, id }) => {
+        return Axios.post(`${host}/api/user/organization/update/name`, { name, id })
+    }
+    , handleActiveOrganization: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/active`, { id })
+    }
+    , handleDeactiveOrganization: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/deactive`, { id })
+    }
 
 }
 

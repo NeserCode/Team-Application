@@ -155,7 +155,7 @@ export default {
 							this.$conf.updateLocalConfig(rt, () => {
 								this.$public.emit(
 									"update-avatar",
-									this.userImage
+									this.inputSrc
 								)
 							})
 						})

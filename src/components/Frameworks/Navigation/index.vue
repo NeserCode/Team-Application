@@ -7,7 +7,7 @@
 			:image="avatarUrl"
 			:isDot="false"
 			:isMe="true"
-			v-if="avatarUrl"
+			v-if="!!avatarUrl"
 		/>
 		<span class="avatar icon" @click="handleOpenUserArea" v-else>
 			<el-icon><User /></el-icon
@@ -96,7 +96,11 @@ export default {
 			"update-main-user-info-upto-app",
 			({ detail, info }) => {
 				this.isLogined = true
-				this.avatarUrl = detail.avatar ?? localStorage.getItem("avatar")
+				this.avatarUrl =
+					detail.avatar ??
+					(localStorage.getItem("avatar") === "null"
+						? null
+						: localStorage.getItem("avatar"))
 
 				this.ensureHostorSuperUser(info, info.id, () => {
 					console.log(
@@ -105,6 +109,9 @@ export default {
 				})
 			}
 		)
+		this.$public.on("update-avatar", (avatar) => {
+			this.avatarUrl = avatar
+		})
 		this.$public.on("clear-user-sign-status", () => {
 			this.isLogined = false
 		})

@@ -50,7 +50,9 @@ var sqlMap = {
             init: "insert into team_organization_info(appKey, hostId, name, organizationKey) values (?,?,?,?)",
         },
         detail: {
-            update: 'update team_organization_info set name = ?, introduce = ?, avatar = ? where id = ?',
+            update: {
+                name: 'update team_organization_info set name = ? where id = ?'
+            },
             change: 'update team_organization_info set hostId = ? where id = ?',
             get: 'select * from team_organization_info where id = ?',
         },
@@ -65,8 +67,11 @@ var sqlMap = {
             oname: 'select count(*) from team_organization_info where name = ?'
         },
         action: {
-            join: 'update team_user_detail set access_status = 0, access_team = ?, access_position = "APPLY" where id = ?',
+            apply: 'update team_user_detail set access_status = 0, access_team = ?, access_position = "APPLY" where id = ?',
+            join: 'update team_user_detail set access_status = ?, access_team = ?, access_position = "JOIN" where id = ?',
             quit: 'update team_user_detail set access_status = 0, access_team = NULL, access_position = NULL where id = ?',
+            active: 'update team_organization_info set status = 1 where id = ?',
+            deactive: 'update team_organization_info set status = 0 where id = ?'
         }
     },
 }

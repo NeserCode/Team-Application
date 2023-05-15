@@ -39,7 +39,7 @@ export default {
 	},
 	beforeCreate() {
 		this.$public.on("update-avatar", (avatar) => {
-			this.userImage = avatar ?? localStorage.getItem("avatar") ?? null
+			this.userImage = avatar
 		})
 	},
 	methods: {

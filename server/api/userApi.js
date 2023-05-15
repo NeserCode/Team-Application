@@ -452,5 +452,46 @@ router.post('/detail/key', (req, res) => {
     })
 })
 
+// 更新组织信息 | oid, name
+router.post('/organization/update/name', (req, res) => {
+    let sql = $sql.organization.detail.update.name
+    let params = req.body
+
+    conn.query(sql, [params.name, params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization update name oid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+// 激活组织状态
+router.post('/organization/active', (req, res) => {
+    let sql = $sql.organization.action.active
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization active oid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
+// 吊销组织状态
+router.post('/organization/deactive', (req, res) => {
+    let sql = $sql.organization.action.deactive
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization deactive oid ${params.id} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
 
 module.exports = router

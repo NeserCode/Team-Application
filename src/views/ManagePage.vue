@@ -1,20 +1,22 @@
 <script>
-// import { _debounce } from "@/plugins/utils"
+import { _debounce } from "@/plugins/utils"
+import renameOrganization from "@/components/Dialogs/renameOrganization.vue"
 
 export default {
 	name: "Manage",
 	beforeCreate() {
 		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			this.getOrganizationInfo(detail.access_team)
-			this.getMembersInfo(detail.access_team)
+			if (this.hostUser) {
+				this.getOrganizationInfo(detail.access_team)
+			}
 
 			this.getAllOrganization()
 		})
 
 		this.$public.on("update-from-keys-failed", () => {
 			this.$conf.getConfPromise().then((conf) => {
-				this.getOrganizationInfo(conf.data.userInfo.organization)
-				this.getMembersInfo(conf.data.userInfo.organization)
+				if (this.hostUser)
+					this.getOrganizationInfo(conf.data.userInfo.organization)
 
 				this.getAllOrganization()
 			})
@@ -28,25 +30,45 @@ export default {
 
 			this.ensureHostorSuperUser(
 				conf.data.userInfo,
-				conf.data.userInfo.id
+				conf.data.userInfo.id,
+				() => {
+					if (this.hostUser) {
+						this.getOrganizationInfo(
+							conf.data.userInfo.organization
+						)
+					}
+				}
 			)
 		})
 	},
 	mounted() {},
-	components: {},
+	components: { renameOrganization },
+	computed: {
+		detailVisible: function () {
+			return (
+				!!this.selectedOrganizationInfo.id &&
+				(this.superUser || this.hostUser)
+			)
+		},
+	},
 	data() {
 		return {
-			organizationInfo: {},
-			hasOrganization: false,
 			allOrganization: [],
+			selectedOrganizationInfo: {},
 			membersInfo: {},
 			superUser: false,
 			hostUser: false,
+			visible: {
+				rename: false,
+				renameFn: (val) => {
+					this.visible.rename = val
+				},
+			},
 		}
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
-		getOrganizationInfo: function (id) {
+		getOrganizationInfo: _debounce(function (id) {
 			// Get the host
 			this.$conf.getHost().then((h) => {
 				// Get the organization information
@@ -58,10 +80,12 @@ export default {
 					})
 					.then((res) => {
 						// Save the organization information
-						this.organizationInfo = res.data[0] || {}
+						this.selectedOrganizationInfo = res.data[0] || {}
+
+						this.getMembersInfo(id)
 					})
 			})
-		},
+		}, 400),
 		getMembersInfo: function (oid) {
 			// Get the host address first
 			this.$conf.getHost().then((h) => {
@@ -102,17 +126,10 @@ export default {
 								"access_position"
 							)
 
-							console.log(this.membersInfo)
 							this.membersInfo.members = members
 						})
 					})
 			})
-
-			// Update the user's access status
-			this.updateUserAccessStatus(oid)
-		},
-		updateUserAccessStatus: function (id) {
-			this.hasOrganization = !!id
 		},
 		getAllOrganization() {
 			this.$conf.getHost().then((h) => {
@@ -122,7 +139,8 @@ export default {
 					})
 					.then((res) => {
 						let i = res.data.findIndex(
-							(item) => item.id === this.organizationInfo.id
+							(item) =>
+								item.id === this.selectedOrganizationInfo.id
 						)
 						if (i !== -1) res.data[i].own = true
 						this.allOrganization = res.data
@@ -144,26 +162,160 @@ export default {
 					})
 			})
 		},
+		updatePageData: function (msg) {
+			this.getAllOrganization()
+			this.getOrganizationInfo(this.selectedOrganizationInfo.id)
+			this.$public.emit("notice", {
+				type: "success",
+				msg,
+			})
+		},
+		updateOrganizationStatus: function (status) {
+			const cb = (res) => {
+				if (res.data.affectedRows) {
+					this.updatePageData("更新组织授权成功")
+				}
+			}
+
+			this.$public.emit("notice", {
+				msg: "正在更新组织授权",
+			})
+
+			this.$conf.getHost().then((h) => {
+				if (status)
+					this.$conf
+						.handleActiveOrganization({
+							host: this.$conf.getHttpString(h.host),
+							id: this.selectedOrganizationInfo.id,
+						})
+						.then(cb)
+				else
+					this.$conf
+						.handleDeactiveOrganization({
+							host: this.$conf.getHttpString(h.host),
+							id: this.selectedOrganizationInfo.id,
+						})
+						.then(cb)
+			})
+		},
+		handleRenameOrganization: function () {
+			this.visible.rename = true
+		},
+		quitOrganization: function (type, user) {
+			if (type !== "HOST")
+				this.$public.emit("notice", {
+					msg: `正在${type === "JOIN" ? "退出组织" : "拒绝申请"}`,
+				})
+			else {
+				this.$public.emit("notice", {
+					msg: `正在解散组织`,
+				})
+				return
+			}
+
+			console.log(user)
+
+			this.$conf.getHost().then((h) => {
+				this.$conf
+					.handleQuitOrganization({
+						host: this.$conf.getHttpString(h.host),
+						id: user.id,
+					})
+					.then((res) => {
+						if (res.data.affectedRows) {
+							this.updatePageData(
+								`${
+									type === "JOIN" ? "退出组织" : "拒绝申请"
+								}成功`
+							)
+						}
+					})
+			})
+		},
 	},
 }
 </script>
 
 <template>
 	<div class="organization">
-		<div
-			class="organization-info"
-			v-if="hasOrganization && (superUser || hostUser)"
-		>
+		<div class="organization-list" v-if="superUser">
 			<span class="title">
-				<span class="name">{{ organizationInfo.name }}</span>
-				<span class="id">编号{{ `#${organizationInfo.id}` }}</span>
-				<span
-					:class="[
-						'status',
-						computedStatusClass(!!organizationInfo.status),
-					]"
-					>{{ !!organizationInfo.status ? "已认证" : "未认证" }}</span
+				<span>组织管理</span>
+				<button class="btn">
+					<el-icon><Plus /></el-icon>
+				</button>
+			</span>
+			<span class="item" v-for="item in allOrganization" :key="item.id">
+				<span class="info">
+					<span class="id">{{ `#${item.id}` }}</span>
+					<span class="name">{{ item.name }}</span>
+					<span class="status">
+						{{ item.status ? "已认证" : "未认证" }}
+					</span>
+				</span>
+				<button
+					class="btn"
+					title="管理该组织"
+					@click="getOrganizationInfo(item.id)"
 				>
+					<el-icon><Setting /></el-icon>
+				</button>
+			</span>
+		</div>
+		<div class="organization-info" v-if="detailVisible">
+			<span class="title">
+				<span class="info">
+					<span class="name">{{
+						selectedOrganizationInfo.name
+					}}</span>
+					<span class="id"
+						>编号{{ `#${selectedOrganizationInfo.id}` }}</span
+					>
+					<span
+						:class="[
+							'status',
+							computedStatusClass(
+								!!selectedOrganizationInfo.status
+							),
+						]"
+						>{{
+							!!selectedOrganizationInfo.status
+								? "已认证"
+								: "未认证"
+						}}</span
+					>
+				</span>
+				<div class="op">
+					<button
+						class="btn"
+						title="重命名该组织"
+						@click="handleRenameOrganization"
+					>
+						<el-icon><Edit /></el-icon>
+					</button>
+					<button
+						class="btn"
+						v-if="superUser"
+						:title="
+							!!selectedOrganizationInfo.status
+								? '取消该组织认证'
+								: '激活该组织认证'
+						"
+						@click="
+							updateOrganizationStatus(
+								!selectedOrganizationInfo.status
+							)
+						"
+					>
+						<el-icon>
+							<TurnOff v-if="!!selectedOrganizationInfo.status" />
+							<Open v-else />
+						</el-icon>
+					</button>
+					<button class="btn danger" title="解散该组织">
+						<el-icon><Delete /></el-icon>
+					</button>
+				</div>
 			</span>
 			<div class="member-list">
 				<span class="count"
@@ -180,31 +332,45 @@ export default {
 					<span class="info">
 						<span class="name">{{ detail.nickname }}</span>
 						<span class="id">{{ `#${detail.id}` }}</span>
+						<span :class="['position', detail.access_position]">{{
+							detail.access_position
+						}}</span>
 					</span>
-					<span class="position">{{ detail.access_position }}</span>
+
+					<span class="op" v-if="detail.access_position === 'APPLY'">
+						<button class="btn" title="接受该申请">
+							<el-icon><Check /></el-icon>
+						</button>
+						<button
+							class="btn danger"
+							title="拒绝该申请"
+							@click="
+								quitOrganization(detail.access_position, detail)
+							"
+						>
+							<el-icon><Close /></el-icon>
+						</button>
+					</span>
+					<span class="op" v-else>
+						<button
+							class="btn danger"
+							title="移除该成员"
+							@click="
+								quitOrganization(detail.access_position, detail)
+							"
+						>
+							<el-icon><Delete /></el-icon>
+						</button>
+					</span>
 				</span>
 			</div>
 		</div>
-		<div class="organization-list" v-if="superUser">
-			<span class="title">
-				<span>组织列表</span>
-				<button class="btn">
-					<el-icon><Plus /></el-icon>
-				</button>
-			</span>
-			<span class="item" v-for="item in allOrganization" :key="item.id">
-				<span class="info">
-					<span class="id">{{ `#${item.id}` }}</span>
-					<span class="name">{{ item.name }}</span>
-					<span class="status">
-						{{ item.status ? "已认证" : "未认证" }}
-					</span>
-				</span>
-				<button class="btn" title="向该组织提交申请">
-					<el-icon><Promotion /></el-icon>
-				</button>
-			</span>
-		</div>
+		<rename-organization
+			:visible="visible.rename"
+			@update:visible="visible.renameFn"
+			:organization="selectedOrganizationInfo"
+			@rename:success="updatePageData('组织重命名成功')"
+		/>
 	</div>
 </template>
 
@@ -215,7 +381,7 @@ export default {
 }
 
 .title {
-	@apply inline-flex items-center mb-4;
+	@apply inline-flex justify-between items-center mb-4;
 }
 
 .organization-info {
@@ -270,7 +436,23 @@ export default {
 .btn {
 	@apply dark:border-gray-700;
 }
-.title .btn {
+.btn.danger {
+	@apply text-red-500 dark:text-red-400;
+}
+.title > .btn {
 	@apply mx-2 text-base rounded-full p-1.5;
+}
+.op > .btn {
+	@apply mx-1 text-base;
+}
+
+.position {
+	@apply inline-flex justify-center items-center px-1 py-0.5 mx-2 rounded
+	text-gray-50 dark:text-gray-800 bg-gray-400 dark:bg-gray-500
+	transition-all shadow;
+}
+.position.HOST,
+.position.JOIN {
+	@apply bg-green-400 dark:bg-green-500;
 }
 </style>
