@@ -119,6 +119,9 @@ const appConfig = {
     , handleCreateOrganization: ({ host, appKey, hostId, name, organizationKey }) => {
         return Axios.post(`${host}/api/user/organization/create/init`, { appKey, hostId, name, organizationKey })
     }
+    , handleApplyOrganization: ({ host, oid, uid }) => {
+        return Axios.post(`${host}/api/user/organization/apply`, { oid, uid })
+    }
     , handleJoinOrganization: ({ host, oid, uid }) => {
         return Axios.post(`${host}/api/user/organization/join`, { oid, uid })
     }
@@ -142,6 +145,12 @@ const appConfig = {
     }
     , handleDeactiveOrganization: ({ host, id }) => {
         return Axios.post(`${host}/api/user/organization/deactive`, { id })
+    }
+    , handleDeleteOrganization: ({ host, id }) => {
+        return Axios.post(`${host}/api/user/organization/delete`, { id })
+    }
+    , handleTransferOrganization: ({ host, uid, oid }) => {
+        return Axios.post(`${host}/api/user/organization/transfer`, { uid, oid })
     }
 
 }

@@ -39,20 +39,21 @@ const checkOrganizationName = $utils._debounce(async (string) => {
 		return
 	}
 	// Get the current host
-	const h = await $conf.getHost()
-	// Call the checkOrganizationName interface
-	$conf
-		.checkOrganizationName({
-			// Get the host address
-			host: $conf.getHttpString(h.host),
-			// Get the name parameter
-			name: string,
-		})
-		.then((res) => {
-			// If there is a count of 1, the name already exists
-			isRepeat.value = !!res.data[0]["count(*)"]
-			clickable.value = true
-		})
+	$conf.getHost().then((h) => {
+		// Call the checkOrganizationName interface
+		$conf
+			.checkOrganizationName({
+				// Get the host address
+				host: $conf.getHttpString(h.host),
+				// Get the name parameter
+				name: string,
+			})
+			.then((res) => {
+				// If there is a count of 1, the name already exists
+				isRepeat.value = !!res.data[0]["count(*)"]
+				clickable.value = true
+			})
+	})
 }, 1000)
 
 watch(
@@ -86,31 +87,36 @@ const createOrganization = async () => {
 		return
 	}
 
-	const h = await $conf.getHost()
-	const config = await $conf.getConfPromise()
+	$conf.getHost().then((h) => {
+		$conf.getConfPromise().then((config) => {
+			form.appKey = config.data.appInfo.key
+			form.hostId = config.data.userInfo.id
+			form.organizationKey = $conf.getRandomKey(16)
 
-	form.appKey = config.data.appInfo.key
-	form.hostId = config.data.userInfo.id
-	form.organizationKey = $conf.getRandomKey(16)
-
-	$conf
-		.handleCreateOrganization({
-			host: $conf.getHttpString(h.host),
-			appKey: form.appKey,
-			hostId: form.hostId,
-			name: form.name,
-			organizationKey: form.organizationKey,
-		})
-		.then((res) => {
-			dialogFormVisible.value = false
-			clickable.value = true
-			res.data.affectRows &&
-				$emit("create:success", {
-					oid: res.data.insertId,
-					uid: form.hostId,
-					type: "HOST",
+			$conf
+				.handleCreateOrganization({
+					host: $conf.getHttpString(h.host),
+					appKey: form.appKey,
+					hostId: form.hostId,
+					name: form.name,
+					organizationKey: form.organizationKey,
+				})
+				.then((res) => {
+					dialogFormVisible.value = false
+					clickable.value = true
+					res.data.affectedRows &&
+						$emit("create:success", {
+							oid: res.data.insertId,
+							uid: form.hostId,
+							type: "HOST",
+						})
+				})
+				.catch((err) => {
+					clickable.value = true
+					console.log(err)
 				})
 		})
+	})
 }
 </script>
 

@@ -1,6 +1,6 @@
 <script>
 import { _debounce } from "@/plugins/utils"
-import renameOrganization from "@/components/Dialogs/renameOrganization.vue"
+import Organization from "@/components/Manage/organization.vue"
 
 export default {
 	name: "Manage",
@@ -14,18 +14,12 @@ export default {
 		})
 
 		this.$public.on("update-from-keys-failed", () => {
-			this.$conf.getConfPromise().then((conf) => {
-				if (this.hostUser)
-					this.getOrganizationInfo(conf.data.userInfo.organization)
-
-				this.getAllOrganization()
-			})
+			this.getAllOrganization()
 		})
 	},
 	created() {
 		this.$conf.getConfPromise().then((conf) => {
 			// this.getOrganizationInfo(conf.data.userInfo.organization)
-			// this.getMembersInfo(conf.data.userInfo.organization)
 			// this.getAllOrganization()
 
 			this.ensureHostorSuperUser(
@@ -42,7 +36,7 @@ export default {
 		})
 	},
 	mounted() {},
-	components: { renameOrganization },
+	components: { Organization },
 	computed: {
 		detailVisible: function () {
 			return (
@@ -55,19 +49,11 @@ export default {
 		return {
 			allOrganization: [],
 			selectedOrganizationInfo: {},
-			membersInfo: {},
 			superUser: false,
 			hostUser: false,
-			visible: {
-				rename: false,
-				renameFn: (val) => {
-					this.visible.rename = val
-				},
-			},
 		}
 	},
 	methods: {
-		computedStatusClass: (status) => (status ? "access" : null),
 		getOrganizationInfo: _debounce(function (id) {
 			// Get the host
 			this.$conf.getHost().then((h) => {
@@ -81,56 +67,9 @@ export default {
 					.then((res) => {
 						// Save the organization information
 						this.selectedOrganizationInfo = res.data[0] || {}
-
-						this.getMembersInfo(id)
 					})
 			})
 		}, 400),
-		getMembersInfo: function (oid) {
-			// Get the host address first
-			this.$conf.getHost().then((h) => {
-				// Get the organization member information through the organization ID
-				this.$conf
-					.getMembersByOrganizationId({
-						host: this.$conf.getHttpString(h.host),
-						id: oid,
-					})
-					.then((res) => {
-						// Get the user's information
-						this.$conf.getConfPromise().then((data) => {
-							// Sort by access status
-							function sortByStr(array, key) {
-								return array.sort(function (a, b) {
-									if (a[key] === "HOST") return -1
-									else if (b[key] === "HOST") return 1
-									else if (
-										a[key] === "JOIN" &&
-										b[key] === "APPLY"
-									)
-										return -1
-									else if (
-										b[key] === "JOIN" &&
-										a[key] === "APPLY"
-									)
-										return 1
-								})
-							}
-							const { detail, members } = res.data
-							let i = detail.findIndex(
-								(detail) => detail.id === data.data.userInfo.id
-							)
-							if (i !== -1) detail[i].self = true
-
-							this.membersInfo.detail = sortByStr(
-								detail,
-								"access_position"
-							)
-
-							this.membersInfo.members = members
-						})
-					})
-			})
-		},
 		getAllOrganization() {
 			this.$conf.getHost().then((h) => {
 				this.$conf
@@ -138,11 +77,6 @@ export default {
 						host: this.$conf.getHttpString(h.host),
 					})
 					.then((res) => {
-						let i = res.data.findIndex(
-							(item) =>
-								item.id === this.selectedOrganizationInfo.id
-						)
-						if (i !== -1) res.data[i].own = true
 						this.allOrganization = res.data
 					})
 			})
@@ -162,75 +96,9 @@ export default {
 					})
 			})
 		},
-		updatePageData: function (msg) {
-			this.getAllOrganization()
+		updatePageData() {
 			this.getOrganizationInfo(this.selectedOrganizationInfo.id)
-			this.$public.emit("notice", {
-				type: "success",
-				msg,
-			})
-		},
-		updateOrganizationStatus: function (status) {
-			const cb = (res) => {
-				if (res.data.affectedRows) {
-					this.updatePageData("更新组织授权成功")
-				}
-			}
-
-			this.$public.emit("notice", {
-				msg: "正在更新组织授权",
-			})
-
-			this.$conf.getHost().then((h) => {
-				if (status)
-					this.$conf
-						.handleActiveOrganization({
-							host: this.$conf.getHttpString(h.host),
-							id: this.selectedOrganizationInfo.id,
-						})
-						.then(cb)
-				else
-					this.$conf
-						.handleDeactiveOrganization({
-							host: this.$conf.getHttpString(h.host),
-							id: this.selectedOrganizationInfo.id,
-						})
-						.then(cb)
-			})
-		},
-		handleRenameOrganization: function () {
-			this.visible.rename = true
-		},
-		quitOrganization: function (type, user) {
-			if (type !== "HOST")
-				this.$public.emit("notice", {
-					msg: `正在${type === "JOIN" ? "退出组织" : "拒绝申请"}`,
-				})
-			else {
-				this.$public.emit("notice", {
-					msg: `正在解散组织`,
-				})
-				return
-			}
-
-			console.log(user)
-
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.handleQuitOrganization({
-						host: this.$conf.getHttpString(h.host),
-						id: user.id,
-					})
-					.then((res) => {
-						if (res.data.affectedRows) {
-							this.updatePageData(
-								`${
-									type === "JOIN" ? "退出组织" : "拒绝申请"
-								}成功`
-							)
-						}
-					})
-			})
+			this.getAllOrganization()
 		},
 	},
 }
@@ -241,9 +109,6 @@ export default {
 		<div class="organization-list" v-if="superUser">
 			<span class="title">
 				<span>组织管理</span>
-				<button class="btn">
-					<el-icon><Plus /></el-icon>
-				</button>
 			</span>
 			<span class="item" v-for="item in allOrganization" :key="item.id">
 				<span class="info">
@@ -262,114 +127,11 @@ export default {
 				</button>
 			</span>
 		</div>
-		<div class="organization-info" v-if="detailVisible">
-			<span class="title">
-				<span class="info">
-					<span class="name">{{
-						selectedOrganizationInfo.name
-					}}</span>
-					<span class="id"
-						>编号{{ `#${selectedOrganizationInfo.id}` }}</span
-					>
-					<span
-						:class="[
-							'status',
-							computedStatusClass(
-								!!selectedOrganizationInfo.status
-							),
-						]"
-						>{{
-							!!selectedOrganizationInfo.status
-								? "已认证"
-								: "未认证"
-						}}</span
-					>
-				</span>
-				<div class="op">
-					<button
-						class="btn"
-						title="重命名该组织"
-						@click="handleRenameOrganization"
-					>
-						<el-icon><Edit /></el-icon>
-					</button>
-					<button
-						class="btn"
-						v-if="superUser"
-						:title="
-							!!selectedOrganizationInfo.status
-								? '取消该组织认证'
-								: '激活该组织认证'
-						"
-						@click="
-							updateOrganizationStatus(
-								!selectedOrganizationInfo.status
-							)
-						"
-					>
-						<el-icon>
-							<TurnOff v-if="!!selectedOrganizationInfo.status" />
-							<Open v-else />
-						</el-icon>
-					</button>
-					<button class="btn danger" title="解散该组织">
-						<el-icon><Delete /></el-icon>
-					</button>
-				</div>
-			</span>
-			<div class="member-list">
-				<span class="count"
-					>组织人数
-					{{
-						membersInfo.detail ? membersInfo.detail.length : NaN
-					}}</span
-				>
-				<span
-					class="item"
-					v-for="detail in membersInfo.detail"
-					:key="detail.id"
-				>
-					<span class="info">
-						<span class="name">{{ detail.nickname }}</span>
-						<span class="id">{{ `#${detail.id}` }}</span>
-						<span :class="['position', detail.access_position]">{{
-							detail.access_position
-						}}</span>
-					</span>
-
-					<span class="op" v-if="detail.access_position === 'APPLY'">
-						<button class="btn" title="接受该申请">
-							<el-icon><Check /></el-icon>
-						</button>
-						<button
-							class="btn danger"
-							title="拒绝该申请"
-							@click="
-								quitOrganization(detail.access_position, detail)
-							"
-						>
-							<el-icon><Close /></el-icon>
-						</button>
-					</span>
-					<span class="op" v-else>
-						<button
-							class="btn danger"
-							title="移除该成员"
-							@click="
-								quitOrganization(detail.access_position, detail)
-							"
-						>
-							<el-icon><Delete /></el-icon>
-						</button>
-					</span>
-				</span>
-			</div>
-		</div>
-		<rename-organization
-			:visible="visible.rename"
-			@update:visible="visible.renameFn"
-			:organization="selectedOrganizationInfo"
-			@rename:success="updatePageData('组织重命名成功')"
+		<Organization
+			:superUser="superUser"
+			:hostUser="hostUser"
+			:selectedOrganizationInfo="selectedOrganizationInfo"
+			@update:info="updatePageData"
 		/>
 	</div>
 </template>

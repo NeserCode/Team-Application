@@ -2,6 +2,7 @@
 import createOrganization from "@/components/Dialogs/createOrganization.vue"
 import joinOrganization from "@/components/Dialogs/joinOrganization.vue"
 
+import { ElMessageBox } from "element-plus"
 import { _debounce } from "@/plugins/utils"
 
 export default {
@@ -28,6 +29,8 @@ export default {
 			this.getOrganizationInfo(conf.data.userInfo.organization)
 			this.getMembersInfo(conf.data.userInfo.organization)
 
+			this.superUser = conf.data.userInfo.super
+
 			this.getAllOrganization()
 		})
 	},
@@ -43,6 +46,9 @@ export default {
 			allOrganization: [],
 			willJoinOrganization: {},
 			membersInfo: {},
+			superUser: false,
+			uid: null,
+			uType: null,
 			visible: {
 				createOrganization: false,
 				joinOrganization: false,
@@ -106,14 +112,17 @@ export default {
 							let i = detail.findIndex(
 								(detail) => detail.id === data.data.userInfo.id
 							)
-							if (i !== -1) detail[i].self = true
+							if (i !== -1) {
+								detail[i].self = true
+								this.uid = detail[i].id
+								this.uType = detail[i].access_position
+							}
 
 							this.membersInfo.detail = sortByStr(
 								detail,
 								"access_position"
 							)
 
-							console.log(this.membersInfo)
 							this.membersInfo.members = members
 						})
 					})
@@ -170,26 +179,134 @@ export default {
 			this.visible.joinOrganization = bool
 		},
 		updateUserOrganization: async function ({ oid, uid, type }) {
-			// network
-			this.getOrganizationInfo(oid)
-			this.getMembersInfo(oid)
-
-			this.getAllOrganization()
 			// local
 			if (type === "HOST") {
-				const h = await this.$conf.getHost()
-				await this.$conf
-					.updateUserAccess({
-						host: this.$conf.getHttpString(h.host),
-						oid,
-						uid,
-					})
-					.then((res) => {
-						console.log(res)
-					})
+				this.$conf.getHost().then((h) => {
+					this.$conf
+						.updateUserAccess({
+							host: this.$conf.getHttpString(h.host),
+							oid,
+							uid,
+						})
+						.then(() => {
+							this.getOrganizationInfo(oid)
+							this.getMembersInfo(oid)
+
+							this.getAllOrganization()
+							this.$public.emit("user-created-organization", {
+								super: this.superUser,
+								id: uid,
+							})
+						})
+				})
 			} else if (type === "JOIN") {
 				this.hasOrganization = !!oid
+
+				// network
+				this.getOrganizationInfo(oid)
+				this.getMembersInfo(oid)
+
+				this.getAllOrganization()
 			}
+		},
+		updatePageData: function (msg) {
+			this.getOrganizationInfo(this.organizationInfo.id)
+			this.getMembersInfo(this.organizationInfo.id)
+
+			this.getAllOrganization()
+
+			this.$router.go(0)
+
+			this.$public.emit("notice", {
+				type: "success",
+				msg,
+			})
+		},
+		quitOrganization: function () {
+			if (this.uType !== "HOST") {
+				ElMessageBox.confirm(
+					`您正在尝试${
+						this.uType === "JOIN" ? "退出组织" : "撤销申请"
+					}`,
+					"请注意",
+					{
+						confirmButtonText: `确认${
+							this.uType === "JOIN" ? "退出组织" : "撤销申请"
+						}`,
+						cancelButtonText: "取消",
+						type: "warning",
+					}
+				)
+					.then(() => {
+						this.$public.emit("notice", {
+							msg: `正在${
+								this.uType === "JOIN" ? "退出组织" : "撤销申请"
+							}`,
+						})
+						this.$conf.getHost().then((h) => {
+							this.$conf
+								.handleQuitOrganization({
+									host: this.$conf.getHttpString(h.host),
+									id: this.uid,
+								})
+								.then((res) => {
+									if (res.data.affectedRows) {
+										this.updatePageData(
+											`${
+												this.uType === "JOIN"
+													? "退出组织"
+													: "撤销申请"
+											}成功`
+										)
+									}
+								})
+						})
+					})
+					.catch(() => {
+						this.$public.emit("notice", {
+							msg: `成功取消操作`,
+						})
+					})
+			} else {
+				this.$public.emit("notice", {
+					msg: `正在解散组织`,
+				})
+				this.deleteOrganization()
+			}
+		},
+		deleteOrganization: function () {
+			ElMessageBox.confirm(
+				"您正在尝试解散一个组织，这将使该组织内所有成员失去他们的组织与已认证的授权",
+				"请注意",
+				{
+					confirmButtonText: "确认解散",
+					cancelButtonText: "取消",
+					type: "warning",
+				}
+			)
+				.then(() => {
+					this.$public.emit("notice", {
+						msg: `正在解散组织`,
+					})
+
+					this.$conf.getHost().then((h) => {
+						this.$conf
+							.handleDeleteOrganization({
+								host: this.$conf.getHttpString(h.host),
+								id: this.organizationInfo.id,
+							})
+							.then((res) => {
+								if (res.data.affectedRows) {
+									this.updatePageData("解散组织成功")
+								}
+							})
+					})
+				})
+				.catch(() => {
+					this.$public.emit("notice", {
+						msg: `取消解散组织`,
+					})
+				})
 		},
 	},
 }
@@ -208,6 +325,9 @@ export default {
 					]"
 					>{{ !!organizationInfo.status ? "已认证" : "未认证" }}</span
 				>
+				<button class="btn" @click="quitOrganization()">
+					<el-icon><Minus /></el-icon>
+				</button>
 			</span>
 			<div class="member-list">
 				<span class="count"

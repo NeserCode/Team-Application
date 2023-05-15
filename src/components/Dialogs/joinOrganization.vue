@@ -37,26 +37,27 @@ watch(
 
 // create organization
 const joinOrganization = async () => {
-	const h = await $conf.getHost()
-	const config = await $conf.getConfPromise()
-
-	$conf
-		.handleJoinOrganization({
-			host: $conf.getHttpString(h.host),
-			oid: $props.organization.id,
-			uid: config.data.userInfo.id,
-		})
-		.then((res) => {
-			Visible.value = false
-			typeContent.value = ""
-
-			res.data.affectedRows &&
-				$emit("join:success", {
+	$conf.getHost().then((h) => {
+		$conf.getConfPromise().then((config) => {
+			$conf
+				.handleApplyOrganization({
+					host: $conf.getHttpString(h.host),
 					oid: $props.organization.id,
 					uid: config.data.userInfo.id,
-					type: "JOIN",
+				})
+				.then((res) => {
+					Visible.value = false
+					typeContent.value = ""
+
+					res.data.affectedRows &&
+						$emit("join:success", {
+							oid: $props.organization.id,
+							uid: config.data.userInfo.id,
+							type: "JOIN",
+						})
 				})
 		})
+	})
 }
 </script>
 

@@ -374,9 +374,9 @@ router.post('/organization/check/oname', (req, res) => {
     })
 })
 
-// 加入组织 | uid, oid
-router.post('/organization/join', (req, res) => {
-    let sql = $sql.organization.action.join
+// 申请加入组织 | uid, oid
+router.post('/organization/apply', (req, res) => {
+    let sql = $sql.organization.action.apply
     let params = req.body
 
     conn.query(sql, [params.oid, params.uid], (err, result) => {
@@ -384,6 +384,26 @@ router.post('/organization/join', (req, res) => {
         else {
             console.log(`[organization join oid ${params.oid} √]`);
             res.status(200).send(result)
+        }
+    })
+})
+
+// 加入组织 | uid, oid
+router.post('/organization/join', (req, res) => {
+    let sql = $sql.organization.action.join
+    let dsql = $sql.organization.detail.get
+    let params = req.body
+
+    conn.query(dsql, [params.oid], (derr, dresult) => {
+        if (derr) return res.status(502).send({ message: derr.sqlMessage, errorCode: derr.errno })
+        else {
+            conn.query(sql, [dresult[0].status, params.oid, params.uid], (err, result) => {
+                if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+                else {
+                    console.log(`[organization join oid ${params.oid} √]`);
+                    res.status(200).send(result)
+                }
+            })
         }
     })
 })
@@ -469,13 +489,19 @@ router.post('/organization/update/name', (req, res) => {
 // 激活组织状态
 router.post('/organization/active', (req, res) => {
     let sql = $sql.organization.action.active
+    let csql = $sql.organization.check.active
     let params = req.body
 
     conn.query(sql, [params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[organization active oid ${params.id} √]`);
-            res.status(200).send(result)
+            conn.query(csql, [params.id], (cerr, cresult) => {
+                if (cerr) return res.status(502).send({ message: cerr.sqlMessage, errorCode: cerr.errno })
+                else {
+                    console.log(`[organization active oid ${params.id} √]`);
+                    res.status(200).send(result)
+                }
+            })
         }
     })
 })
@@ -483,15 +509,58 @@ router.post('/organization/active', (req, res) => {
 // 吊销组织状态
 router.post('/organization/deactive', (req, res) => {
     let sql = $sql.organization.action.deactive
+    let csql = $sql.organization.check.deactive
     let params = req.body
 
     conn.query(sql, [params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
         else {
-            console.log(`[organization deactive oid ${params.id} √]`);
+            conn.query(csql, [params.id], (cerr, cresult) => {
+                if (cerr) return res.status(502).send({ message: cerr.sqlMessage, errorCode: cerr.errno })
+                else {
+                    console.log(`[organization deactive oid ${params.id} √]`);
+                    res.status(200).send(result)
+                }
+            })
+        }
+    })
+})
+
+// 解散组织
+router.post('/organization/delete', (req, res) => {
+    let sql = $sql.organization.action.free
+    let csql = $sql.organization.check.free
+
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            conn.query(csql, [params.id], (cerr, cresult) => {
+                if (cerr) return res.status(502).send({ message: cerr.sqlMessage, errorCode: cerr.errno })
+                else {
+                    console.log(`[organization delete oid ${params.id} √]`);
+                    res.status(200).send(result)
+                }
+            })
+        }
+    })
+})
+
+// 转让组织
+router.post('/organization/transfer', (req, res) => {
+    let sql = $sql.organization.action.transfer
+
+    let params = req.body
+
+    conn.query(sql, [params.uid, params.oid], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else {
+            console.log(`[organization transfer oid ${params.id} => uid ${params.uid} √]`);
             res.status(200).send(result)
         }
     })
 })
+
 
 module.exports = router

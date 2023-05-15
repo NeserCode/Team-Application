@@ -64,14 +64,19 @@ var sqlMap = {
             membersDetail: 'select * from team_user_detail where id in (select id from team_user_detail where access_team = ?)',
         },
         check: {
-            oname: 'select count(*) from team_organization_info where name = ?'
+            oname: 'select count(*) from team_organization_info where name = ?',
+            active: 'update team_user_detail set access_status = 1 where access_team = ?',
+            deactive: 'update team_user_detail set access_status = 0 where access_team = ?',
+            free: 'update team_user_detail set access_status = 0, access_team = NULL, access_position = NULL where access_team = ?',
         },
         action: {
             apply: 'update team_user_detail set access_status = 0, access_team = ?, access_position = "APPLY" where id = ?',
             join: 'update team_user_detail set access_status = ?, access_team = ?, access_position = "JOIN" where id = ?',
             quit: 'update team_user_detail set access_status = 0, access_team = NULL, access_position = NULL where id = ?',
             active: 'update team_organization_info set status = 1 where id = ?',
-            deactive: 'update team_organization_info set status = 0 where id = ?'
+            deactive: 'update team_organization_info set status = 0 where id = ?',
+            free: 'delete from team_organization_info where id = ?',
+            transfer: 'update team_organization_info set hostId = ? where id = ?',
         }
     },
 }

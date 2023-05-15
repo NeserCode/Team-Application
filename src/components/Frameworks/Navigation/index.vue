@@ -112,6 +112,9 @@ export default {
 		this.$public.on("update-avatar", (avatar) => {
 			this.avatarUrl = avatar
 		})
+		this.$public.on("user-created-organization", (info) => {
+			this.ensureHostorSuperUser(info, info.id)
+		})
 		this.$public.on("clear-user-sign-status", () => {
 			this.isLogined = false
 		})
