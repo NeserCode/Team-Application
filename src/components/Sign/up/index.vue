@@ -234,7 +234,7 @@ export default {
 								if (response.data.errorCode)
 									this.$public.emit("notice", {
 										type: "error",
-										msg: `☹ 注册失败, #[${response.data.errorCode}] ${response.data.message}`,
+										msg: `注册失败, #[${response.data.errorCode}] ${response.data.message}`,
 										time: 2500,
 										fn: () => {
 											this.clickable = true
@@ -257,7 +257,7 @@ export default {
 								console.log(e)
 								this.$public.emit("notice", {
 									type: "error",
-									msg: "☹ 注册失败, 请检查输入选项和网络配置",
+									msg: "注册失败, 请检查输入选项和网络配置",
 									time: 2500,
 									fn: () => {
 										this.clickable = true

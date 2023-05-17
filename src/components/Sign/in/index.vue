@@ -100,12 +100,16 @@ export default {
 		usernameFormat() {
 			return (
 				this.signIn.username.length >= 3 &&
+				this.signIn.username.length <= 12 &&
 				this.signIn.username ==
 					this.signIn.username.replace(/[^\w]/gi, "")
 			)
 		},
 		passwordFormat() {
-			return this.signIn.password.length >= 8
+			return (
+				this.signIn.password.split("").length >= 8 &&
+				this.signIn.password.split("").length <= 16
+			)
 		},
 	},
 	data() {
@@ -147,7 +151,7 @@ export default {
 			if (this.clickable) {
 				if (this.signIn.username.length < 1)
 					this.$refs.iact.handleShakeInput()
-				else if (this.signIn.password < 1)
+				else if (this.signIn.password.length < 1)
 					this.$refs.ipwd.handleShakeInput()
 				else if (this.checkText.length >= 2) {
 					this.clickable = false

@@ -167,7 +167,7 @@ export default {
 		addSubmission: function (leetname, submitid, status, timestamp) {
 			if (!localStorage.getItem("username")) {
 				this.$public.emit("notice", {
-					msg: `☹ 检测用户Team未登入 本次提交将无法记录于Team 请前往LeetCode官网查看详细结果`,
+					msg: `检测用户Team未登入 本次提交将无法记录于Team 请前往LeetCode官网查看详细结果`,
 					time: 4500,
 				})
 				return 0

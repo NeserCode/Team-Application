@@ -212,6 +212,9 @@ span.opTip {
 :deep(.el-input) {
 	@apply w-auto;
 }
+:deep(.el-input.is-disabled .el-input__wrapper) {
+	@apply bg-gray-600;
+}
 
 @media screen and (max-width: 830px) {
 	:deep(.el-radio) {
