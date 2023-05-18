@@ -7,34 +7,7 @@ import { _debounce } from "@/plugins/utils"
 
 export default {
 	name: "Organization",
-	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			this.getOrganizationInfo(detail.access_team)
-			this.getMembersInfo(detail.access_team)
-
-			this.getAllOrganization()
-		})
-
-		this.$public.on("update-from-keys-failed", () => {
-			this.$conf.getConfPromise().then((conf) => {
-				this.getOrganizationInfo(conf.data.userInfo.organization)
-				this.getMembersInfo(conf.data.userInfo.organization)
-
-				this.getAllOrganization()
-			})
-		})
-	},
-	created() {
-		this.$conf.getConfPromise().then((conf) => {
-			this.getOrganizationInfo(conf.data.userInfo.organization)
-			this.getMembersInfo(conf.data.userInfo.organization)
-
-			this.superUser = conf.data.userInfo.super
-
-			this.getAllOrganization()
-		})
-	},
-	mounted() {},
+	inject: ["$setting", "$host"],
 	components: {
 		createOrganization,
 		joinOrganization,
@@ -55,6 +28,32 @@ export default {
 			},
 		}
 	},
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+			this.getOrganizationInfo(detail.access_team)
+			this.getMembersInfo(detail.access_team)
+
+			this.getAllOrganization()
+		})
+
+		this.$public.on("update-from-keys-failed", () => {
+			const conf = this.$setting.getData()
+			this.getOrganizationInfo(conf.userInfo.organization)
+			this.getMembersInfo(conf.userInfo.organization)
+
+			this.getAllOrganization()
+		})
+	},
+	created() {
+		const conf = this.$setting.getData()
+		this.getOrganizationInfo(conf.userInfo.organization)
+		this.getMembersInfo(conf.userInfo.organization)
+
+		this.superUser = conf.userInfo.super
+
+		this.getAllOrganization()
+	},
+	mounted() {},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
 		computedOwnOgnizationClass: (item) => {
@@ -66,85 +65,68 @@ export default {
 			return detail.self ? "self" : null
 		},
 		getOrganizationInfo: function (id) {
-			// Get the host
-			this.$conf.getHost().then((h) => {
-				// Get the organization information
-				this.$conf
-					.getOrganizationById({
-						// Use the host to get the full URL
-						host: this.$conf.getHttpString(h.host),
-						id,
-					})
-					.then((res) => {
-						// Save the organization information
-						this.organizationInfo = res.data[0] || {}
-					})
-			})
+			this.$conf
+				.getOrganizationById({
+					// Use the host to get the full URL
+					host: this.$host.getData().host,
+					id,
+				})
+				.then((res) => {
+					// Save the organization information
+					this.organizationInfo = res.data[0] || {}
+				})
 		},
 		getMembersInfo: function (oid) {
-			// Get the host address first
-			this.$conf.getHost().then((h) => {
-				// Get the organization member information through the organization ID
-				this.$conf
-					.getMembersByOrganizationId({
-						host: this.$conf.getHttpString(h.host),
-						id: oid,
-					})
-					.then((res) => {
-						this.$conf.getConfPromise().then((data) => {
-							function sortByStr(array, key) {
-								return array.sort(function (a, b) {
-									if (a[key] === "HOST") return -1
-									else if (b[key] === "HOST") return 1
-									else if (
-										a[key] === "JOIN" &&
-										b[key] === "APPLY"
-									)
-										return -1
-									else if (
-										b[key] === "JOIN" &&
-										a[key] === "APPLY"
-									)
-										return 1
-								})
-							}
-							const { detail, members } = res.data
-							let i = detail.findIndex(
-								(detail) => detail.id === data.data.userInfo.id
-							)
-							if (i !== -1) {
-								detail[i].self = true
-								this.uid = detail[i].id
-								this.uType = detail[i].access_position
-							}
-
-							this.membersInfo.detail = sortByStr(
-								detail,
-								"access_position"
-							)
-
-							this.membersInfo.members = members
+			this.$conf
+				.getMembersByOrganizationId({
+					host: this.$host.getData().host,
+					id: oid,
+				})
+				.then((res) => {
+					function sortByStr(array, key) {
+						return array.sort(function (a, b) {
+							if (a[key] === "HOST") return -1
+							else if (b[key] === "HOST") return 1
+							else if (a[key] === "JOIN" && b[key] === "APPLY")
+								return -1
+							else if (b[key] === "JOIN" && a[key] === "APPLY")
+								return 1
 						})
-					})
-			})
+					}
+					const { detail, members } = res.data
+					let i = detail.findIndex(
+						(detail) =>
+							detail.id === this.$setting.getData().userInfo.id
+					)
+					if (i !== -1) {
+						detail[i].self = true
+						this.uid = detail[i].id
+						this.uType = detail[i].access_position
+					}
+
+					this.membersInfo.detail = sortByStr(
+						detail,
+						"access_position"
+					)
+
+					this.membersInfo.members = members
+				})
 
 			// Update the user's access status
 			this.updateUserAccessStatus(oid)
 		},
 		getAllOrganization() {
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.allOrganization({
-						host: this.$conf.getHttpString(h.host),
-					})
-					.then((res) => {
-						let i = res.data.findIndex(
-							(item) => item.id === this.organizationInfo.id
-						)
-						if (i !== -1) res.data[i].own = true
-						this.allOrganization = res.data
-					})
-			})
+			this.$conf
+				.allOrganization({
+					host: this.$host.getData().host,
+				})
+				.then((res) => {
+					let i = res.data.findIndex(
+						(item) => item.id === this.organizationInfo.id
+					)
+					if (i !== -1) res.data[i].own = true
+					this.allOrganization = res.data
+				})
 		},
 		updateUserAccessStatus: function (bool) {
 			this.hasOrganization = !!bool
@@ -181,24 +163,22 @@ export default {
 		updateUserOrganization: async function ({ oid, uid, type }) {
 			// local
 			if (type === "HOST") {
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.updateUserAccess({
-							host: this.$conf.getHttpString(h.host),
-							oid,
-							uid,
-						})
-						.then(() => {
-							this.getOrganizationInfo(oid)
-							this.getMembersInfo(oid)
+				this.$conf
+					.updateUserAccess({
+						host: this.$host.getData().host,
+						oid,
+						uid,
+					})
+					.then(() => {
+						this.getOrganizationInfo(oid)
+						this.getMembersInfo(oid)
 
-							this.getAllOrganization()
-							this.$public.emit("user-created-organization", {
-								super: this.superUser,
-								id: uid,
-							})
+						this.getAllOrganization()
+						this.$public.emit("user-created-organization", {
+							super: this.superUser,
+							id: uid,
 						})
-				})
+					})
 			} else if (type === "JOIN") {
 				this.hasOrganization = !!oid
 
@@ -214,8 +194,6 @@ export default {
 			this.getMembersInfo(this.organizationInfo.id)
 
 			this.getAllOrganization()
-
-			this.$router.go(0)
 
 			this.$public.emit("notice", {
 				type: "success",
@@ -243,24 +221,23 @@ export default {
 								this.uType === "JOIN" ? "退出组织" : "撤销申请"
 							}`,
 						})
-						this.$conf.getHost().then((h) => {
-							this.$conf
-								.handleQuitOrganization({
-									host: this.$conf.getHttpString(h.host),
-									id: this.uid,
-								})
-								.then((res) => {
-									if (res.data.affectedRows) {
-										this.updatePageData(
-											`${
-												this.uType === "JOIN"
-													? "退出组织"
-													: "撤销申请"
-											}成功`
-										)
-									}
-								})
-						})
+
+						this.$conf
+							.handleQuitOrganization({
+								host: this.$host.getData().host,
+								id: this.uid,
+							})
+							.then((res) => {
+								if (res.data.affectedRows) {
+									this.updatePageData(
+										`${
+											this.uType === "JOIN"
+												? "退出组织"
+												: "撤销申请"
+										}成功`
+									)
+								}
+							})
 					})
 					.catch(() => {
 						this.$public.emit("notice", {
@@ -289,18 +266,16 @@ export default {
 						msg: `正在解散组织`,
 					})
 
-					this.$conf.getHost().then((h) => {
-						this.$conf
-							.handleDeleteOrganization({
-								host: this.$conf.getHttpString(h.host),
-								id: this.organizationInfo.id,
-							})
-							.then((res) => {
-								if (res.data.affectedRows) {
-									this.updatePageData("解散组织成功")
-								}
-							})
-					})
+					this.$conf
+						.handleDeleteOrganization({
+							host: this.$host.getData().host,
+							id: this.organizationInfo.id,
+						})
+						.then((res) => {
+							if (res.data.affectedRows) {
+								this.updatePageData("解散组织成功")
+							}
+						})
 				})
 				.catch(() => {
 					this.$public.emit("notice", {

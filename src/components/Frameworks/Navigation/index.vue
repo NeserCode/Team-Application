@@ -80,7 +80,7 @@ export default {
 	components: {
 		UserAvatar,
 	},
-
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			isLogined: false,
@@ -102,7 +102,7 @@ export default {
 						? null
 						: localStorage.getItem("avatar"))
 
-				this.ensureHostorSuperUser(info, info.id, () => {
+				this.ensureHostorSuperUser(info, () => {
 					console.log(
 						`Host(${this.hostUser}) or Super(${this.superUser})`
 					)
@@ -124,19 +124,18 @@ export default {
 		this.$public.on("update-color-mode", (mode) => {
 			this.colorMode = mode
 		})
-	},
-	created() {
-		this.$conf.getConfPromise().then((conf) => {
-			const { userInfo: info } = conf.data
-			this.ensureHostorSuperUser(info, info.id)
+		this.$public.on("app-created", () => {
+			this.ensureHostorSuperUser(this.$setting.getData().userInfo)
+
+			this.initColorMode()
+			this.initUserAvatar()
 		})
 	},
+
 	mounted() {
 		this.isLogined = !(
 			localStorage.getItem("checkKey") == (undefined || null)
 		)
-		this.initColorMode()
-		this.initUserAvatar()
 	},
 	methods: {
 		initColorMode: function () {
@@ -171,47 +170,38 @@ export default {
 			return false
 		},
 		switchColorMode: function () {
-			this.$conf.getConfPromise().then((data) => {
-				data.data.userSetting.colorSchemeMode = this.colorMode
-				localStorage.setItem(
-					"color-scheme-mode",
-					this.colorMode === "light" ? "dark" : "light"
-				)
-				this.handleStorgeSetting(data.data, () => {
-					console.log(data.data)
-					setTimeout(() => {
-						this.initColorMode()
-					}, 0)
-				})
-			})
-		},
-		handleStorgeSetting: function (setting, cb) {
-			this.$conf.updateLocalConfig(setting, (err) => {
+			let data = this.$setting.getData()
+			data.userSetting.colorSchemeMode = this.colorMode
+			localStorage.setItem(
+				"color-scheme-mode",
+				this.colorMode === "light" ? "dark" : "light"
+			)
+			this.$conf.updateLocalConfig(data, (err) => {
+				console.log(`Strorage Setting for ColorMode`)
 				if (err) {
 					console.log(err)
 				}
+				this.$nextTick(() => {
+					this.initColorMode()
+				})
 			})
-			cb && cb()
 		},
 		initUserAvatar: function () {
-			this.$conf.getConfPromise().then((data) => {
-				this.avatarUrl = data.data.userInfo.avatar
-			})
+			this.avatarUrl = this.$setting.getData().userInfo.avatar
 		},
-		ensureHostorSuperUser: function (info, id, cb) {
+		ensureHostorSuperUser: function (info, cb) {
 			this.superUser = !!info.super
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.queryHostOrganizationById({
-						host: this.$conf.getHttpString(h.host),
-						id,
-					})
-					.then((res) => {
-						this.hostUser = res.data.length > 0
 
-						cb && cb()
-					})
-			})
+			this.$conf
+				.queryHostOrganizationById({
+					host: this.$host.getData().host,
+					id: info.id,
+				})
+				.then((res) => {
+					this.hostUser = res.data.length > 0
+
+					cb && cb()
+				})
 		},
 	},
 }

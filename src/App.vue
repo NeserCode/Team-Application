@@ -22,6 +22,8 @@ import Navigation from "@/components/Frameworks/Navigation/index.vue"
 import Controller from "@/views/Controller.vue"
 const { ipcRenderer } = window.require("electron")
 
+import { reactive } from "vue"
+
 export default {
 	name: "App",
 	components: {
@@ -31,15 +33,7 @@ export default {
 		Navigation,
 		Controller,
 	},
-	beforeMount() {
-		// document.onmousedown = (e) => {
-		//   if (e.button == 2) console.log("你按下了右键");
-		// };
-		// document.onmouseup = (e) => {
-		//   if (e.button == 2) console.log("你松开了右键");
-		// };
-	},
-	mounted() {
+	beforeCreate() {
 		//listen public response this.$public.on('',()=>{})
 		this.$public.on("update-footer-status-upto-app", (status) => {
 			this.statusReal.status = status.status
@@ -51,14 +45,37 @@ export default {
 		this.$public.on("update-header-need-close-direct", (symbol) => {
 			this.needs.isSettingCloseDirect = symbol
 		})
-
+	},
+	created() {
 		this.$conf.getConfPromise().then((data) => {
 			this.needs.setting = data.data
-			setTimeout(() => {
-				this.initApp()
-				this.$public.emit("app-mounted", data.data)
-			}, 50)
+			this.$conf.getHost().then((res) => {
+				this.needs.host = res
+				setTimeout(() => {
+					this.initApp()
+					this.$public.emit("app-created", data.data)
+				}, 0)
+			})
 		})
+	},
+	beforeMount() {
+		// document.onmousedown = (e) => {
+		//   if (e.button == 2) console.log("你按下了右键");
+		// };
+		// document.onmouseup = (e) => {
+		//   if (e.button == 2) console.log("你松开了右键");
+		// };
+	},
+	mounted() {},
+	provide() {
+		return {
+			$host: reactive({
+				getData: () => this.needs.host,
+			}),
+			$setting: reactive({
+				getData: () => this.needs.setting,
+			}),
+		}
 	},
 	data() {
 		return {
@@ -70,6 +87,7 @@ export default {
 			needs: {
 				isSettingCloseDirect: false,
 				setting: null,
+				host: null,
 			},
 		}
 	},

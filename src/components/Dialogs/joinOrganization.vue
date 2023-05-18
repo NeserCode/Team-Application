@@ -10,6 +10,10 @@ const $props = defineProps({
 })
 const $emit = defineEmits(["update:visible", "join:success"])
 const $conf = inject("$conf")
+const INJECTION = {
+	setting: inject("$setting", undefined).getData(),
+	host: inject("$host", undefined).getData(),
+}
 
 const Visible = ref(false)
 
@@ -37,27 +41,23 @@ watch(
 
 // create organization
 const joinOrganization = async () => {
-	$conf.getHost().then((h) => {
-		$conf.getConfPromise().then((config) => {
-			$conf
-				.handleApplyOrganization({
-					host: $conf.getHttpString(h.host),
-					oid: $props.organization.id,
-					uid: config.data.userInfo.id,
-				})
-				.then((res) => {
-					Visible.value = false
-					typeContent.value = ""
+	$conf
+		.handleApplyOrganization({
+			host: INJECTION.host.host,
+			oid: $props.organization.id,
+			uid: INJECTION.setting.userInfo.id,
+		})
+		.then((res) => {
+			Visible.value = false
+			typeContent.value = ""
 
-					res.data.affectedRows &&
-						$emit("join:success", {
-							oid: $props.organization.id,
-							uid: config.data.userInfo.id,
-							type: "JOIN",
-						})
+			res.data.affectedRows &&
+				$emit("join:success", {
+					oid: $props.organization.id,
+					uid: INJECTION.setting.userInfo.id,
+					type: "JOIN",
 				})
 		})
-	})
 }
 </script>
 

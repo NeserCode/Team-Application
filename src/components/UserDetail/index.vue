@@ -69,6 +69,7 @@ export default {
 			else return `About ${this.thisUsername}`
 		},
 	},
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			isConfirmOut: false,
@@ -198,33 +199,31 @@ export default {
 				this.$router.go(0)
 		},
 		initComponentLocal: function () {
-			this.$conf.getConfPromise().then((data) => {
-				const { userInfo } = data.data
-				// 处理认证条目
-				this.accessOgz.access = !!userInfo.access
+			const { userInfo } = this.$setting.getData()
+			// 处理认证条目
+			this.accessOgz.access = !!userInfo.access
 
-				this.accessOgz.ogz = userInfo.organization
-				this.accessOgz.position = userInfo.oPosition
+			this.accessOgz.ogz = userInfo.organization
+			this.accessOgz.position = userInfo.oPosition
 
-				this.accessObj.text = `${
-					this.accessOgz.access ? "已" : "未"
-				}认证 #${this.accessOgz.ogz} ${this.accessOgz.position}`
+			this.accessObj.text = `${
+				this.accessOgz.access ? "已" : "未"
+			}认证 #${this.accessOgz.ogz} ${this.accessOgz.position}`
 
-				// 处理性别条目
-				this.sexObj.text =
-					(userInfo.sex == "m"
-						? "男"
-						: userInfo.sex == "w"
-						? "女"
-						: null) ?? "Unknow"
-				this.radioTemp = userInfo.sex == "w" ? 1 : 0
-				// 处理绑定条目
-				this.boundObj.text = userInfo.bound ?? "Unknow"
-				// 处理键值条目
-				this.keyObj.text = userInfo.key ?? "No Such Key"
-				// 处理用户名
-				this.thisUsername = userInfo.name
-			})
+			// 处理性别条目
+			this.sexObj.text =
+				(userInfo.sex == "m"
+					? "男"
+					: userInfo.sex == "w"
+					? "女"
+					: null) ?? "Unknow"
+			this.radioTemp = userInfo.sex == "w" ? 1 : 0
+			// 处理绑定条目
+			this.boundObj.text = userInfo.bound ?? "Unknow"
+			// 处理键值条目
+			this.keyObj.text = userInfo.key ?? "No Such Key"
+			// 处理用户名
+			this.thisUsername = userInfo.name
 		},
 	},
 }

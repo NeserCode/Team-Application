@@ -10,16 +10,7 @@ export default {
 			this.$public.emit("update-app-title", val)
 		},
 	},
-	mounted() {
-		this.$public.on("rebuild-app-key", () => {
-			this.handleRebuildKey("appkey")
-		})
-		this.$public.on("check-all-key", () => {
-			this.handleCheckKey()
-		})
-
-		this.initController()
-	},
+	inject: ["$setting", "$host"],
 	data() {
 		return {}
 	},
@@ -77,47 +68,38 @@ export default {
 				})
 		},
 		handleCheckKey: function () {
-			this.$conf
-				.getConfPromise()
-				.then((data) => {
-					if (
-						data.data.appInfo.key != null &&
-						localStorage.getItem("appKey") == (null || "")
-					)
-						this.handleSaveAppkey(data.data.appInfo.key)
-					else if (data.data.appInfo.key == (null || ""))
-						this.handleRebuildKey("appkey")
-					else if (data.data.userInfo.key == (null || ""))
-						this.handleRebuildKey("userkey")
-				})
-				.then(() => {
-					this.$conf.getHost().then((h) => {
-						this.$conf
-							.getDetailByKeys({
-								host: this.$conf.getHttpString(h.host),
-								userKey: localStorage.getItem("userKey"),
-								checkKey: localStorage.getItem("checkKey"),
-							})
-							.then((res) => {
-								if (res.status !== 200) {
-									this.$public.emit("notice", {
-										type: "info",
-										msg: `自动信息更新失败 ${res.data.message}`,
-									})
-									this.$public.emit("update-from-keys-failed")
-								} else {
-									const { detail, info } = res.data
+			if (
+				this.$setting.getData().appInfo.key != null &&
+				localStorage.getItem("appKey") == (null || "")
+			)
+				this.handleSaveAppkey(this.$setting.getData().appInfo.key)
+			else if (this.$setting.getData().appInfo.key == (null || ""))
+				this.handleRebuildKey("appkey")
+			else if (this.$setting.getData().userInfo.key == (null || ""))
+				this.handleRebuildKey("userkey")
 
-									console.log(
-										"Auto CheckKey to Update Datails"
-									)
-									this.$public.emit(
-										"update-main-user-info-upto-app",
-										{ detail, info }
-									)
-								}
-							})
-					})
+			this.$conf
+				.getDetailByKeys({
+					host: this.$host.getData().host,
+					userKey: localStorage.getItem("userKey"),
+					checkKey: localStorage.getItem("checkKey"),
+				})
+				.then((res) => {
+					if (res.status !== 200) {
+						this.$public.emit("notice", {
+							type: "info",
+							msg: `自动信息更新失败 ${res.data.message}`,
+						})
+						this.$public.emit("update-from-keys-failed")
+					} else {
+						const { detail, info } = res.data
+
+						console.log("Auto CheckKey to Update Datails")
+						this.$public.emit("update-main-user-info-upto-app", {
+							detail,
+							info,
+						})
+					}
 				})
 		},
 		initUser: function () {
@@ -129,55 +111,53 @@ export default {
 			this.initUser()
 		},
 		updateConfig: function ({ info, detail }) {
-			this.$conf.getConfPromise().then((data) => {
-				let tempSetting = data.data
+			let tempSetting = this.$setting.getData()
 
-				// User Access
-				tempSetting.userInfo = {}
-				tempSetting.userInfo.id = detail.id
-				tempSetting.userInfo.access = detail.access_status
-				tempSetting.userInfo.organization = detail.access_team
-				tempSetting.userInfo.oPosition = detail.access_position
-				// User Sex
-				tempSetting.userInfo.sex = detail.sex
-				// User Avatar
-				tempSetting.userInfo.avatar = detail.avatar
-				// User Nickname
-				tempSetting.userInfo.nickname = detail.nickname
-				// User Introduce
-				tempSetting.userInfo.introduce = detail.introduce
-				// User Bound
-				tempSetting.userInfo.bound = detail.bound
-				// User Exp
-				tempSetting.userInfo.exp = detail.exp
-				// User Name
-				tempSetting.userInfo.name = info.username
-				// User Key
-				tempSetting.userInfo.key = info.userKey
-				// Super User
-				tempSetting.userInfo.super = !!info.super
+			// User Access
+			tempSetting.userInfo = {}
+			tempSetting.userInfo.id = detail.id
+			tempSetting.userInfo.access = detail.access_status
+			tempSetting.userInfo.organization = detail.access_team
+			tempSetting.userInfo.oPosition = detail.access_position
+			// User Sex
+			tempSetting.userInfo.sex = detail.sex
+			// User Avatar
+			tempSetting.userInfo.avatar = detail.avatar
+			// User Nickname
+			tempSetting.userInfo.nickname = detail.nickname
+			// User Introduce
+			tempSetting.userInfo.introduce = detail.introduce
+			// User Bound
+			tempSetting.userInfo.bound = detail.bound
+			// User Exp
+			tempSetting.userInfo.exp = detail.exp
+			// User Name
+			tempSetting.userInfo.name = info.username
+			// User Key
+			tempSetting.userInfo.key = info.userKey
+			// Super User
+			tempSetting.userInfo.super = !!info.super
 
-				this.$conf
-					.updateLocalConfig(tempSetting, () => {
-						this.$public.emit("notice", {
-							type: "success",
-							msg: "用户信息同步成功",
-						})
-
-						localStorage.setItem("userKey", info.userKey)
-						localStorage.setItem("appKey", tempSetting.appInfo.key)
-						localStorage.setItem("username", info.username)
-						this.$public.emit("update-check-day")
-						this.$public.emit("update-username")
+			this.$conf
+				.updateLocalConfig(tempSetting, () => {
+					this.$public.emit("notice", {
+						type: "success",
+						msg: "用户信息同步成功",
 					})
-					.catch((e) => {
-						console.log(e.message)
-						this.$public.emit("notice", {
-							type: "error",
-							msg: "用户信息同步失败，您可能需要重新登录",
-						})
+
+					localStorage.setItem("userKey", info.userKey)
+					localStorage.setItem("appKey", tempSetting.appInfo.key)
+					localStorage.setItem("username", info.username)
+					this.$public.emit("update-check-day")
+					this.$public.emit("update-username")
+				})
+				.catch((e) => {
+					console.log(e.message)
+					this.$public.emit("notice", {
+						type: "error",
+						msg: "用户信息同步失败，您可能需要重新登录",
 					})
-			})
+				})
 		},
 	},
 	beforeCreate() {
@@ -206,6 +186,27 @@ export default {
 				status: type ?? "Loading",
 				text: msg,
 			})
+		})
+
+		this.$public.on("rebuild-app-key", () => {
+			this.handleRebuildKey("appkey")
+		})
+		this.$public.on("check-all-key", () => {
+			this.handleCheckKey()
+		})
+
+		this.$public.on("app-created", () => {
+			console.log(
+				this.$setting,
+				this.$host,
+				this.$setting.getData(),
+				this.$host.getData()
+			)
+			this.initController()
+		})
+
+		this.$conf.setConfigListener((prev, curr) => {
+			console.log(prev, curr)
 		})
 	},
 }

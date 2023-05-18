@@ -20,6 +20,7 @@
 <script>
 export default {
 	name: "Rank",
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			isLoading: true,
@@ -33,29 +34,23 @@ export default {
 		this.$public.on("clear-user-sign-status", () => {
 			this.initRankers()
 		})
+		this.$public.on("app-created", () => {
+			this.initRankers()
+		})
 	},
-	mounted() {
-		this.initRankers()
-	},
+	mounted() {},
 	methods: {
 		initRankers: function () {
+			this.isLoading = true
 			this.$conf
-				.getHost()
-				.then((h) => {
-					this.isLoading = true
-					this.$conf
-						.allCheckToday(this.$conf.getHttpString(h.host))
-						.then((adata) => {
-							const { detail, order } = adata.data
-							this.rankers = detail.sort((a, b) => {
-								return order.indexOf(a.id) - order.indexOf(b.id)
-							})
+				.allCheckToday(this.$host.getData().host)
+				.then((adata) => {
+					const { detail, order } = adata.data
+					this.rankers = detail.sort((a, b) => {
+						return order.indexOf(a.id) - order.indexOf(b.id)
+					})
 
-							this.isLoading = false
-						})
-						.catch((e) => {
-							console.log(e.messgae)
-						})
+					this.isLoading = false
 				})
 				.catch((e) => {
 					console.log(e.messgae)

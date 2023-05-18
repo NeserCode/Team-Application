@@ -63,6 +63,7 @@ const { ipcRenderer } = window.require("electron")
 export default {
 	name: "LocalSetting",
 	components: { SettingOption },
+	inject: ["$setting", "$host"],
 	data() {
 		return {
 			isClickable: true,
@@ -119,24 +120,23 @@ export default {
 				value: " ",
 				tip: "服务器运行服务的端口 例如:5999",
 			},
-			settings: null,
 		}
 	},
 	beforeMount() {
-		this.$conf.getConfPromise().then((data) => {
-			const { userSetting, appInfo } = data.data
-			this.appOnTop.value = userSetting.alwaysOnTop
-			this.appCloseAction.value = userSetting.alwaysCloseDirect
-			this.appTheme.value = userSetting.colorSchemeMode
-			this.$refs.opDomain.initOption(appInfo.domain)
-			this.$refs.opPort.initOption(appInfo.port)
-		})
+		const { userSetting } = this.$setting.getData()
+		this.appOnTop.value = userSetting.alwaysOnTop
+		this.appCloseAction.value = userSetting.alwaysCloseDirect
+		this.appTheme.value = userSetting.colorSchemeMode
+
 		this.$public.on("update-color-mode", (mode) => {
 			this.appTheme.value = mode
 		})
 	},
 	mounted() {
 		nextTick(() => {
+			const { appInfo } = this.$setting.getData()
+			this.$refs.opDomain.initOption(appInfo.domain)
+			this.$refs.opPort.initOption(appInfo.port)
 			this.appTheme.value =
 				localStorage.getItem("color-scheme-mode") ?? "system"
 		})
@@ -152,24 +152,23 @@ export default {
 			if (this.isClickable) {
 				this.isClickable = false
 				this.$refs.opDomain.handleInputEditEnd()
-				this.$conf.getConfPromise().then((data) => {
-					let temp = data.data
-					temp.appInfo.domain = e.value
-					temp.appInfo.host =
-						temp.appInfo.domain + ":" + temp.appInfo.port
 
-					this.handleChangeSettingAction(temp, () => {
-						if (localStorage.getItem("username")) {
-							this.$router.push("UserArea")
-							this.$public.emit("notice", {
-								msg: "🎈 检测到服务主机地址更改，正在为您登出Team账号",
-								time: 3000,
-								fn: () => {
-									this.$public.emit("clear-user-sign-status")
-								},
-							})
-						}
-					})
+				let temp = this.$setting.getData()
+				temp.appInfo.domain = e.value
+				temp.appInfo.host =
+					temp.appInfo.domain + ":" + temp.appInfo.port
+
+				this.handleChangeSettingAction(temp, () => {
+					if (localStorage.getItem("username")) {
+						this.$router.push("UserArea")
+						this.$public.emit("notice", {
+							msg: "🎈 检测到服务主机地址更改，正在为您登出Team账号",
+							time: 3000,
+							fn: () => {
+								this.$public.emit("clear-user-sign-status")
+							},
+						})
+					}
 				})
 			}
 		},
@@ -177,21 +176,20 @@ export default {
 			if (this.isClickable) {
 				this.isClickable = false
 				this.$refs.opPort.handleInputEditEnd()
-				this.$conf.getConfPromise().then((data) => {
-					let temp = data.data
-					temp.appInfo.port = e.value
-					temp.appInfo.host =
-						temp.appInfo.domain + ":" + temp.appInfo.port
 
-					this.handleChangeSettingAction(temp, () => {
-						this.$router.push("UserArea")
-						this.$public.emit("notice", {
-							msg: "🎈 检测到服务主机端口更改，正在为您登出Team账号",
-							time: 3000,
-							fn: () => {
-								this.$public.emit("clear-user-sign-status")
-							},
-						})
+				let temp = this.$setting.getData()
+				temp.appInfo.port = e.value
+				temp.appInfo.host =
+					temp.appInfo.domain + ":" + temp.appInfo.port
+
+				this.handleChangeSettingAction(temp, () => {
+					this.$router.push("UserArea")
+					this.$public.emit("notice", {
+						msg: "🎈 检测到服务主机端口更改，正在为您登出Team账号",
+						time: 3000,
+						fn: () => {
+							this.$public.emit("clear-user-sign-status")
+						},
 					})
 				})
 			}
@@ -204,15 +202,10 @@ export default {
 				if (this.appOnTop.value)
 					ipcRenderer.send("setting-always-on-top")
 				else ipcRenderer.send("setting-always-not-top")
-				this.$conf
-					.getConfPromise()
-					.then((data) => {
-						data.data.userSetting.alwaysOnTop = this.appOnTop.value
-						this.handleChangeSettingAction(data.data)
-					})
-					.catch((e) => {
-						console.log(e.message)
-					})
+
+				let data = this.$setting.getData()
+				data.userSetting.alwaysOnTop = this.appOnTop.value
+				this.handleChangeSettingAction(data)
 			}
 		},
 		handleChangeCloseAction: function () {
@@ -222,16 +215,10 @@ export default {
 				if (this.appCloseAction.value)
 					this.$public.emit("update-header-need-close-direct", true)
 				else this.$public.emit("update-header-need-close-direct", false)
-				this.$conf
-					.getConfPromise()
-					.then((data) => {
-						data.data.userSetting.alwaysCloseDirect =
-							this.appCloseAction.value
-						this.handleChangeSettingAction(data.data)
-					})
-					.catch((e) => {
-						console.log(e.message)
-					})
+
+				let data = this.$setting.getData()
+				data.userSetting.alwaysCloseDirect = this.appCloseAction.value
+				this.handleChangeSettingAction(data)
 			}
 		},
 		handleChangeAppTheme: function (theme) {
@@ -239,26 +226,17 @@ export default {
 				this.isClickable = false
 				this.appTheme.value = theme
 				ipcRenderer.send("color-schemeMode-" + theme)
-				this.$conf
-					.getConfPromise()
-					.then((data) => {
-						data.data.userSetting.colorSchemeMode =
-							this.appTheme.value
-						this.handleChangeSettingAction(data.data)
-						this.$public.emit("update-color-mode", theme)
-						const themeMedia = window.matchMedia(
-							"(prefers-color-scheme: light)"
-						)
-						if (themeMedia.matches)
-							document
-								.querySelector("html")
-								.classList.remove("dark")
-						else
-							document.querySelector("html").classList.add("dark")
-					})
-					.catch((e) => {
-						console.log(e.message)
-					})
+
+				let data = this.$setting.getData()
+				data.userSetting.colorSchemeMode = this.appTheme.value
+				this.handleChangeSettingAction(data)
+				this.$public.emit("update-color-mode", theme)
+				const themeMedia = window.matchMedia(
+					"(prefers-color-scheme: light)"
+				)
+				if (themeMedia.matches)
+					document.querySelector("html").classList.remove("dark")
+				else document.querySelector("html").classList.add("dark")
 			}
 		},
 		handleChangeSettingAction: function (setting, cb) {

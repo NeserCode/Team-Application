@@ -213,7 +213,7 @@ span.opTip {
 	@apply w-auto;
 }
 :deep(.el-input.is-disabled .el-input__wrapper) {
-	@apply bg-gray-600;
+	@apply bg-gray-100 dark:bg-gray-600;
 }
 
 @media screen and (max-width: 830px) {

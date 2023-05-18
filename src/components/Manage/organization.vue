@@ -19,26 +19,8 @@ export default {
 			default: false,
 		},
 	},
+	inject: ["$setting", "$host"],
 	emits: ["update:info"],
-	mounted() {
-		this.getMembersInfo(this.selectedOrganizationInfo.id)
-	},
-	watch: {
-		"selectedOrganizationInfo.id": {
-			handler: function (val) {
-				this.getMembersInfo(val)
-			},
-		},
-	},
-	components: { renameOrganization },
-	computed: {
-		detailVisible: function () {
-			return (
-				!!this.selectedOrganizationInfo.id &&
-				(this.superUser || this.hostUser)
-			)
-		},
-	},
 	data() {
 		return {
 			membersInfo: {},
@@ -50,52 +32,61 @@ export default {
 			},
 		}
 	},
+	computed: {
+		detailVisible: function () {
+			return (
+				!!this.selectedOrganizationInfo.id &&
+				(this.superUser || this.hostUser)
+			)
+		},
+	},
+	watch: {
+		"selectedOrganizationInfo.id": {
+			handler: function (val) {
+				this.getMembersInfo(val)
+			},
+		},
+	},
+	components: { renameOrganization },
+	beforeCreate() {
+		this.$public.on("app-created", () => {
+			this.getMembersInfo(this.selectedOrganizationInfo.id)
+		})
+	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
 		getMembersInfo: function (oid) {
-			// Get the host address first
-			this.$conf.getHost().then((h) => {
-				// Get the organization member information through the organization ID
-				this.$conf
-					.getMembersByOrganizationId({
-						host: this.$conf.getHttpString(h.host),
-						id: oid,
-					})
-					.then((res) => {
-						// Get the user's information
-						this.$conf.getConfPromise().then((data) => {
-							// Sort by access status
-							function sortByStr(array, key) {
-								return array.sort(function (a, b) {
-									if (a[key] === "HOST") return -1
-									else if (b[key] === "HOST") return 1
-									else if (
-										a[key] === "JOIN" &&
-										b[key] === "APPLY"
-									)
-										return -1
-									else if (
-										b[key] === "JOIN" &&
-										a[key] === "APPLY"
-									)
-										return 1
-								})
-							}
-							const { detail, members } = res.data
-							let i = detail.findIndex(
-								(detail) => detail.id === data.data.userInfo.id
-							)
-							if (i !== -1) detail[i].self = true
-
-							this.membersInfo.detail = sortByStr(
-								detail,
-								"access_position"
-							)
-
-							this.membersInfo.members = members
+			this.$conf
+				.getMembersByOrganizationId({
+					host: this.$host.getData().host,
+					id: oid,
+				})
+				.then((res) => {
+					// Sort by access status
+					function sortByStr(array, key) {
+						return array.sort(function (a, b) {
+							if (a[key] === "HOST") return -1
+							else if (b[key] === "HOST") return 1
+							else if (a[key] === "JOIN" && b[key] === "APPLY")
+								return -1
+							else if (b[key] === "JOIN" && a[key] === "APPLY")
+								return 1
 						})
-					})
-			})
+					}
+					const { detail, members } = res.data
+					let i = detail.findIndex(
+						(detail) =>
+							detail.id === this.$setting.getData().userInfo.id
+					)
+					if (i !== -1) detail[i].self = true
+
+					this.membersInfo.detail = sortByStr(
+						detail,
+						"access_position"
+					)
+
+					this.membersInfo.members = members
+				})
 		},
 		updatePageData: function (msg) {
 			this.getMembersInfo(this.selectedOrganizationInfo.id)
@@ -141,24 +132,20 @@ export default {
 				this.$public.emit("notice", {
 					msg: `正在${type === "JOIN" ? "退出组织" : "拒绝申请"}`,
 				})
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.handleQuitOrganization({
-							host: this.$conf.getHttpString(h.host),
-							id: user.id,
-						})
-						.then((res) => {
-							if (res.data.affectedRows) {
-								this.updatePageData(
-									`${
-										type === "JOIN"
-											? "退出组织"
-											: "拒绝申请"
-									}成功`
-								)
-							}
-						})
-				})
+				this.$conf
+					.handleQuitOrganization({
+						host: this.$host.getData().host,
+						id: user.id,
+					})
+					.then((res) => {
+						if (res.data.affectedRows) {
+							this.updatePageData(
+								`${
+									type === "JOIN" ? "退出组织" : "拒绝申请"
+								}成功`
+							)
+						}
+					})
 			} else {
 				this.$public.emit("notice", {
 					msg: `正在解散组织`,
@@ -171,19 +158,17 @@ export default {
 				msg: `正在同意申请`,
 			})
 
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.handleJoinOrganization({
-						host: this.$conf.getHttpString(h.host),
-						oid: this.selectedOrganizationInfo.id,
-						uid: user.id,
-					})
-					.then((res) => {
-						if (res.data.affectedRows) {
-							this.updatePageData("同意申请成功")
-						}
-					})
-			})
+			this.$conf
+				.handleJoinOrganization({
+					host: this.$host.getData().host,
+					oid: this.selectedOrganizationInfo.id,
+					uid: user.id,
+				})
+				.then((res) => {
+					if (res.data.affectedRows) {
+						this.updatePageData("同意申请成功")
+					}
+				})
 		},
 		deleteOrganization: function () {
 			ElMessageBox.confirm(
@@ -200,18 +185,16 @@ export default {
 						msg: `正在解散组织`,
 					})
 
-					this.$conf.getHost().then((h) => {
-						this.$conf
-							.handleDeleteOrganization({
-								host: this.$conf.getHttpString(h.host),
-								id: this.selectedOrganizationInfo.id,
-							})
-							.then((res) => {
-								if (res.data.affectedRows) {
-									this.updatePageData("解散组织成功")
-								}
-							})
-					})
+					this.$conf
+						.handleDeleteOrganization({
+							host: this.$host.getData().host,
+							id: this.selectedOrganizationInfo.id,
+						})
+						.then((res) => {
+							if (res.data.affectedRows) {
+								this.updatePageData("解散组织成功")
+							}
+						})
 				})
 				.catch(() => {
 					this.$public.emit("notice", {

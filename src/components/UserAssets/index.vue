@@ -72,6 +72,7 @@ export default {
 			default: true,
 		},
 	},
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			userImage: localStorage.getItem("avatar"),
@@ -89,8 +90,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.$public.on("app-mounted", (setting) => {
-			this.userImage = setting.userInfo.avatar ?? null
+		this.$public.on("app-created", () => {
+			this.userImage = this.$setting.getData().userInfo.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
 		this.$public.on("update-main-user-info-upto-app", (data) => {
@@ -138,29 +139,23 @@ export default {
 			})
 		},
 		AccessChangeAvatar: function () {
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.updateDBConfig(
-						this.$conf.getHttpString(h.host),
-						"avatar",
-						this.inputSrc,
-						localStorage.getItem("username")
-					)
-					.then(() => {
-						this.handleShowPopover()
-						this.userImage = this.inputSrc
-						this.$conf.getConfPromise().then((data) => {
-							let rt = data.data
-							rt.userInfo.avatar = this.userImage
-							this.$conf.updateLocalConfig(rt, () => {
-								this.$public.emit(
-									"update-avatar",
-									this.inputSrc
-								)
-							})
-						})
+			this.$conf
+				.updateDBConfig(
+					this.$host.getData().host,
+					"avatar",
+					this.inputSrc,
+					localStorage.getItem("username")
+				)
+				.then(() => {
+					this.handleShowPopover()
+					this.userImage = this.inputSrc
+
+					let data = this.$setting.getData()
+					data.userInfo.avatar = this.userImage
+					this.$conf.updateLocalConfig(data, () => {
+						this.$public.emit("update-avatar", this.inputSrc)
 					})
-			})
+				})
 		},
 	},
 }

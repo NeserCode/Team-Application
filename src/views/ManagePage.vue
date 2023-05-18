@@ -4,38 +4,6 @@ import Organization from "@/components/Manage/organization.vue"
 
 export default {
 	name: "Manage",
-	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			if (this.hostUser) {
-				this.getOrganizationInfo(detail.access_team)
-			}
-
-			this.getAllOrganization()
-		})
-
-		this.$public.on("update-from-keys-failed", () => {
-			this.getAllOrganization()
-		})
-	},
-	created() {
-		this.$conf.getConfPromise().then((conf) => {
-			// this.getOrganizationInfo(conf.data.userInfo.organization)
-			// this.getAllOrganization()
-
-			this.ensureHostorSuperUser(
-				conf.data.userInfo,
-				conf.data.userInfo.id,
-				() => {
-					if (this.hostUser) {
-						this.getOrganizationInfo(
-							conf.data.userInfo.organization
-						)
-					}
-				}
-			)
-		})
-	},
-	mounted() {},
 	components: { Organization },
 	computed: {
 		detailVisible: function () {
@@ -45,6 +13,7 @@ export default {
 			)
 		},
 	},
+	inject: ["$setting", "$host"],
 	data() {
 		return {
 			allOrganization: [],
@@ -53,48 +22,63 @@ export default {
 			hostUser: false,
 		}
 	},
+	beforeCreate() {
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+			if (this.hostUser) this.getOrganizationInfo(detail.access_team)
+
+			this.getAllOrganization()
+		})
+
+		this.$public.on("update-from-keys-failed", () => {
+			this.getAllOrganization()
+		})
+
+		this.$public.on("app-created", () => {
+			const conf = this.$setting.getData()
+
+			this.ensureHostorSuperUser(conf.userInfo, conf.userInfo.id, () => {
+				if (this.hostUser) {
+					this.getOrganizationInfo(conf.userInfo.organization)
+				}
+			})
+		})
+	},
+	mounted() {},
 	methods: {
 		getOrganizationInfo: _debounce(function (id) {
-			// Get the host
-			this.$conf.getHost().then((h) => {
-				// Get the organization information
-				this.$conf
-					.getOrganizationById({
-						// Use the host to get the full URL
-						host: this.$conf.getHttpString(h.host),
-						id,
-					})
-					.then((res) => {
-						// Save the organization information
-						this.selectedOrganizationInfo = res.data[0] || {}
-					})
-			})
+			this.$conf
+				.getOrganizationById({
+					// Use the host to get the full URL
+					host: this.$host.getData().host,
+					id,
+				})
+				.then((res) => {
+					// Save the organization information
+					this.selectedOrganizationInfo = res.data[0] || {}
+				})
 		}, 400),
 		getAllOrganization() {
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.allOrganization({
-						host: this.$conf.getHttpString(h.host),
-					})
-					.then((res) => {
-						this.allOrganization = res.data
-					})
-			})
+			this.$conf
+				.allOrganization({
+					host: this.$host.getData().host,
+				})
+				.then((res) => {
+					this.allOrganization = res.data
+				})
 		},
 		ensureHostorSuperUser: function (info, id, cb) {
 			this.superUser = !!info.super
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.queryHostOrganizationById({
-						host: this.$conf.getHttpString(h.host),
-						id,
-					})
-					.then((res) => {
-						this.hostUser = res.data.length > 0
 
-						cb && cb()
-					})
-			})
+			this.$conf
+				.queryHostOrganizationById({
+					host: this.$host.getData().host,
+					id,
+				})
+				.then((res) => {
+					this.hostUser = res.data.length > 0
+
+					cb && cb()
+				})
 		},
 		updatePageData() {
 			this.getOrganizationInfo(this.selectedOrganizationInfo.id)

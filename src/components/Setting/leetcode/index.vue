@@ -34,6 +34,7 @@ import SettingOption from "@/components/Setting/option/index.vue"
 export default {
 	name: "LeetcodeSetting",
 	components: { SettingOption },
+	inject: ["$setting", "$host"],
 	data() {
 		return {
 			isDisabled: false,
@@ -50,15 +51,14 @@ export default {
 		}
 	},
 	mounted() {
-		this.$conf.getConfPromise().then((data) => {
-			const { userAccount } = data.data
-			this.$refs.opSession.initOption(
-				userAccount.cookie_leetcode["LEETCODE_SESSION"]
-			)
-			this.$refs.opToken.initOption(
-				userAccount.cookie_leetcode["x-csrftoken"]
-			)
-		})
+		const { userAccount } = this.$setting.getData()
+
+		this.$refs.opSession.initOption(
+			userAccount.cookie_leetcode["LEETCODE_SESSION"]
+		)
+		this.$refs.opToken.initOption(
+			userAccount.cookie_leetcode["x-csrftoken"]
+		)
 	},
 	beforeMount() {},
 	methods: {
@@ -77,17 +77,10 @@ export default {
 				)
 				.then(() => {
 					this.isDisabled = true
-					this.$conf
-						.getConfPromise()
-						.then((data) => {
-							data.data.userAccount.cookie_leetcode[cookie.name] =
-								cookie.value
-							this.handleChangeSettingAction(data.data)
-							this.$public.emit("opInputEditFinish")
-						})
-						.catch((e) => {
-							console.log(e.message)
-						})
+					let data = this.$setting.getData()
+					data.userAccount.cookie_leetcode[cookie.name] = cookie.value
+					this.handleChangeSettingAction(data)
+					this.$public.emit("opInputEditFinish")
 				})
 		},
 		handleChangeSettingAction: function (setting) {

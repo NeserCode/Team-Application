@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { inject } from "vue"
 import { _debounce } from "@/plugins/utils.js"
 // @ is an alias to /src
 
@@ -47,14 +48,21 @@ export default {
 	},
 	activated() {},
 	mounted() {
-		this.initCheckDay()
 		// setInterval(() => {
 		//   this.checkObject.timestamp = (+new Date()).toString();
 		//   // console.log(this.checkObject.timestamp);
 		// }, 1000);
+
+		this.INJECTION.setting = inject("$setting", undefined).getData()
+		this.INJECTION.host = inject("$host", undefined).getData()
+		this.initCheckDay()
 	},
 	data() {
 		return {
+			INJECTION: {
+				setting: null,
+				host: null,
+			},
 			checkDays: [],
 			checkedDays: [],
 			checkObject: {
@@ -145,51 +153,35 @@ export default {
 				}
 
 			if (!this.checkObject.isCheck)
-				this.$conf.getConfPromise().then((response) => {
-					const { name } = response.data.userInfo
-					const { key } = response.data.appInfo
-					this.$conf
-						.getHost()
-						.then((h) => {
-							this.$conf
-								.updateCheckDay({
-									host: this.$conf.getHttpString(h.host),
-									username: name,
-									appKey: key,
-									timeStamp: new Date().getTime(),
-								})
-								.then((res) => {
-									this.checkObject.isLoading = false
-									this.checkObject.isCheck =
-										res.status == 200 ?? false
-									this.$public.emit("notice", {
-										type: "success",
-										msg: `签到成功`,
-										fn: () => {
-											this.$public.emit(
-												"update-user-check"
-											)
-										},
-									})
-									this.getCheckedDay()
-								})
-								.catch(() => {
-									this.$public.emit("notice", {
-										type: "error",
-										msg: `更新签到状态失败`,
-										fn: () => {
-											this.checkObject.isLoading = false
-											this.$public.emit(
-												"update-user-check"
-											)
-										},
-									})
-								})
+				this.$conf
+					.updateCheckDay({
+						host: this.INJECTION.host.host,
+						username: this.INJECTION.setting.userInfo.name,
+						appKey: this.INJECTION.setting.appInfo.key,
+						timeStamp: new Date().getTime(),
+					})
+					.then((res) => {
+						this.checkObject.isLoading = false
+						this.checkObject.isCheck = res.status == 200 ?? false
+						this.$public.emit("notice", {
+							type: "success",
+							msg: `签到成功`,
+							fn: () => {
+								this.$public.emit("update-user-check")
+							},
 						})
-						.catch((e) => {
-							console.log(e.message)
+						this.getCheckedDay()
+					})
+					.catch(() => {
+						this.$public.emit("notice", {
+							type: "error",
+							msg: `更新签到状态失败`,
+							fn: () => {
+								this.checkObject.isLoading = false
+								this.$public.emit("update-user-check")
+							},
 						})
-				})
+					})
 		}, 500),
 		handleCheckLoading: function () {
 			this.checkObject.isLoading = true
@@ -198,48 +190,45 @@ export default {
 			let checkedDays = []
 
 			if (this.getUserStatus())
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.getCheckDay({
-							host: this.$conf.getHttpString(h.host),
-							username: localStorage.getItem("username"),
-						})
-						.then((response) => {
-							response.data.forEach((element) => {
-								const { id, timeStamp } = element
-								checkedDays.push({
-									id,
-									m: new Date(Number(timeStamp)).getMonth(),
-									d: new Date(Number(timeStamp)).getDate(),
-									timeStamp: Number(timeStamp),
-								})
+				this.$conf
+					.getCheckDay({
+						host: this.INJECTION.host.host,
+						username: this.INJECTION.setting.userInfo.name,
+					})
+					.then((response) => {
+						response.data.forEach((element) => {
+							const { id, timeStamp } = element
+							checkedDays.push({
+								id,
+								m: new Date(Number(timeStamp)).getMonth(),
+								d: new Date(Number(timeStamp)).getDate(),
+								timeStamp: Number(timeStamp),
 							})
-							this.checkedDays = checkedDays
+						})
+						this.checkedDays = checkedDays
 
-							for (let i = 0; i < this.checkedDays.length; i++) {
+						for (let i = 0; i < this.checkedDays.length; i++) {
+							if (
+								this.checkedDays[i].m ==
+									this.checkObject.checkMonth &&
+								this.checkedDays[i].d ==
+									this.checkObject.checkDay
+							)
+								this.checkObject.isCheck = true
+							for (let j = 0; j < this.checkDays.length; j++)
 								if (
-									this.checkedDays[i].m ==
-										this.checkObject.checkMonth &&
-									this.checkedDays[i].d ==
-										this.checkObject.checkDay
+									this.checkDays[j].m ==
+										this.checkedDays[i].m &&
+									this.checkDays[j].d == this.checkedDays[i].d
 								)
-									this.checkObject.isCheck = true
-								for (let j = 0; j < this.checkDays.length; j++)
-									if (
-										this.checkDays[j].m ==
-											this.checkedDays[i].m &&
-										this.checkDays[j].d ==
-											this.checkedDays[i].d
-									)
-										this.checkDays[j].isChecked = true
-							}
+									this.checkDays[j].isChecked = true
+						}
+					})
+					.catch(() => {
+						this.$public.emit("notice", {
+							msg: `获取签到状态失败`,
 						})
-						.catch(() => {
-							this.$public.emit("notice", {
-								msg: `获取签到状态失败`,
-							})
-						})
-				})
+					})
 		},
 		getUserStatus: () => localStorage.getItem("username"),
 	},

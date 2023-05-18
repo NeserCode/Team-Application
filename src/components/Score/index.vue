@@ -65,6 +65,7 @@ import Pagination from "@/components/Frameworks/Pagination/index.vue"
 export default {
 	name: "Score",
 	components: { Detail, Pagination },
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			loading: true,
@@ -78,6 +79,11 @@ export default {
 			author: null,
 		}
 	},
+	watch: {
+		submitPage: function () {
+			this.getSubmitArr()
+		},
+	},
 	beforeCreate() {
 		this.$public.on("clear-user-sign-status", () => {
 			this.initTables()
@@ -85,15 +91,11 @@ export default {
 		this.$public.on("leetcode-local-submit", () => {
 			this.initTables()
 		})
+		this.$public.on("app-created", () => {
+			this.initTables()
+		})
 	},
-	watch: {
-		submitPage: function () {
-			this.getSubmitArr()
-		},
-	},
-	mounted() {
-		this.initTables()
-	},
+	mounted() {},
 	methods: {
 		sortByCount: (a, b) => a - b,
 		getSubmissionDetail: _debounce(async function (id, uid) {
@@ -101,7 +103,9 @@ export default {
 				.getSubmissionStatus(`${id}`)
 				.then((result) => {
 					const { submissionDetail } = result.data.data
+
 					console.log(submissionDetail, result)
+
 					if (!submissionDetail) {
 						this.$public.emit("notice", {
 							type: "error",
@@ -126,45 +130,42 @@ export default {
 		getSubmitArr: _debounce(function () {
 			this.loading = true
 			this.submissionDetail = {}
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.allLeetcodeSubmission({
-						host: this.$conf.getHttpString(h.host),
-						limit: this.pageLimit,
-						offset: (this.submitPage - 1) * this.pageLimit,
-					})
-					.then((result) => {
-						this.subs = result.data.arr
-						this.total = result.data.all
 
-						this.loading = false
-						console.log(result)
+			this.$conf
+				.allLeetcodeSubmission({
+					host: this.$host.getData().host,
+					limit: this.pageLimit,
+					offset: (this.submitPage - 1) * this.pageLimit,
+				})
+				.then((result) => {
+					this.subs = result.data.arr
+					this.total = result.data.all
 
-						this.$public.emit("notice", {
-							type: "success",
-							msg: "获取提交列表",
-						})
+					this.loading = false
+					console.log(result)
+
+					this.$public.emit("notice", {
+						type: "success",
+						msg: "获取提交列表",
 					})
-					.catch(() => {
-						this.$public.emit("notice", {
-							type: "error",
-							msg: `获取提交返回数据失败 ERRCODE: -2`,
-						})
+				})
+				.catch(() => {
+					this.$public.emit("notice", {
+						type: "error",
+						msg: `获取提交返回数据失败 ERRCODE: -2`,
 					})
-			})
+				})
 		}, 400),
 		getSubmitor: function (uid) {
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.getUserDetailById({
-						host: this.$conf.getHttpString(h.host),
-						id: uid,
-					})
-					.then((data) => {
-						const { nickname, avatar, introduce } = data.data[0]
-						this.author = { nickname, avatar, introduce }
-					})
-			})
+			this.$conf
+				.getUserDetailById({
+					host: this.$host.getData().host,
+					id: uid,
+				})
+				.then((data) => {
+					const { nickname, avatar, introduce } = data.data[0]
+					this.author = { nickname, avatar, introduce }
+				})
 		},
 		researchSubmission: _debounce(function () {
 			this.loading = true

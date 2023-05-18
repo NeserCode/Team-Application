@@ -7,6 +7,10 @@ const $props = defineProps({
 const $emit = defineEmits(["update:visible", "create:success"])
 const $conf = inject("$conf")
 const $utils = inject("$utils")
+const INJECTION = {
+	setting: inject("$setting", undefined).getData(),
+	host: inject("$host", undefined).getData(),
+}
 
 const dialogFormVisible = ref(false)
 
@@ -38,22 +42,18 @@ const checkOrganizationName = $utils._debounce(async (string) => {
 		clickable.value = false
 		return
 	}
-	// Get the current host
-	$conf.getHost().then((h) => {
-		// Call the checkOrganizationName interface
-		$conf
-			.checkOrganizationName({
-				// Get the host address
-				host: $conf.getHttpString(h.host),
-				// Get the name parameter
-				name: string,
-			})
-			.then((res) => {
-				// If there is a count of 1, the name already exists
-				isRepeat.value = !!res.data[0]["count(*)"]
-				clickable.value = true
-			})
-	})
+	$conf
+		.checkOrganizationName({
+			// Get the host address
+			host: INJECTION.host.host,
+			// Get the name parameter
+			name: string,
+		})
+		.then((res) => {
+			// If there is a count of 1, the name already exists
+			isRepeat.value = !!res.data[0]["count(*)"]
+			clickable.value = true
+		})
 }, 1000)
 
 watch(
@@ -87,36 +87,32 @@ const createOrganization = async () => {
 		return
 	}
 
-	$conf.getHost().then((h) => {
-		$conf.getConfPromise().then((config) => {
-			form.appKey = config.data.appInfo.key
-			form.hostId = config.data.userInfo.id
-			form.organizationKey = $conf.getRandomKey(16)
+	form.appKey = INJECTION.setting.appInfo.key
+	form.hostId = INJECTION.setting.userInfo.id
+	form.organizationKey = $conf.getRandomKey(16)
 
-			$conf
-				.handleCreateOrganization({
-					host: $conf.getHttpString(h.host),
-					appKey: form.appKey,
-					hostId: form.hostId,
-					name: form.name,
-					organizationKey: form.organizationKey,
-				})
-				.then((res) => {
-					dialogFormVisible.value = false
-					clickable.value = true
-					res.data.affectedRows &&
-						$emit("create:success", {
-							oid: res.data.insertId,
-							uid: form.hostId,
-							type: "HOST",
-						})
-				})
-				.catch((err) => {
-					clickable.value = true
-					console.log(err)
+	$conf
+		.handleCreateOrganization({
+			host: INJECTION.host.host,
+			appKey: form.appKey,
+			hostId: form.hostId,
+			name: form.name,
+			organizationKey: form.organizationKey,
+		})
+		.then((res) => {
+			dialogFormVisible.value = false
+			clickable.value = true
+			res.data.affectedRows &&
+				$emit("create:success", {
+					oid: res.data.insertId,
+					uid: form.hostId,
+					type: "HOST",
 				})
 		})
-	})
+		.catch((err) => {
+			clickable.value = true
+			console.log(err)
+		})
 }
 </script>
 

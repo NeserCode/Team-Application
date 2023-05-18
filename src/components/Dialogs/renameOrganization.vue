@@ -10,6 +10,10 @@ const $props = defineProps({
 })
 const $emit = defineEmits(["update:visible", "rename:success"])
 const $conf = inject("$conf")
+const INJECTION = {
+	setting: inject("$setting", undefined).getData(),
+	host: inject("$host", undefined).getData(),
+}
 
 const Visible = ref(false)
 
@@ -36,20 +40,18 @@ watch(
 	}
 )
 
-// create organization
+// rename organization
 const renameOrganization = () => {
-	$conf.getHost().then((h) => {
-		$conf
-			.handleRenameOrganization({
-				host: $conf.getHttpString(h.host),
-				name: typeContent.value,
-				id: $props.organization.id,
-			})
-			.then((raws) => {
-				Visible.value = false
-				raws.data.affectedRows && $emit("rename:success")
-			})
-	})
+	$conf
+		.handleRenameOrganization({
+			host: INJECTION.host.host,
+			name: typeContent.value,
+			id: $props.organization.id,
+		})
+		.then((raws) => {
+			Visible.value = false
+			raws.data.affectedRows && $emit("rename:success")
+		})
 }
 </script>
 
