@@ -81,6 +81,7 @@ import { _debounce } from "@/plugins/utils"
 export default {
 	name: "Register",
 	components: { SignInput, SignRadio },
+	inject: ["$host"],
 	data() {
 		return {
 			sexList: [
@@ -156,23 +157,21 @@ export default {
 	mounted() {},
 	methods: {
 		handleIAccount: _debounce(function (s) {
-			this.$conf.getHost().then((h) => {
-				this.$conf
-					.checkUsername({
-						host: this.$conf.getHttpString(h.host),
-						username: s,
+			this.$conf
+				.checkUsername({
+					host: this.$host.getData().host,
+					username: s,
+				})
+				.then((response) => {
+					this.isNameRepeat = response.data.length != 0
+					this.signUp.username = s
+				})
+				.catch((err) => {
+					this.$public.emit("notice", {
+						type: "error",
+						msg: `验证发生错误 ${err}`,
 					})
-					.then((response) => {
-						this.isNameRepeat = response.data.length != 0
-						this.signUp.username = s
-					})
-					.catch((err) => {
-						this.$public.emit("notice", {
-							type: "error",
-							msg: `验证发生错误 ${err}`,
-						})
-					})
-			})
+				})
 		}, 400),
 		handleIPassword: function (s) {
 			this.signUp.password = s
@@ -217,54 +216,52 @@ export default {
 					})
 				} else {
 					this.clickable = false
-					this.$conf.getHost().then((h) => {
-						this.$conf
-							.handleUserSignUp({
-								host: this.$conf.getHttpString(h.host),
-								username: this.signUp.username,
-								password: this.$conf.getMd5String(
-									this.signUp.password
-								),
-								appkey: localStorage.getItem("appKey"),
-								userkey: this.$conf.getRandomKey(16),
-								sex: this.signUp.sex,
-								bound: this.signUp.bound,
-							})
-							.then((response) => {
-								if (response.data.errorCode)
-									this.$public.emit("notice", {
-										type: "error",
-										msg: `注册失败, #[${response.data.errorCode}] ${response.data.message}`,
-										time: 2500,
-										fn: () => {
-											this.clickable = true
-										},
-									})
-								else {
-									console.log(response.data)
-									this.$public.emit("notice", {
-										type: "success",
-										msg: `注册成功, 欢迎您!`,
-										time: 2500,
-										fn: () => {
-											this.toggleSignModeToIn()
-											this.clickable = true
-										},
-									})
-								}
-							})
-							.catch((e) => {
-								console.log(e)
+					this.$conf
+						.handleUserSignUp({
+							host: this.$host.getData().host,
+							username: this.signUp.username,
+							password: this.$conf.getMd5String(
+								this.signUp.password
+							),
+							appkey: localStorage.getItem("appKey"),
+							userkey: this.$conf.getRandomKey(16),
+							sex: this.signUp.sex,
+							bound: this.signUp.bound,
+						})
+						.then((response) => {
+							if (response.data.errorCode)
 								this.$public.emit("notice", {
 									type: "error",
-									msg: "注册失败, 请检查输入选项和网络配置",
+									msg: `注册失败, #[${response.data.errorCode}] ${response.data.message}`,
 									time: 2500,
 									fn: () => {
 										this.clickable = true
 									},
 								})
+							else {
+								console.log(response.data)
+								this.$public.emit("notice", {
+									type: "success",
+									msg: `注册成功, 欢迎您!`,
+									time: 2500,
+									fn: () => {
+										this.toggleSignModeToIn()
+										this.clickable = true
+									},
+								})
+							}
+						})
+						.catch((e) => {
+							console.log(e)
+							this.$public.emit("notice", {
+								type: "error",
+								msg: "注册失败, 请检查输入选项和网络配置",
+								time: 2500,
+								fn: () => {
+									this.clickable = true
+								},
 							})
-					})
+						})
 				}
 			}
 		},

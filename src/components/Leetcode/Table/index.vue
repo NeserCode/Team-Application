@@ -130,6 +130,15 @@ import { _debounce } from "@/plugins/utils"
 export default {
 	name: "LeetcodeTable",
 	props: {},
+	inject: ["$host"],
+	data() {
+		return {
+			idList: null,
+			leetname: "游客",
+			questions: {},
+			submissionDetail: {},
+		}
+	},
 	beforeCreate() {
 		this.$public.on("leetcode-update-question-detail", (obj) => {
 			this.questions = obj
@@ -151,15 +160,7 @@ export default {
 	mounted() {
 		this.initSubmission()
 	},
-	activated() {},
-	data() {
-		return {
-			idList: null,
-			leetname: "游客",
-			questions: {},
-			submissionDetail: {},
-		}
-	},
+
 	methods: {
 		sortByCount: function (a, b) {
 			return b - a
@@ -180,28 +181,27 @@ export default {
 						this.$public.emit("leetcode-local-submit")
 					},
 				})
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.addLeetcodeSubmission({
-							host: this.$conf.getHttpString(h.host),
-							leetname,
-							username: localStorage.getItem("username"),
-							appkey: localStorage.getItem("appKey"),
-							submitid,
-							status,
-							timestamp,
+
+				this.$conf
+					.addLeetcodeSubmission({
+						host: this.$host.getData().host,
+						leetname,
+						username: localStorage.getItem("username"),
+						appkey: localStorage.getItem("appKey"),
+						submitid,
+						status,
+						timestamp,
+					})
+					.catch((e) => {
+						this.$public.emit("notice", {
+							msg: `提交本地修改失败 ${e.message}`,
 						})
-						.catch((e) => {
-							this.$public.emit("notice", {
-								msg: `提交本地修改失败 ${e.message}`,
-							})
-						})
-				})
+					})
 			}
 		},
 		afterIdSubmission: function (id) {
 			this.$public.emit("notice", {
-				msg: `🐱‍👤 正在为您查询本次提交 ID[${id}]`,
+				msg: `正在为您查询本次提交 ID-${id}`,
 				time: 8000,
 			})
 			setTimeout(async () => {
@@ -239,7 +239,7 @@ export default {
 					if (!submissionDetail) {
 						this.$public.emit("notice", {
 							type: "error",
-							msg: `❌ 检测到未登入 LeetCode 无法获取题解详情`,
+							msg: `检测到未登入 LeetCode 无法获取题解详情`,
 						})
 						return 0
 					}
@@ -260,24 +260,22 @@ export default {
 			})
 		}, 500),
 		initSubmission: function () {
-			this.$conf.getHost().then((h) => {
-				if (localStorage.getItem("username"))
-					this.$conf
-						.getLeetcodeSubmission({
-							host: this.$conf.getHttpString(h.host),
-							username: localStorage.getItem("username"),
+			if (localStorage.getItem("username"))
+				this.$conf
+					.getLeetcodeSubmission({
+						host: this.$host.getData().host,
+						username: localStorage.getItem("username"),
+					})
+					.then((res) => {
+						this.idList = res.data
+						this.$public.emit("notice", {
+							msg: "获取提交列表",
+							type: "success",
 						})
-						.then((res) => {
-							this.idList = res.data
-							this.$public.emit("notice", {
-								msg: "获取提交列表",
-								type: "success",
-							})
-						})
-						.catch((e) => {
-							console.log(e)
-						})
-			})
+					})
+					.catch((e) => {
+						console.log(e)
+					})
 		},
 	},
 }

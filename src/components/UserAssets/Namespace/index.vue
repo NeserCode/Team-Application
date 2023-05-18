@@ -61,6 +61,7 @@ import { clipboard } from "electron"
 
 export default {
 	name: "Namespace",
+	inject: ["$host", "$setting"],
 	data() {
 		return {
 			namespace: "",
@@ -88,19 +89,12 @@ export default {
 	},
 	methods: {
 		getNamespace: function () {
-			this.$conf
-				.getConfPromise()
-				.then((data) => {
-					const { userInfo } = data.data
-					this.namespace = userInfo.name
-					this.nickspace = userInfo.nickname ?? "[无名氏]"
-					this.introduce =
-						userInfo.introduce ??
-						` Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque ab praesentium alias, nam placeat corrupti iusto, laborum, porro consequatur totam qui facilis eveniet? Deserunt sit similique impedit laudantium non excepturi?`
-				})
-				.catch((e) => {
-					this.namespace = e.message
-				})
+			const { userInfo } = this.$setting.getData()
+			this.namespace = userInfo.name
+			this.nickspace = userInfo.nickname ?? "[无名氏]"
+			this.introduce =
+				userInfo.introduce ??
+				` Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque ab praesentium alias, nam placeat corrupti iusto, laborum, porro consequatur totam qui facilis eveniet? Deserunt sit similique impedit laudantium non excepturi?`
 		},
 		getClipText: function (t) {
 			if (this.clickable) {
@@ -121,64 +115,49 @@ export default {
 		},
 		handleChangeIntroduce: function () {
 			if (this.editable.introduce) {
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.updateDBConfig(
-							this.$conf.getHttpString(h.host),
-							"introduce",
-							this.introduce,
-							localStorage.getItem("username")
-						)
-						.then(() => {
-							this.$public.emit("notice", {
-								type: "success",
-								msg: `同步到网络数据成功`,
-							})
-							this.$conf
-								.getConfPromise()
-								.then((data) => {
-									data.data.userInfo.introduce =
-										this.introduce
-									this.$conf
-										.updateLocalConfig(data.data, () => {
-											this.$public.emit("notice", {
-												type: "success",
-												msg: `同步到本地数据成功`,
-												fn: () => {
-													this.handleEditIntroduce()
-												},
-											})
-										})
-										.catch((e) => {
-											this.$public.emit("notice", {
-												type: "error",
-												msg: `同步到本地数据失败 ${e.message}`,
-												fn: () => {
-													this.handleEditIntroduce()
-												},
-											})
-										})
-								})
-								.catch((e) => {
-									this.$public.emit("notice", {
-										type: "error",
-										msg: `读取本地数据失败 ${e.message}`,
-										fn: () => {
-											this.handleEditIntroduce()
-										},
-									})
-								})
+				this.$conf
+					.updateDBConfig(
+						this.$host.getData().host,
+						"introduce",
+						this.introduce,
+						localStorage.getItem("username")
+					)
+					.then(() => {
+						this.$public.emit("notice", {
+							type: "success",
+							msg: `同步到网络数据成功`,
 						})
-						.catch((e) => {
-							this.$public.emit("notice", {
-								type: "error",
-								msg: `同步到网络数据失败 ${e.message}`,
-								fn: () => {
-									this.handleEditIntroduce()
-								},
+						let data = this.$setting.getData()
+						data.userInfo.introduce = this.introduce
+						this.$conf
+							.updateLocalConfig(data, () => {
+								this.$public.emit("notice", {
+									type: "success",
+									msg: `同步到本地数据成功`,
+									fn: () => {
+										this.handleEditIntroduce()
+									},
+								})
 							})
+							.catch((e) => {
+								this.$public.emit("notice", {
+									type: "error",
+									msg: `同步到本地数据失败 ${e.message}`,
+									fn: () => {
+										this.handleEditIntroduce()
+									},
+								})
+							})
+					})
+					.catch((e) => {
+						this.$public.emit("notice", {
+							type: "error",
+							msg: `同步到网络数据失败 ${e.message}`,
+							fn: () => {
+								this.handleEditIntroduce()
+							},
 						})
-				})
+					})
 			}
 		},
 		handleEditNickname: function () {
@@ -187,63 +166,49 @@ export default {
 		},
 		handleChangeNickname: function () {
 			if (this.editable.nickname) {
-				this.$conf.getHost().then((h) => {
-					this.$conf
-						.updateDBConfig(
-							this.$conf.getHttpString(h.host),
-							"nickname",
-							this.nickspace,
-							localStorage.getItem("username")
-						)
-						.then(() => {
-							this.$public.emit("notice", {
-								type: "success",
-								msg: `同步到网络数据成功`,
-							})
-							this.$conf
-								.getConfPromise()
-								.then((data) => {
-									data.data.userInfo.nickname = this.nickspace
-									this.$conf
-										.updateLocalConfig(data.data, () => {
-											this.$public.emit("notice", {
-												type: "success",
-												msg: `同步到本地数据成功`,
-												fn: () => {
-													this.handleEditNickname()
-												},
-											})
-										})
-										.catch((e) => {
-											this.$public.emit("notice", {
-												type: "error",
-												msg: `同步到本地数据失败 ${e.message}`,
-												fn: () => {
-													this.handleEditNickname()
-												},
-											})
-										})
-								})
-								.catch((e) => {
-									this.$public.emit("notice", {
-										type: "error",
-										msg: `读取本地数据失败 ${e.message}`,
-										fn: () => {
-											this.handleEditNickname()
-										},
-									})
-								})
+				this.$conf
+					.updateDBConfig(
+						this.$host.getData().host,
+						"nickname",
+						this.nickspace,
+						localStorage.getItem("username")
+					)
+					.then(() => {
+						this.$public.emit("notice", {
+							type: "success",
+							msg: `同步到网络数据成功`,
 						})
-						.catch((e) => {
-							this.$public.emit("notice", {
-								type: "error",
-								msg: `同步到网络数据失败 ${e.message}`,
-								fn: () => {
-									this.handleEditNickname()
-								},
+						let data = this.$setting.getData()
+						data.userInfo.nickname = this.nickspace
+						this.$conf
+							.updateLocalConfig(data, () => {
+								this.$public.emit("notice", {
+									type: "success",
+									msg: `同步到本地数据成功`,
+									fn: () => {
+										this.handleEditNickname()
+									},
+								})
 							})
+							.catch((e) => {
+								this.$public.emit("notice", {
+									type: "error",
+									msg: `同步到本地数据失败 ${e.message}`,
+									fn: () => {
+										this.handleEditNickname()
+									},
+								})
+							})
+					})
+					.catch((e) => {
+						this.$public.emit("notice", {
+							type: "error",
+							msg: `同步到网络数据失败 ${e.message}`,
+							fn: () => {
+								this.handleEditNickname()
+							},
 						})
-				})
+					})
 			}
 		},
 	},

@@ -13,6 +13,7 @@ const appConfig = {
     , getHost: async () => {
         return appConfig.getConfPromise().then((res) => {
             const { appInfo } = res.data
+            console.log('Host 引用');
             return {
                 port: appInfo.port,
                 domain: appInfo.domain,
@@ -42,6 +43,7 @@ const appConfig = {
         }).then((resolve) => { return resolve })
     }
     , getConfPromise: async () => {
+        console.log('Config 引用');
         return Axios.get(appConfig.getPath())
     }
     , getRandomKey: (length) => {

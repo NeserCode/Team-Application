@@ -107,22 +107,20 @@ export default {
 				msg: "正在更新组织授权",
 			})
 
-			this.$conf.getHost().then((h) => {
-				if (status)
-					this.$conf
-						.handleActiveOrganization({
-							host: this.$conf.getHttpString(h.host),
-							id: this.selectedOrganizationInfo.id,
-						})
-						.then(cb)
-				else
-					this.$conf
-						.handleDeactiveOrganization({
-							host: this.$conf.getHttpString(h.host),
-							id: this.selectedOrganizationInfo.id,
-						})
-						.then(cb)
-			})
+			if (status)
+				this.$conf
+					.handleActiveOrganization({
+						host: this.$host.getData().host,
+						id: this.selectedOrganizationInfo.id,
+					})
+					.then(cb)
+			else
+				this.$conf
+					.handleDeactiveOrganization({
+						host: this.$host.getData().host,
+						id: this.selectedOrganizationInfo.id,
+					})
+					.then(cb)
 		},
 		handleRenameOrganization: function () {
 			this.visible.rename = true

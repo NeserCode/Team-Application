@@ -46,7 +46,15 @@ export default {
 			this.needs.isSettingCloseDirect = symbol
 		})
 	},
-	created() {
+	beforeMount() {
+		// document.onmousedown = (e) => {
+		//   if (e.button == 2) console.log("你按下了右键");
+		// };
+		// document.onmouseup = (e) => {
+		//   if (e.button == 2) console.log("你松开了右键");
+		// };
+	},
+	mounted() {
 		this.$conf.getConfPromise().then((data) => {
 			this.needs.setting = data.data
 			this.$conf.getHost().then((res) => {
@@ -58,15 +66,6 @@ export default {
 			})
 		})
 	},
-	beforeMount() {
-		// document.onmousedown = (e) => {
-		//   if (e.button == 2) console.log("你按下了右键");
-		// };
-		// document.onmouseup = (e) => {
-		//   if (e.button == 2) console.log("你松开了右键");
-		// };
-	},
-	mounted() {},
 	provide() {
 		return {
 			$host: reactive({

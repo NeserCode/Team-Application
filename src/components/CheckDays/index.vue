@@ -31,38 +31,15 @@
 </template>
 
 <script>
-import { inject } from "vue"
 import { _debounce } from "@/plugins/utils.js"
 // @ is an alias to /src
 
 export default {
 	name: "CheckDays",
 	components: {},
-	beforeCreate() {
-		this.$public.on("update-check-day", () => {
-			this.initCheckDay()
-		})
-		this.$public.on("clear-user-sign-status", () => {
-			this.userStatus = false
-		})
-	},
-	activated() {},
-	mounted() {
-		// setInterval(() => {
-		//   this.checkObject.timestamp = (+new Date()).toString();
-		//   // console.log(this.checkObject.timestamp);
-		// }, 1000);
-
-		this.INJECTION.setting = inject("$setting", undefined).getData()
-		this.INJECTION.host = inject("$host", undefined).getData()
-		this.initCheckDay()
-	},
+	inject: ["$host", "$setting"],
 	data() {
 		return {
-			INJECTION: {
-				setting: null,
-				host: null,
-			},
 			checkDays: [],
 			checkedDays: [],
 			checkObject: {
@@ -75,6 +52,20 @@ export default {
 			userStatus: false,
 		}
 	},
+	beforeCreate() {
+		this.$public.on("update-check-day", () => {
+			this.initCheckDay()
+		})
+		this.$public.on("clear-user-sign-status", () => {
+			this.userStatus = false
+		})
+
+		this.$public.on("app-created", () => {
+			this.initCheckDay()
+		})
+	},
+	mounted() {},
+
 	methods: {
 		//this.getMonthDays(T.getFullYear(), T.getMonth(), 0) 某月天数
 		getMonthDays: (year, month) => new Date(year, month, 0).getDate(),
@@ -155,9 +146,9 @@ export default {
 			if (!this.checkObject.isCheck)
 				this.$conf
 					.updateCheckDay({
-						host: this.INJECTION.host.host,
-						username: this.INJECTION.setting.userInfo.name,
-						appKey: this.INJECTION.setting.appInfo.key,
+						host: this.$host.getData().host,
+						username: this.$setting.getData().userInfo.name,
+						appKey: this.$setting.getData().appInfo.key,
 						timeStamp: new Date().getTime(),
 					})
 					.then((res) => {
@@ -192,8 +183,8 @@ export default {
 			if (this.getUserStatus())
 				this.$conf
 					.getCheckDay({
-						host: this.INJECTION.host.host,
-						username: this.INJECTION.setting.userInfo.name,
+						host: this.$host.getData().host,
+						username: this.$setting.getData().userInfo.name,
 					})
 					.then((response) => {
 						response.data.forEach((element) => {

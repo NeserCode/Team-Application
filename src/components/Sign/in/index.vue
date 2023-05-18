@@ -112,6 +112,7 @@ export default {
 			)
 		},
 	},
+	inject: ["$host"],
 	data() {
 		return {
 			signIn: {
@@ -164,76 +165,74 @@ export default {
 						},
 					})
 				} else {
-					this.$conf.getHost().then((h) => {
-						this.clickable = false
-						let ck = this.$conf.getMd5String(
-							this.IpAddress ?? h.host
-						)
-						this.$conf
-							.handleUserSignIn({
-								host: this.$conf.getHttpString(h.host),
-								username: this.signIn.username,
-								password: this.$conf.getMd5String(
-									this.signIn.password
-								),
-								appkey: localStorage.getItem("appKey"),
-								checkkey: ck,
-							})
-							.then((response) => {
-								const { info, detail } = response.data
-								localStorage.setItem("checkKey", ck)
-								if (info.userKey.length < 16)
-									this.$public.emit("notice", {
-										type: "warning",
-										msg: "用户键值缺失异常",
-										fn: () => {
-											this.clickable = true
-										},
-									})
-								else if (info.appKey.length < 16) {
-									this.$public.emit("notice", {
-										type: "warning",
-										msg: "应用键值缺失异常",
-										fn: () => {
-											this.clickable = true
-										},
-									})
-								}
-
+					this.clickable = false
+					let ck = this.$conf.getMd5String(
+						this.IpAddress ?? this.$host.getData().host
+					)
+					this.$conf
+						.handleUserSignIn({
+							host: this.$host.getData().host,
+							username: this.signIn.username,
+							password: this.$conf.getMd5String(
+								this.signIn.password
+							),
+							appkey: localStorage.getItem("appKey"),
+							checkkey: ck,
+						})
+						.then((response) => {
+							const { info, detail } = response.data
+							localStorage.setItem("checkKey", ck)
+							if (info.userKey.length < 16)
 								this.$public.emit("notice", {
-									type: "success",
-									msg: `欢迎您，${info.username}`,
-									time: 3000,
-									fn: () => {
-										this.$public.emit(
-											"update-main-user-info-upto-app",
-											{
-												info,
-												detail,
-											}
-										)
-
-										this.signIn.username = ""
-										this.signIn.password = ""
-										this.options.isOnlineSignIn = true
-										this.options.isShowPassword = false
-
-										this.clickable = true
-										this.$router.push("/userArea")
-									},
-								})
-							})
-							.catch((e) => {
-								console.log(e.message)
-								this.$public.emit("notice", {
-									type: "error",
-									msg: "登陆错误, 请检查您输入的用户名和密码",
+									type: "warning",
+									msg: "用户键值缺失异常",
 									fn: () => {
 										this.clickable = true
 									},
 								})
+							else if (info.appKey.length < 16) {
+								this.$public.emit("notice", {
+									type: "warning",
+									msg: "应用键值缺失异常",
+									fn: () => {
+										this.clickable = true
+									},
+								})
+							}
+
+							this.$public.emit("notice", {
+								type: "success",
+								msg: `欢迎您，${info.username}`,
+								time: 3000,
+								fn: () => {
+									this.$public.emit(
+										"update-main-user-info-upto-app",
+										{
+											info,
+											detail,
+										}
+									)
+
+									this.signIn.username = ""
+									this.signIn.password = ""
+									this.options.isOnlineSignIn = true
+									this.options.isShowPassword = false
+
+									this.clickable = true
+									this.$router.push("/userArea")
+								},
 							})
-					})
+						})
+						.catch((e) => {
+							console.log(e.message)
+							this.$public.emit("notice", {
+								type: "error",
+								msg: "登陆错误, 请检查您输入的用户名和密码",
+								fn: () => {
+									this.clickable = true
+								},
+							})
+						})
 				}
 			}
 		},

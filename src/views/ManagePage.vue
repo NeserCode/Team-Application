@@ -25,7 +25,6 @@ export default {
 	beforeCreate() {
 		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
 			if (this.hostUser) this.getOrganizationInfo(detail.access_team)
-
 			this.getAllOrganization()
 		})
 
@@ -33,15 +32,13 @@ export default {
 			this.getAllOrganization()
 		})
 
-		this.$public.on("app-created", () => {
-			const conf = this.$setting.getData()
+		this.$public.on("app-created", () => {})
+	},
+	created() {
+		const conf = this.$setting.getData()
+		this.getAllOrganization()
 
-			this.ensureHostorSuperUser(conf.userInfo, conf.userInfo.id, () => {
-				if (this.hostUser) {
-					this.getOrganizationInfo(conf.userInfo.organization)
-				}
-			})
-		})
+		this.ensureHostorSuperUser(conf.userInfo, conf.userInfo.id)
 	},
 	mounted() {},
 	methods: {
@@ -76,13 +73,16 @@ export default {
 				})
 				.then((res) => {
 					this.hostUser = res.data.length > 0
-
+					if (this.hostUser)
+						this.getOrganizationInfo(
+							this.$setting.getData().userInfo.organization
+						)
 					cb && cb()
 				})
 		},
 		updatePageData() {
-			this.getOrganizationInfo(this.selectedOrganizationInfo.id)
 			this.getAllOrganization()
+			this.getOrganizationInfo(this.selectedOrganizationInfo.id)
 		},
 	},
 }

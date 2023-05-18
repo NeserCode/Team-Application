@@ -196,12 +196,6 @@ export default {
 		})
 
 		this.$public.on("app-created", () => {
-			console.log(
-				this.$setting,
-				this.$host,
-				this.$setting.getData(),
-				this.$host.getData()
-			)
 			this.initController()
 		})
 
