@@ -32,7 +32,7 @@ export default {
 			this.getAllOrganization()
 		})
 
-		this.$public.on("app-created", () => {})
+		this.$public.on("app-provided", () => {})
 	},
 	created() {
 		const conf = this.$setting.getData()

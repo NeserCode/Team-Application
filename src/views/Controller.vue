@@ -14,6 +14,51 @@ export default {
 	data() {
 		return {}
 	},
+	created() {},
+	beforeCreate() {
+		this.$public.on(
+			"update-main-user-info-upto-app",
+			({ info, detail }) => {
+				this.updateConfig({ info, detail })
+			}
+		)
+
+		this.$public.on("notice", ({ title, msg, type, time, fn }) => {
+			let duration = 3000,
+				position = "bottom-right"
+
+			this.$notify({
+				title,
+				message: msg,
+				type: type == "loading" ? "info" : type,
+				duration: time ?? duration,
+				position,
+				onClose: fn,
+				showClose: false,
+				offset: 25,
+			})
+			this.$public.emit("update-footer-status-upto-app", {
+				status: type ?? "Loading",
+				text: msg,
+			})
+		})
+
+		this.$public.on("rebuild-app-key", () => {
+			this.handleRebuildKey("appkey")
+		})
+		this.$public.on("check-all-key", () => {
+			this.handleCheckKey()
+		})
+
+		this.$public.on("app-provided", () => {
+			this.initController()
+		})
+
+		this.$conf.setConfigListener(() => {
+			// console.log(prev, curr)
+			console.log("Config Changed")
+		})
+	},
 	methods: {
 		handleRebuildKey: function (...option) {
 			if (option.length == 0) {
@@ -107,8 +152,8 @@ export default {
 				console.log(`#checkKey [${localStorage.getItem("checkKey")}]`)
 		},
 		initController: function () {
-			this.handleCheckKey()
 			this.initUser()
+			this.handleCheckKey()
 		},
 		updateConfig: function ({ info, detail }) {
 			let tempSetting = this.$setting.getData()
@@ -159,49 +204,6 @@ export default {
 					})
 				})
 		},
-	},
-	beforeCreate() {
-		this.$public.on(
-			"update-main-user-info-upto-app",
-			({ info, detail }) => {
-				this.updateConfig({ info, detail })
-			}
-		)
-
-		this.$public.on("notice", ({ title, msg, type, time, fn }) => {
-			let duration = 3000,
-				position = "bottom-right"
-
-			this.$notify({
-				title,
-				message: msg,
-				type: type == "loading" ? "info" : type,
-				duration: time ?? duration,
-				position,
-				onClose: fn,
-				showClose: false,
-				offset: 25,
-			})
-			this.$public.emit("update-footer-status-upto-app", {
-				status: type ?? "Loading",
-				text: msg,
-			})
-		})
-
-		this.$public.on("rebuild-app-key", () => {
-			this.handleRebuildKey("appkey")
-		})
-		this.$public.on("check-all-key", () => {
-			this.handleCheckKey()
-		})
-
-		this.$public.on("app-created", () => {
-			this.initController()
-		})
-
-		this.$conf.setConfigListener((prev, curr) => {
-			console.log(prev, curr)
-		})
 	},
 }
 </script>

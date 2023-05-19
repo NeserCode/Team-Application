@@ -49,7 +49,7 @@ export default {
 	},
 	components: { renameOrganization },
 	beforeCreate() {
-		this.$public.on("app-created", () => {
+		this.$public.on("app-provided", () => {
 			this.getMembersInfo(this.selectedOrganizationInfo.id)
 		})
 	},

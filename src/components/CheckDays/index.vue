@@ -60,7 +60,7 @@ export default {
 			this.userStatus = false
 		})
 
-		this.$public.on("app-created", () => {
+		this.$public.on("app-provided", () => {
 			this.initCheckDay()
 		})
 	},

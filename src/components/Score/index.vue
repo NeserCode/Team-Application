@@ -91,9 +91,10 @@ export default {
 		this.$public.on("leetcode-local-submit", () => {
 			this.initTables()
 		})
-		this.$public.on("app-created", () => {
-			this.initTables()
-		})
+		this.$public.on("app-provided", () => {})
+	},
+	created() {
+		this.initTables()
 	},
 	mounted() {},
 	methods: {

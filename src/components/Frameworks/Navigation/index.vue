@@ -124,7 +124,7 @@ export default {
 		this.$public.on("update-color-mode", (mode) => {
 			this.colorMode = mode
 		})
-		this.$public.on("app-created", () => {
+		this.$public.on("app-provided", () => {
 			this.ensureHostorSuperUser(this.$setting.getData().userInfo)
 
 			this.initColorMode()

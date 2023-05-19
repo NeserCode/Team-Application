@@ -59,10 +59,10 @@ export default {
 			this.needs.setting = data.data
 			this.$conf.getHost().then((res) => {
 				this.needs.host = res
-				setTimeout(() => {
+				this.$nextTick(() => {
 					this.initApp()
-					this.$public.emit("app-created", data.data)
-				}, 0)
+					this.$public.emit("app-provided")
+				})
 			})
 		})
 	},

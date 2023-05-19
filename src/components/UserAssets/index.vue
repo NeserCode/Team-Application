@@ -90,7 +90,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.$public.on("app-created", () => {
+		this.$public.on("app-provided", () => {
 			this.userImage = this.$setting.getData().userInfo.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
