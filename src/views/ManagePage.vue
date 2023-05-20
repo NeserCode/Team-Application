@@ -1,10 +1,11 @@
 <script>
 import { _debounce } from "@/plugins/utils"
 import Organization from "@/components/Manage/organization.vue"
+import Announcement from "@/components/Manage/announcement.vue"
 
 export default {
 	name: "Manage",
-	components: { Organization },
+	components: { Organization, Announcement },
 	computed: {
 		detailVisible: function () {
 			return (
@@ -114,6 +115,10 @@ export default {
 		<Organization
 			:superUser="superUser"
 			:hostUser="hostUser"
+			:selectedOrganizationInfo="selectedOrganizationInfo"
+			@update:info="updatePageData"
+		/>
+		<Announcement
 			:selectedOrganizationInfo="selectedOrganizationInfo"
 			@update:info="updatePageData"
 		/>

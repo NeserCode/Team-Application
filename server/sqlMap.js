@@ -79,5 +79,19 @@ var sqlMap = {
             transfer: 'update team_organization_info set hostId = ? where id = ?',
         }
     },
+    announcement: {
+        create: "insert into team_announcement_info(oid, open, content, timeStamp) values (?,?,?,?)",
+        get: {
+            all: "select * from team_announcement_info ORDER BY timeStamp DESC",
+            oid: "select * from team_announcement_info where oid = ? ORDER BY timeStamp DESC",
+            open: "select * from team_announcement_info where open = 1 ORDER BY timeStamp DESC",
+            notOpen: "select * from team_announcement_info where open = 0 ORDER BY timeStamp DESC",
+        },
+        update: {
+            open: "update team_announcement_info set open = 1 where id = ?",
+            content: "update team_announcement_info set content = ? where id = ?",
+        },
+        free: "delete from team_announcement_info where id = ?",
+    }
 }
 module.exports = sqlMap;

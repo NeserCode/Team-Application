@@ -159,6 +159,30 @@ const appConfig = {
     , handleTransferOrganization: ({ host, uid, oid }) => {
         return Axios.post(`${appConfig.getHttpString(host)}/api/user/organization/transfer`, { uid, oid })
     }
+    , handleCreateAnnouncement: ({ host, oid, open, content, timeStamp }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/announcement/create`, { oid, open, content, timeStamp })
+    }
+    , handleUpdateAnnouncementToOpen: ({ host, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/announcement/update/open`, { id })
+    }
+    , handleUpdateAnnouncementContent: ({ host, content, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/announcement/update/content`, { content, id })
+    }
+    , handleDeleteAnnouncement: ({ host, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/announcement/delete`, { id })
+    }
+    , allAnnouncement: ({ host }) => {
+        return Axios.get(`${appConfig.getHttpString(host)}/api/user/announcement/get/all`)
+    }
+    , getAnnouncementByOid: ({ host, oid }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/announcement/get/oid`, { oid })
+    }
+    , getOpenAnnouncement: ({ host }) => {
+        return Axios.get(`${appConfig.getHttpString(host)}/api/user/announcement/get/open`)
+    }
+    , getNotOpenAnnouncement: ({ host }) => {
+        return Axios.get(`${appConfig.getHttpString(host)}/api/user/announcement/get/not-open`)
+    }
 
 }
 

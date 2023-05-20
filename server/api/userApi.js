@@ -562,5 +562,84 @@ router.post('/organization/transfer', (req, res) => {
     })
 })
 
+// 公告相关
+router.post('/announcement/create', (req, res) => {
+    let sql = $sql.announcement.create
+    let params = req.body
+
+    conn.query(sql, [params.oid, params.open, params.content, params.timeStamp], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else res.status(200).send(result)
+    })
+})
+
+router.get('/announcement/get/all', (req, res) => {
+    let sql = $sql.announcement.get.all
+
+    conn.query(sql, (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else res.status(200).send(result)
+    })
+})
+
+router.post('/announcement/get/oid', (req, res) => {
+    let sql = $sql.announcement.get.oid
+    let params = req.body
+
+    conn.query(sql, [params.oid], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else res.status(200).send(result)
+    })
+})
+
+router.get('/announcement/get/open', (req, res) => {
+    let sql = $sql.announcement.get.open
+
+    conn.query(sql, (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else res.status(200).send(result)
+    })
+})
+
+router.get('/announcement/get/not-open', (req, res) => {
+    let sql = $sql.announcement.get.notOpen
+
+    conn.query(sql, (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno })
+        else res.status(200).send(result)
+    })
+})
+
+router.post('/announcement/update/open', (req, res) => {
+    let sql = $sql.announcement.update.open
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+        else res.status(200).send(result)
+    })
+})
+
+router.post('/announcement/update/content', (req, res) => {
+    let sql = $sql.announcement.update.content
+    let params = req.body
+
+    conn.query(sql, [params.content, params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+        else res.status(200).send(result)
+    })
+})
+
+router.post('/announcement/delete', (req, res) => {
+    let sql = $sql.announcement.free
+    let params = req.body
+
+    conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+        else res.status(200).send(result)
+    })
+})
+
+
 
 module.exports = router

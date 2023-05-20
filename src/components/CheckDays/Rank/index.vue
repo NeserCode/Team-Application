@@ -34,9 +34,10 @@ export default {
 		this.$public.on("clear-user-sign-status", () => {
 			this.initRankers()
 		})
-		this.$public.on("app-provided", () => {
-			this.initRankers()
-		})
+		this.$public.on("app-provided", () => {})
+	},
+	created() {
+		this.initRankers()
 	},
 	mounted() {},
 	methods: {

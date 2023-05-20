@@ -2,13 +2,15 @@
 	<div class="home">
 		<div class="topContainer"></div>
 		<div class="mainContainer">
-			<div class="leftTabs"></div>
+			<div class="leftTabs">
+				<Announcement class="announcement" />
+			</div>
 			<div class="centerBody">
 				<Score />
 			</div>
 			<div class="rightTabs">
 				<CheckDays class="checkdays" />
-				<Rank />
+				<Rank class="check-rank" />
 			</div>
 		</div>
 	</div>
@@ -19,10 +21,11 @@
 import CheckDays from "@/components/CheckDays/index.vue"
 import Rank from "@/components/CheckDays/Rank/index.vue"
 import Score from "@/components/Score/index.vue"
+import Announcement from "@/components/Announcement/Announcement.vue"
 
 export default {
 	name: "Home",
-	components: { CheckDays, Score, Rank },
+	components: { CheckDays, Score, Rank, Announcement },
 	beforeCreate() {},
 	mounted() {},
 	data() {
@@ -47,13 +50,10 @@ export default {
 .mainContainer .rightTabs {
 	@apply w-1/5 mx-4 text-center;
 }
-.checkdays {
-	@apply h-auto;
-	max-width: 277px;
-}
-
-.rank {
-	@apply h-auto;
+.checkdays,
+.announcement,
+.check-rank {
+	@apply inline-flex flex-col h-auto;
 	max-width: 277px;
 }
 .mainContainer .centerBody {
