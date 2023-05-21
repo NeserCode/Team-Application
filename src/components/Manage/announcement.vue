@@ -1,6 +1,7 @@
 <script>
 // import { _debounce } from "@/plugins/utils"
 // import { ElMessageBox } from "element-plus"
+import createAnnouncement from "@/components/Dialogs/createAnnouncement.vue"
 
 export default {
 	name: "Manage-Announcement",
@@ -16,6 +17,10 @@ export default {
 		return {
 			announcementInfo: {},
 			visible: {
+				create: false,
+				createFn: (val) => {
+					this.visible.create = val
+				},
 				edit: false,
 				editFn: (val) => {
 					this.visible.edit = val
@@ -30,20 +35,29 @@ export default {
 	// 		},
 	// 	},
 	// },
-	components: {},
+	components: { createAnnouncement },
 	beforeCreate() {
 		this.$public.on("app-provided", () => {
 			// this.getMembersInfo(this.selectedOrganizationInfo.id)
 		})
 	},
-	methods: {},
+	methods: {
+		handleCreateAnnouncement: function () {
+			this.visible.create = true
+		},
+	},
 }
 </script>
 
 <template>
 	<div class="announcement">
 		<div class="announcement-info">
-			<span class="title">title</span>
+			<span class="title">
+				<span>公告</span>
+				<button class="btn" @click="handleCreateAnnouncement">
+					<el-icon><Plus /></el-icon>
+				</button>
+			</span>
 			<div class="announcement-list">
 				<div class="announcement-item">
 					<span class="details"> these are some details </span>
@@ -51,6 +65,11 @@ export default {
 				</div>
 			</div>
 		</div>
+		<createAnnouncement
+			:visible="visible.create"
+			@update:visible="visible.createFn"
+			:selectedOrganizationInfo="selectedOrganizationInfo"
+		/>
 	</div>
 </template>
 
@@ -61,7 +80,8 @@ export default {
 }
 
 .title {
-	@apply inline-flex justify-between items-center mb-4;
+	@apply inline-flex justify-between items-center mb-4
+	text-3xl font-semibold;
 }
 
 .item {

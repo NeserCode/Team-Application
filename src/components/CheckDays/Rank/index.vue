@@ -36,10 +36,10 @@ export default {
 		})
 		this.$public.on("app-provided", () => {})
 	},
-	created() {
+	created() {},
+	mounted() {
 		this.initRankers()
 	},
-	mounted() {},
 	methods: {
 		initRankers: function () {
 			this.isLoading = true
