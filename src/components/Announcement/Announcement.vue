@@ -1,31 +1,64 @@
 <script setup>
-import { inject, onBeforeMount } from "vue"
+import { ref, inject, reactive, onBeforeMount } from "vue"
 
 const { getData: getSetting } = inject("$setting")
+const { getData: getAnnouncement } = inject("$announcement")
+
+const setting = ref(null)
+const announcement = ref(null)
+const sorted = ref({
+	openAnnouncement: [],
+	ogAnnouncement: [],
+})
 
 onBeforeMount(() => {
-	let setting = getSetting()
-	console.log(setting)
+	setting.value = getSetting()
+	announcement.value = getAnnouncement()
+
+	const { openAnnouncement, ogAnnouncement } = useSortAnnouncement(
+		announcement.value
+	)
+	sorted.value = { openAnnouncement, ogAnnouncement }
 })
+
+function useSortAnnouncement(array) {
+	const sorterByTime = (a, b) => {
+		return new Date(b.time) - new Date(a.time)
+	}
+	const openAnnouncement = array
+		.filter((item) => !!item.open)
+		.sort(sorterByTime)
+	const ogAnnouncement = array.filter((item) => !item.open).sort(sorterByTime)
+
+	return reactive({ openAnnouncement, ogAnnouncement })
+}
 </script>
 
 <template>
 	<div class="announcement-main">
-		<div class="og-announcement">
+		<div class="og-announcement" v-if="setting.userInfo.organization">
 			<span class="title">组织公告</span>
 			<div class="announcement-list">
-				<div class="announcement-item">
+				<div
+					class="announcement-item"
+					v-for="item in sorted.ogAnnouncement"
+					:key="item.id"
+				>
+					<span class="content">{{ item.content }}</span>
 					<span class="details"> these are some details </span>
-					<span class="content"> here contents </span>
 				</div>
 			</div>
 		</div>
 		<div class="open-announcement">
 			<span class="title">软件公告</span>
-			<div class="announcement-list">
+			<div
+				class="announcement-list"
+				v-for="item in sorted.openAnnouncement"
+				:key="item.id"
+			>
 				<div class="announcement-item">
+					<span class="content">{{ item.content }}</span>
 					<span class="details"> these are some details </span>
-					<span class="content"> here contents </span>
 				</div>
 			</div>
 		</div>

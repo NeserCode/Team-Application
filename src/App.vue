@@ -46,15 +46,7 @@ export default {
 			this.needs.isSettingCloseDirect = symbol
 		})
 	},
-	beforeMount() {
-		// document.onmousedown = (e) => {
-		//   if (e.button == 2) console.log("你按下了右键");
-		// };
-		// document.onmouseup = (e) => {
-		//   if (e.button == 2) console.log("你松开了右键");
-		// };
-	},
-	mounted() {
+	created() {
 		this.$conf.getConfPromise().then((data) => {
 			this.needs.setting = data.data
 			this.$conf.getHost().then((res) => {
@@ -63,9 +55,25 @@ export default {
 					this.initApp()
 					this.$public.emit("app-provided")
 				})
+				this.$conf
+					.allAnnouncement({
+						host: res.host,
+					})
+					.then((res) => {
+						this.needs.announcement = res.data
+					})
 			})
 		})
 	},
+	beforeMount() {
+		// document.onmousedown = (e) => {
+		//   if (e.button == 2) console.log("你按下了右键");
+		// };
+		// document.onmouseup = (e) => {
+		//   if (e.button == 2) console.log("你松开了右键");
+		// };
+	},
+	mounted() {},
 	provide() {
 		return {
 			$host: reactive({
@@ -73,6 +81,9 @@ export default {
 			}),
 			$setting: reactive({
 				getData: () => this.needs.setting,
+			}),
+			$announcement: reactive({
+				getData: () => this.needs.announcement,
 			}),
 		}
 	},
@@ -87,6 +98,7 @@ export default {
 				isSettingCloseDirect: false,
 				setting: null,
 				host: null,
+				announcement: null,
 			},
 		}
 	},
