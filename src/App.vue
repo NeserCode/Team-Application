@@ -2,7 +2,7 @@
 	<div id="AppView">
 		<Controller />
 		<appViewHead
-			:isSettingCloseDirect="needs.isSettingCloseDirect"
+			:isSettingCloseDirect="isSettingCloseDirect"
 			:title="appTitle"
 		></appViewHead>
 		<Navigation />
@@ -14,109 +14,83 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import appViewHead from "@/components/Frameworks/Header/index.vue"
 import appViewFoot from "@/components/Frameworks/Footer/index.vue"
 import AppMainContainer from "@/components/Frameworks/Container/index.vue"
 import Navigation from "@/components/Frameworks/Navigation/index.vue"
 import Controller from "@/views/Controller.vue"
 const { ipcRenderer } = window.require("electron")
+import { ref, onBeforeMount, inject, nextTick, provide } from "vue"
+import { AnnouncementKey, HostKey, SettingKey } from "@/tokens"
 
-import { reactive } from "vue"
+const $conf = inject("$conf")
+const $public = inject("$public")
 
-export default {
-	name: "App",
-	components: {
-		appViewHead,
-		appViewFoot,
-		AppMainContainer,
-		Navigation,
-		Controller,
-	},
-	beforeCreate() {
-		//listen public response this.$public.on('',()=>{})
-		this.$public.on("update-footer-status-upto-app", (status) => {
-			this.statusReal.status = status.status
-			this.statusReal.text = status.text
-		})
-		this.$public.on("update-app-title", (title) => {
-			this.appTitle = `${title} - Team Application`
-		})
-		this.$public.on("update-header-need-close-direct", (symbol) => {
-			this.needs.isSettingCloseDirect = symbol
-		})
-	},
-	created() {
-		this.$conf.getConfPromise().then((data) => {
-			this.needs.setting = data.data
-			this.$conf.getHost().then((res) => {
-				this.needs.host = res
-				this.$nextTick(() => {
-					this.initApp()
-					this.$public.emit("app-provided")
-				})
-				this.$conf
-					.allAnnouncement({
-						host: res.host,
-					})
-					.then((res) => {
-						this.needs.announcement = res.data
-					})
+const appTitle = ref("Team Application")
+const statusReal = ref({
+	status: "success",
+	text: "😀 Thank your usage for Team Application",
+})
+const isSettingCloseDirect = ref(false)
+const setting = ref(null),
+	announcement = ref(null),
+	host = ref(null)
+
+provide(HostKey, host)
+provide(SettingKey, setting)
+provide(AnnouncementKey, announcement)
+
+//listen public response $public.on('',()=>{})
+$public.on("update-footer-status-upto-app", (status) => {
+	statusReal.value.status = status.status
+	statusReal.value.text = status.text
+})
+$public.on("update-app-title", (title) => {
+	appTitle.value = `${title} - Team Application`
+})
+$public.on("update-header-need-close-direct", (symbol) => {
+	isSettingCloseDirect.value = symbol
+})
+
+$conf.getConfPromise().then((data) => {
+	setting.value = data.data
+	$conf.getHost().then((res) => {
+		host.value = res
+		$conf
+			.allAnnouncement({
+				host: res.host,
 			})
-		})
-	},
-	beforeMount() {
-		// document.onmousedown = (e) => {
-		//   if (e.button == 2) console.log("你按下了右键");
-		// };
-		// document.onmouseup = (e) => {
-		//   if (e.button == 2) console.log("你松开了右键");
-		// };
-	},
-	mounted() {},
-	provide() {
-		return {
-			$host: reactive({
-				getData: () => this.needs.host,
-			}),
-			$setting: reactive({
-				getData: () => this.needs.setting,
-			}),
-			$announcement: reactive({
-				getData: () => this.needs.announcement,
-			}),
-		}
-	},
-	data() {
-		return {
-			appTitle: "Team Application",
-			statusReal: {
-				status: "success",
-				text: "😀 Thank your usage for Team Application",
-			},
-			needs: {
-				isSettingCloseDirect: false,
-				setting: null,
-				host: null,
-				announcement: null,
-			},
-		}
-	},
-	methods: {
-		initSettings: function () {
-			this.needs.isSettingCloseDirect =
-				this.needs.setting.userSetting.alwaysCloseDirect
-			//判定并实际操作主进程
-			if (this.needs.setting.userSetting.alwaysOnTop)
-				ipcRenderer.send("setting-always-on-top")
-			else ipcRenderer.send("setting-always-not-top")
-		},
+			.then((res) => {
+				announcement.value = res.data
+				nextTick(() => {
+					initApp()
+					$public.emit("app-provided")
+				})
+			})
+	})
+})
 
-		initApp: function () {
-			this.initSettings()
-			// console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
-		},
-	},
+onBeforeMount(() => {
+	// document.onmousedown = (e) => {
+	//   if (e.button == 2) console.log("你按下了右键");
+	// };
+	// document.onmouseup = (e) => {
+	//   if (e.button == 2) console.log("你松开了右键");
+	// };
+})
+
+function initSettings() {
+	isSettingCloseDirect.value = setting.value.userSetting.alwaysCloseDirect
+	//判定并实际操作主进程
+	if (setting.value.userSetting.alwaysOnTop)
+		ipcRenderer.send("setting-always-on-top")
+	else ipcRenderer.send("setting-always-not-top")
+}
+
+function initApp() {
+	initSettings()
+	// console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
 }
 </script>
 
@@ -127,6 +101,10 @@ export default {
 </style>
 
 <style lang="postcss">
+html.dark {
+	color-scheme: dark;
+}
+
 .appViewHead,
 .appViewFoot,
 .navigation {

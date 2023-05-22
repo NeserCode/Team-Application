@@ -58,10 +58,18 @@
 
 <script>
 import { clipboard } from "electron"
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Namespace",
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			namespace: "",
@@ -89,7 +97,7 @@ export default {
 	},
 	methods: {
 		getNamespace: function () {
-			const { userInfo } = this.$setting.getData()
+			const { userInfo } = this.setting
 			this.namespace = userInfo.name
 			this.nickspace = userInfo.nickname ?? "[无名氏]"
 			this.introduce =
@@ -117,7 +125,7 @@ export default {
 			if (this.editable.introduce) {
 				this.$conf
 					.updateDBConfig(
-						this.$host.getData().host,
+						this.host.host,
 						"introduce",
 						this.introduce,
 						localStorage.getItem("username")
@@ -127,7 +135,7 @@ export default {
 							type: "success",
 							msg: `同步到网络数据成功`,
 						})
-						let data = this.$setting.getData()
+						let data = this.setting
 						data.userInfo.introduce = this.introduce
 						this.$conf
 							.updateLocalConfig(data, () => {
@@ -168,7 +176,7 @@ export default {
 			if (this.editable.nickname) {
 				this.$conf
 					.updateDBConfig(
-						this.$host.getData().host,
+						this.host.host,
 						"nickname",
 						this.nickspace,
 						localStorage.getItem("username")
@@ -178,7 +186,7 @@ export default {
 							type: "success",
 							msg: `同步到网络数据成功`,
 						})
-						let data = this.$setting.getData()
+						let data = this.setting
 						data.userInfo.nickname = this.nickspace
 						this.$conf
 							.updateLocalConfig(data, () => {

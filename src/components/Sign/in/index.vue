@@ -51,6 +51,7 @@
 
 <script>
 import SignInput from "@/components/Sign/input/index.vue"
+import { HostKey } from "@/tokens"
 
 export default {
 	name: "Login",
@@ -112,7 +113,11 @@ export default {
 			)
 		},
 	},
-	inject: ["$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+	},
 	data() {
 		return {
 			signIn: {
@@ -167,11 +172,11 @@ export default {
 				} else {
 					this.clickable = false
 					let ck = this.$conf.getMd5String(
-						this.IpAddress ?? this.$host.getData().host
+						this.IpAddress ?? this.host.host
 					)
 					this.$conf
 						.handleUserSignIn({
-							host: this.$host.getData().host,
+							host: this.host.host,
 							username: this.signIn.username,
 							password: this.$conf.getMd5String(
 								this.signIn.password

@@ -59,11 +59,16 @@
 import SettingOption from "@/components/Setting/option/index.vue"
 import { nextTick } from "vue"
 const { ipcRenderer } = window.require("electron")
+import { SettingKey } from "@/tokens"
 
 export default {
 	name: "LocalSetting",
 	components: { SettingOption },
-	inject: ["$setting", "$host"],
+	inject: {
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			isClickable: true,
@@ -123,7 +128,7 @@ export default {
 		}
 	},
 	beforeMount() {
-		const { userSetting } = this.$setting.getData()
+		const { userSetting } = this.setting
 		this.appOnTop.value = userSetting.alwaysOnTop
 		this.appCloseAction.value = userSetting.alwaysCloseDirect
 		this.appTheme.value = userSetting.colorSchemeMode
@@ -134,7 +139,7 @@ export default {
 	},
 	mounted() {
 		nextTick(() => {
-			const { appInfo } = this.$setting.getData()
+			const { appInfo } = this.setting
 			this.$refs.opDomain.initOption(appInfo.domain)
 			this.$refs.opPort.initOption(appInfo.port)
 			this.appTheme.value =
@@ -153,7 +158,7 @@ export default {
 				this.isClickable = false
 				this.$refs.opDomain.handleInputEditEnd()
 
-				let temp = this.$setting.getData()
+				let temp = this.setting
 				temp.appInfo.domain = e.value
 				temp.appInfo.host =
 					temp.appInfo.domain + ":" + temp.appInfo.port
@@ -177,7 +182,7 @@ export default {
 				this.isClickable = false
 				this.$refs.opPort.handleInputEditEnd()
 
-				let temp = this.$setting.getData()
+				let temp = this.setting
 				temp.appInfo.port = e.value
 				temp.appInfo.host =
 					temp.appInfo.domain + ":" + temp.appInfo.port
@@ -203,7 +208,7 @@ export default {
 					ipcRenderer.send("setting-always-on-top")
 				else ipcRenderer.send("setting-always-not-top")
 
-				let data = this.$setting.getData()
+				let data = this.setting
 				data.userSetting.alwaysOnTop = this.appOnTop.value
 				this.handleChangeSettingAction(data)
 			}
@@ -216,7 +221,7 @@ export default {
 					this.$public.emit("update-header-need-close-direct", true)
 				else this.$public.emit("update-header-need-close-direct", false)
 
-				let data = this.$setting.getData()
+				let data = this.setting
 				data.userSetting.alwaysCloseDirect = this.appCloseAction.value
 				this.handleChangeSettingAction(data)
 			}
@@ -227,7 +232,7 @@ export default {
 				this.appTheme.value = theme
 				ipcRenderer.send("color-schemeMode-" + theme)
 
-				let data = this.$setting.getData()
+				let data = this.setting
 				data.userSetting.colorSchemeMode = this.appTheme.value
 				this.handleChangeSettingAction(data)
 				this.$public.emit("update-color-mode", theme)

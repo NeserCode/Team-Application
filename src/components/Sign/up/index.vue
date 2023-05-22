@@ -77,11 +77,16 @@ import SignInput from "@/components/Sign/input/index.vue"
 import SignRadio from "@/components/Sign/radio/index.vue"
 import { _debounce } from "@/plugins/utils"
 // @ is an alias to /src
+import { HostKey } from "@/tokens"
 
 export default {
 	name: "Register",
 	components: { SignInput, SignRadio },
-	inject: ["$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+	},
 	data() {
 		return {
 			sexList: [
@@ -159,7 +164,7 @@ export default {
 		handleIAccount: _debounce(function (s) {
 			this.$conf
 				.checkUsername({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					username: s,
 				})
 				.then((response) => {
@@ -218,7 +223,7 @@ export default {
 					this.clickable = false
 					this.$conf
 						.handleUserSignUp({
-							host: this.$host.getData().host,
+							host: this.host.host,
 							username: this.signUp.username,
 							password: this.$conf.getMd5String(
 								this.signUp.password

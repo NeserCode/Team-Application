@@ -74,13 +74,21 @@
 // @ is an alias to /src
 import UserAvatar from "@/components/UserAssets/Avatar/index.vue"
 const { ipcRenderer } = window.require("electron")
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Navigation",
 	components: {
 		UserAvatar,
 	},
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			isLogined: false,
@@ -125,7 +133,7 @@ export default {
 			this.colorMode = mode
 		})
 		this.$public.on("app-provided", () => {
-			this.ensureHostorSuperUser(this.$setting.getData().userInfo)
+			this.ensureHostorSuperUser(this.setting.userInfo)
 
 			this.initColorMode()
 			this.initUserAvatar()
@@ -153,7 +161,6 @@ export default {
 			}
 
 			this.$public.emit("update-color-mode", this.colorMode)
-			console.log("colorMode", this.colorMode)
 		},
 		handleOpenUserArea: function () {
 			this.$router.push({ path: "/userArea" })
@@ -170,7 +177,7 @@ export default {
 			return false
 		},
 		switchColorMode: function () {
-			let data = this.$setting.getData()
+			let data = this.setting
 			data.userSetting.colorSchemeMode = this.colorMode
 			localStorage.setItem(
 				"color-scheme-mode",
@@ -187,14 +194,14 @@ export default {
 			})
 		},
 		initUserAvatar: function () {
-			this.avatarUrl = this.$setting.getData().userInfo.avatar
+			this.avatarUrl = this.setting.userInfo.avatar
 		},
 		ensureHostorSuperUser: function (info, cb) {
 			this.superUser = !!info.super
 
 			this.$conf
 				.queryHostOrganizationById({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id: info.id,
 				})
 				.then((res) => {

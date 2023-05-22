@@ -11,7 +11,6 @@ export default {
 			default: () => ({}),
 		},
 	},
-	inject: ["$setting", "$host"],
 	emits: ["update:info"],
 	data() {
 		return {

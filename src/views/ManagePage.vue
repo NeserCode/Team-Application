@@ -2,6 +2,7 @@
 import { _debounce } from "@/plugins/utils"
 import Organization from "@/components/Manage/organization.vue"
 import Announcement from "@/components/Manage/announcement.vue"
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Manage",
@@ -14,7 +15,14 @@ export default {
 			)
 		},
 	},
-	inject: ["$setting", "$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			allOrganization: [],
@@ -36,7 +44,7 @@ export default {
 		this.$public.on("app-provided", () => {})
 	},
 	created() {
-		const conf = this.$setting.getData()
+		const conf = this.setting
 		this.getAllOrganization()
 
 		this.ensureHostorSuperUser(conf.userInfo, conf.userInfo.id)
@@ -47,7 +55,7 @@ export default {
 			this.$conf
 				.getOrganizationById({
 					// Use the host to get the full URL
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id,
 				})
 				.then((res) => {
@@ -58,7 +66,7 @@ export default {
 		getAllOrganization() {
 			this.$conf
 				.allOrganization({
-					host: this.$host.getData().host,
+					host: this.host.host,
 				})
 				.then((res) => {
 					this.allOrganization = res.data
@@ -69,14 +77,14 @@ export default {
 
 			this.$conf
 				.queryHostOrganizationById({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id,
 				})
 				.then((res) => {
 					this.hostUser = res.data.length > 0
 					if (this.hostUser)
 						this.getOrganizationInfo(
-							this.$setting.getData().userInfo.organization
+							this.setting.userInfo.organization
 						)
 					cb && cb()
 				})

@@ -126,11 +126,16 @@
 <script>
 // @ is an alias to /src
 import { _debounce } from "@/plugins/utils"
+import { HostKey } from "@/tokens"
 
 export default {
 	name: "LeetcodeTable",
 	props: {},
-	inject: ["$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+	},
 	data() {
 		return {
 			idList: null,
@@ -184,7 +189,7 @@ export default {
 
 				this.$conf
 					.addLeetcodeSubmission({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						leetname,
 						username: localStorage.getItem("username"),
 						appkey: localStorage.getItem("appKey"),
@@ -263,7 +268,7 @@ export default {
 			if (localStorage.getItem("username"))
 				this.$conf
 					.getLeetcodeSubmission({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						username: localStorage.getItem("username"),
 					})
 					.then((res) => {

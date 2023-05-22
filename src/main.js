@@ -16,6 +16,9 @@ import 'element-plus/dist/index.css'
 Axios.defaults.withCredentials = true;
 
 const app = createApp(App)
+
+app.config.unwrapInjectedRef = true
+
 app.config.globalProperties.$axios = Axios
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$conf = appConfig

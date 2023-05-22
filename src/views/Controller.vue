@@ -3,14 +3,26 @@
 </template>
 
 <script>
+import { SettingKey, HostKey } from "@/tokens"
+
 export default {
 	name: "Controller",
 	watch: {
 		"$route.name"(val) {
 			this.$public.emit("update-app-title", val)
 		},
+		host() {
+			this.initController()
+		},
 	},
-	inject: ["$setting", "$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {}
 	},
@@ -50,9 +62,7 @@ export default {
 			this.handleCheckKey()
 		})
 
-		this.$public.on("app-provided", () => {
-			this.initController()
-		})
+		this.$public.on("app-provided", () => {})
 
 		this.$conf.setConfigListener(() => {
 			// console.log(prev, curr)
@@ -114,18 +124,18 @@ export default {
 		},
 		handleCheckKey: function () {
 			if (
-				this.$setting.getData().appInfo.key != null &&
+				this.setting.appInfo.key != null &&
 				localStorage.getItem("appKey") == (null || "")
 			)
-				this.handleSaveAppkey(this.$setting.getData().appInfo.key)
-			else if (this.$setting.getData().appInfo.key == (null || ""))
+				this.handleSaveAppkey(this.setting.appInfo.key)
+			else if (this.setting.appInfo.key == (null || ""))
 				this.handleRebuildKey("appkey")
-			else if (this.$setting.getData().userInfo.key == (null || ""))
+			else if (this.setting.userInfo.key == (null || ""))
 				this.handleRebuildKey("userkey")
 
 			this.$conf
 				.getDetailByKeys({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					userKey: localStorage.getItem("userKey"),
 					checkKey: localStorage.getItem("checkKey"),
 				})
@@ -156,7 +166,7 @@ export default {
 			this.handleCheckKey()
 		},
 		updateConfig: function ({ info, detail }) {
-			let tempSetting = this.$setting.getData()
+			let tempSetting = this.setting
 
 			// User Access
 			tempSetting.userInfo = {}

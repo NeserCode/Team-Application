@@ -60,6 +60,7 @@
 <script>
 // @ is an alias to /src
 import Avatar from "@/components/UserAssets/Avatar/index.vue"
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "UserAssets",
@@ -72,7 +73,14 @@ export default {
 			default: true,
 		},
 	},
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			userImage: localStorage.getItem("avatar"),
@@ -91,7 +99,7 @@ export default {
 	},
 	mounted() {
 		this.$public.on("app-provided", () => {
-			this.userImage = this.$setting.getData().userInfo.avatar ?? null
+			this.userImage = this.setting.userInfo.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
 		this.$public.on("update-main-user-info-upto-app", (data) => {
@@ -141,7 +149,7 @@ export default {
 		AccessChangeAvatar: function () {
 			this.$conf
 				.updateDBConfig(
-					this.$host.getData().host,
+					this.host.host,
 					"avatar",
 					this.inputSrc,
 					localStorage.getItem("username")
@@ -150,7 +158,7 @@ export default {
 					this.handleShowPopover()
 					this.userImage = this.inputSrc
 
-					let data = this.$setting.getData()
+					let data = this.setting
 					data.userInfo.avatar = this.userImage
 					this.$conf.updateLocalConfig(data, () => {
 						this.$public.emit("update-avatar", this.inputSrc)

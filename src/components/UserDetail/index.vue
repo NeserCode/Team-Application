@@ -55,6 +55,7 @@ import UserAssets from "@/components/UserAssets/index.vue"
 import Namespace from "@/components/UserAssets/Namespace/index.vue"
 import UserDetailOption from "@/components/UserDetail/Option/index.vue"
 import { clipboard } from "electron"
+import { SettingKey } from "@/tokens"
 
 export default {
 	name: "userDetail",
@@ -69,7 +70,11 @@ export default {
 			else return `About ${this.thisUsername}`
 		},
 	},
-	inject: ["$host", "$setting"],
+	inject: {
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			isConfirmOut: false,
@@ -199,7 +204,7 @@ export default {
 				this.$router.go(0)
 		},
 		initComponentLocal: function () {
-			const { userInfo } = this.$setting.getData()
+			const { userInfo } = this.setting
 			// 处理认证条目
 			this.accessOgz.access = !!userInfo.access
 

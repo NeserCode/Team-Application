@@ -4,10 +4,18 @@ import joinOrganization from "@/components/Dialogs/joinOrganization.vue"
 
 import { ElMessageBox } from "element-plus"
 import { _debounce } from "@/plugins/utils"
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Organization",
-	inject: ["$setting", "$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	components: {
 		createOrganization,
 		joinOrganization,
@@ -37,7 +45,7 @@ export default {
 		})
 
 		this.$public.on("update-from-keys-failed", () => {
-			const conf = this.$setting.getData()
+			const conf = this.setting
 			this.getOrganizationInfo(conf.userInfo.organization)
 			this.getMembersInfo(conf.userInfo.organization)
 
@@ -45,7 +53,7 @@ export default {
 		})
 	},
 	created() {
-		const conf = this.$setting.getData()
+		const conf = this.setting
 		this.getOrganizationInfo(conf.userInfo.organization)
 		this.getMembersInfo(conf.userInfo.organization)
 
@@ -68,7 +76,7 @@ export default {
 			this.$conf
 				.getOrganizationById({
 					// Use the host to get the full URL
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id,
 				})
 				.then((res) => {
@@ -79,7 +87,7 @@ export default {
 		getMembersInfo: function (oid) {
 			this.$conf
 				.getMembersByOrganizationId({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id: oid,
 				})
 				.then((res) => {
@@ -95,8 +103,7 @@ export default {
 					}
 					const { detail, members } = res.data
 					let i = detail.findIndex(
-						(detail) =>
-							detail.id === this.$setting.getData().userInfo.id
+						(detail) => detail.id === this.setting.userInfo.id
 					)
 					if (i !== -1) {
 						detail[i].self = true
@@ -118,7 +125,7 @@ export default {
 		getAllOrganization() {
 			this.$conf
 				.allOrganization({
-					host: this.$host.getData().host,
+					host: this.host.host,
 				})
 				.then((res) => {
 					let i = res.data.findIndex(
@@ -165,7 +172,7 @@ export default {
 			if (type === "HOST") {
 				this.$conf
 					.updateUserAccess({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						oid,
 						uid,
 					})
@@ -224,7 +231,7 @@ export default {
 
 						this.$conf
 							.handleQuitOrganization({
-								host: this.$host.getData().host,
+								host: this.host.host,
 								id: this.uid,
 							})
 							.then((res) => {
@@ -268,7 +275,7 @@ export default {
 
 					this.$conf
 						.handleDeleteOrganization({
-							host: this.$host.getData().host,
+							host: this.host.host,
 							id: this.organizationInfo.id,
 						})
 						.then((res) => {

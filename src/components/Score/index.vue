@@ -61,11 +61,16 @@
 import { _debounce } from "@/plugins/utils"
 import Detail from "@/components/Score/Detail/index.vue"
 import Pagination from "@/components/Frameworks/Pagination/index.vue"
+import { HostKey } from "@/tokens"
 
 export default {
 	name: "Score",
 	components: { Detail, Pagination },
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+	},
 	data() {
 		return {
 			loading: true,
@@ -134,7 +139,7 @@ export default {
 
 			this.$conf
 				.allLeetcodeSubmission({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					limit: this.pageLimit,
 					offset: (this.submitPage - 1) * this.pageLimit,
 				})
@@ -143,7 +148,6 @@ export default {
 					this.total = result.data.all
 
 					this.loading = false
-					console.log(result)
 
 					this.$public.emit("notice", {
 						type: "success",
@@ -160,7 +164,7 @@ export default {
 		getSubmitor: function (uid) {
 			this.$conf
 				.getUserDetailById({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id: uid,
 				})
 				.then((data) => {

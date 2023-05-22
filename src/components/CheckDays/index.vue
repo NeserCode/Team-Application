@@ -32,12 +32,21 @@
 
 <script>
 import { _debounce } from "@/plugins/utils.js"
+import { SettingKey, HostKey } from "@/tokens"
+
 // @ is an alias to /src
 
 export default {
 	name: "CheckDays",
 	components: {},
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			checkDays: [],
@@ -146,9 +155,9 @@ export default {
 			if (!this.checkObject.isCheck)
 				this.$conf
 					.updateCheckDay({
-						host: this.$host.getData().host,
-						username: this.$setting.getData().userInfo.name,
-						appKey: this.$setting.getData().appInfo.key,
+						host: this.host.host,
+						username: this.setting.userInfo.name,
+						appKey: this.setting.appInfo.key,
 						timeStamp: new Date().getTime(),
 					})
 					.then((res) => {
@@ -183,8 +192,8 @@ export default {
 			if (this.getUserStatus())
 				this.$conf
 					.getCheckDay({
-						host: this.$host.getData().host,
-						username: this.$setting.getData().userInfo.name,
+						host: this.host.host,
+						username: this.setting.userInfo.name,
 					})
 					.then((response) => {
 						response.data.forEach((element) => {

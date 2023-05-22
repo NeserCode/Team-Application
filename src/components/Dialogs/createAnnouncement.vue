@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref, watch, defineProps, defineEmits, inject } from "vue"
+import { HostKey } from "@/tokens"
 
 const $props = defineProps({
 	visible: Boolean,
@@ -11,8 +12,7 @@ const $props = defineProps({
 const $emit = defineEmits(["update:visible", "create:success"])
 const $conf = inject("$conf")
 const INJECTION = {
-	setting: inject("$setting", undefined).getData(),
-	host: inject("$host", undefined).getData(),
+	host: inject(HostKey, undefined),
 }
 
 const dialogFormVisible = ref(false)
@@ -61,7 +61,7 @@ const createAnnouncement = async () => {
 
 	$conf
 		.handleCreateAnnouncement({
-			host: INJECTION.host.host,
+			host: INJECTION.host.value.host,
 			oid: $props.selectedOrganizationInfo.id,
 			open: form.public === true ? 1 : 0,
 			content: form.content,
@@ -80,10 +80,13 @@ const createAnnouncement = async () => {
 </script>
 
 <template>
-	<el-dialog v-model="dialogFormVisible" title="创建组织">
+	<el-dialog v-model="dialogFormVisible" title="创建公告">
 		<el-form :model="form" :inline="true">
 			<el-form-item label="发起组织">
-				<el-input :value="selectedOrganizationInfo.name" readonly />
+				<el-input
+					:value="`#${selectedOrganizationInfo.id} ${selectedOrganizationInfo.name}`"
+					readonly
+				/>
 			</el-form-item>
 			<el-form-item label="是否公开">
 				<el-switch v-model="form.public" />
@@ -92,7 +95,7 @@ const createAnnouncement = async () => {
 				<el-input
 					v-model="form.content"
 					placeholder="请输入公告内容"
-					:rows="2"
+					:rows="3"
 					type="textarea"
 				/>
 			</el-form-item>

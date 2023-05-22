@@ -14,13 +14,33 @@
 				<span class="nickname">{{ item.nickname }}</span>
 			</span>
 		</div>
+		<div class="null" v-if="!rankers.length">
+			<el-empty description="暂时还没有人上榜"></el-empty>
+		</div>
 	</div>
 </template>
 
 <script>
+import { SettingKey, HostKey } from "@/tokens"
+
 export default {
 	name: "Rank",
-	inject: ["$host", "$setting"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
+	watch: {
+		setting: {
+			handler: function () {
+				this.initRankers()
+			},
+			deep: true,
+		},
+	},
 	data() {
 		return {
 			isLoading: true,
@@ -36,15 +56,11 @@ export default {
 		})
 		this.$public.on("app-provided", () => {})
 	},
-	created() {},
-	mounted() {
-		this.initRankers()
-	},
 	methods: {
 		initRankers: function () {
 			this.isLoading = true
 			this.$conf
-				.allCheckToday(this.$host.getData().host)
+				.allCheckToday(this.host.host)
 				.then((adata) => {
 					const { detail, order } = adata.data
 					this.rankers = detail.sort((a, b) => {

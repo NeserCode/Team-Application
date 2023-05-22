@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, computed, defineProps, defineEmits, inject } from "vue"
+import { SettingKey, HostKey } from "@/tokens"
 
 const $props = defineProps({
 	visible: Boolean,
@@ -11,8 +12,8 @@ const $props = defineProps({
 const $emit = defineEmits(["update:visible", "join:success"])
 const $conf = inject("$conf")
 const INJECTION = {
-	setting: inject("$setting", undefined).getData(),
-	host: inject("$host", undefined).getData(),
+	setting: inject(SettingKey, undefined),
+	host: inject(HostKey, undefined),
 }
 
 const Visible = ref(false)

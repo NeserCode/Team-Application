@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref, watch, defineProps, defineEmits, inject } from "vue"
+import { SettingKey, HostKey } from "@/tokens"
 
 const $props = defineProps({
 	visible: Boolean,
@@ -8,8 +9,8 @@ const $emit = defineEmits(["update:visible", "create:success"])
 const $conf = inject("$conf")
 const $utils = inject("$utils")
 const INJECTION = {
-	setting: inject("$setting", undefined).getData(),
-	host: inject("$host", undefined).getData(),
+	setting: inject(SettingKey, undefined),
+	host: inject(HostKey, undefined),
 }
 
 const dialogFormVisible = ref(false)

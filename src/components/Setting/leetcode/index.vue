@@ -30,11 +30,16 @@
 <script>
 import SettingOption from "@/components/Setting/option/index.vue"
 // const { ipcRenderer } = window.require("electron");
+import { SettingKey } from "@/tokens"
 
 export default {
 	name: "LeetcodeSetting",
 	components: { SettingOption },
-	inject: ["$setting", "$host"],
+	inject: {
+		setting: {
+			from: SettingKey,
+		},
+	},
 	data() {
 		return {
 			isDisabled: false,
@@ -51,7 +56,7 @@ export default {
 		}
 	},
 	mounted() {
-		const { userAccount } = this.$setting.getData()
+		const { userAccount } = this.setting
 
 		this.$refs.opSession.initOption(
 			userAccount.cookie_leetcode["LEETCODE_SESSION"]
@@ -77,7 +82,7 @@ export default {
 				)
 				.then(() => {
 					this.isDisabled = true
-					let data = this.$setting.getData()
+					let data = this.setting
 					data.userAccount.cookie_leetcode[cookie.name] = cookie.value
 					this.handleChangeSettingAction(data)
 					this.$public.emit("opInputEditFinish")

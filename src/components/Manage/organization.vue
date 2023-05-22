@@ -2,6 +2,7 @@
 // import { _debounce } from "@/plugins/utils"
 import { ElMessageBox } from "element-plus"
 import renameOrganization from "@/components/Dialogs/renameOrganization.vue"
+import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Manage-Organization",
@@ -19,7 +20,14 @@ export default {
 			default: false,
 		},
 	},
-	inject: ["$setting", "$host"],
+	inject: {
+		host: {
+			from: HostKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
 	emits: ["update:info"],
 	data() {
 		return {
@@ -58,7 +66,7 @@ export default {
 		getMembersInfo: function (oid) {
 			this.$conf
 				.getMembersByOrganizationId({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					id: oid,
 				})
 				.then((res) => {
@@ -75,8 +83,7 @@ export default {
 					}
 					const { detail, members } = res.data
 					let i = detail.findIndex(
-						(detail) =>
-							detail.id === this.$setting.getData().userInfo.id
+						(detail) => detail.id === this.setting.userInfo.id
 					)
 					if (i !== -1) detail[i].self = true
 
@@ -110,14 +117,14 @@ export default {
 			if (status)
 				this.$conf
 					.handleActiveOrganization({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						id: this.selectedOrganizationInfo.id,
 					})
 					.then(cb)
 			else
 				this.$conf
 					.handleDeactiveOrganization({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						id: this.selectedOrganizationInfo.id,
 					})
 					.then(cb)
@@ -132,7 +139,7 @@ export default {
 				})
 				this.$conf
 					.handleQuitOrganization({
-						host: this.$host.getData().host,
+						host: this.host.host,
 						id: user.id,
 					})
 					.then((res) => {
@@ -158,7 +165,7 @@ export default {
 
 			this.$conf
 				.handleJoinOrganization({
-					host: this.$host.getData().host,
+					host: this.host.host,
 					oid: this.selectedOrganizationInfo.id,
 					uid: user.id,
 				})
@@ -185,7 +192,7 @@ export default {
 
 					this.$conf
 						.handleDeleteOrganization({
-							host: this.$host.getData().host,
+							host: this.host.host,
 							id: this.selectedOrganizationInfo.id,
 						})
 						.then((res) => {
