@@ -74,7 +74,7 @@
 // @ is an alias to /src
 import UserAvatar from "@/components/UserAssets/Avatar/index.vue"
 const { ipcRenderer } = window.require("electron")
-import { SettingKey, HostKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Navigation",
@@ -88,6 +88,25 @@ export default {
 		setting: {
 			from: SettingKey,
 		},
+		userStatus: {
+			from: UserStatusKey,
+		},
+	},
+	watch: {
+		setting: {
+			handler: function () {
+				this.initColorMode()
+			},
+			deep: true,
+		},
+		userStatus: {
+			handler: function () {
+				this.isLogined = this.userStatus.isLogined
+				this.superUser = this.userStatus.isSuper
+				this.hostUser = this.userStatus.isHost
+			},
+			deep: true,
+		},
 	},
 	data() {
 		return {
@@ -100,28 +119,16 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on(
-			"update-main-user-info-upto-app",
-			({ detail, info }) => {
-				this.isLogined = true
-				this.avatarUrl =
-					detail.avatar ??
-					(localStorage.getItem("avatar") === "null"
-						? null
-						: localStorage.getItem("avatar"))
-
-				this.ensureHostorSuperUser(info, () => {
-					console.log(
-						`Host(${this.hostUser}) or Super(${this.superUser})`
-					)
-				})
-			}
-		)
+		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+			this.isLogined = true
+			this.avatarUrl =
+				detail.avatar ??
+				(localStorage.getItem("avatar") === "null"
+					? null
+					: localStorage.getItem("avatar"))
+		})
 		this.$public.on("update-avatar", (avatar) => {
 			this.avatarUrl = avatar
-		})
-		this.$public.on("user-created-organization", (info) => {
-			this.ensureHostorSuperUser(info, info.id)
 		})
 		this.$public.on("clear-user-sign-status", () => {
 			this.isLogined = false
@@ -133,18 +140,11 @@ export default {
 			this.colorMode = mode
 		})
 		this.$public.on("app-provided", () => {
-			this.ensureHostorSuperUser(this.setting.userInfo)
-
-			this.initColorMode()
 			this.initUserAvatar()
 		})
 	},
 
-	mounted() {
-		this.isLogined = !(
-			localStorage.getItem("checkKey") == (undefined || null)
-		)
-	},
+	mounted() {},
 	methods: {
 		initColorMode: function () {
 			this.colorMode =
@@ -195,20 +195,6 @@ export default {
 		},
 		initUserAvatar: function () {
 			this.avatarUrl = this.setting.userInfo.avatar
-		},
-		ensureHostorSuperUser: function (info, cb) {
-			this.superUser = !!info.super
-
-			this.$conf
-				.queryHostOrganizationById({
-					host: this.host.host,
-					id: info.id,
-				})
-				.then((res) => {
-					this.hostUser = res.data.length > 0
-
-					cb && cb()
-				})
 		},
 	},
 }

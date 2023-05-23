@@ -1,13 +1,17 @@
 <script setup>
 import { ref, inject, reactive, watch, computed } from "vue"
-import { SettingKey, AnnouncementKey } from "@/tokens"
+import { SettingKey, AnnouncementKey, UserStatusKey } from "@/tokens"
 
 const setting = inject(SettingKey)
 const announcement = inject(AnnouncementKey)
+const userStatus = inject(UserStatusKey)
 // const $public = inject("$public")
 
 const showOgAnnouncement = computed(() => {
-	if (setting.value) return !!setting.value.userInfo.organization
+	if (setting.value)
+		return (
+			!!setting.value.userInfo.organization && userStatus.value.isLogined
+		)
 	else return false
 })
 const sorted = ref({
@@ -15,14 +19,21 @@ const sorted = ref({
 	ogAnnouncement: [],
 })
 
-watch(announcement, () => {
-	const { openAnnouncement, ogAnnouncement } = useSortAnnouncement(
-		announcement.value
-	)
+watch(
+	announcement,
+	() => {
+		const { openAnnouncement, ogAnnouncement } = useSortAnnouncement(
+			announcement.value
+		)
 
-	sorted.value = { openAnnouncement, ogAnnouncement }
-	console.log(sorted.value)
-})
+		sorted.value = { openAnnouncement, ogAnnouncement }
+		console.log(sorted.value)
+	},
+	{
+		deep: true,
+		immediate: true,
+	}
+)
 
 function useSortAnnouncement(array) {
 	const sorterByTime = (a, b) => {
@@ -98,12 +109,6 @@ function getTimeComputed(timeStamp) {
 						<span class="time" v-if="item.timeStamp">{{
 							getTimeComputed(item.timeStamp)
 						}}</span>
-						<span class="open icon">
-							<el-icon title="是否公开">
-								<View v-if="item.open" />
-								<Hide v-else />
-							</el-icon>
-						</span>
 					</span>
 				</div>
 			</div>
@@ -124,15 +129,15 @@ function getTimeComputed(timeStamp) {
 }
 
 .announcement-item {
-	@apply inline-flex flex-col w-full border-2 my-1 rounded
+	@apply inline-flex flex-col w-full border-2 my-1 rounded px-3 py-2
 	border-gray-200 dark:border-gray-600;
 }
 .content {
-	@apply inline-block text-base text-left whitespace-pre-wrap max-h-36 overflow-auto
-	px-3 py-2;
+	@apply inline-block pr-1 text-base text-left whitespace-pre-wrap max-h-48 overflow-auto;
 }
 .details {
-	@apply inline-flex flex-col bg-gray-200 dark:bg-gray-700;
+	@apply inline-flex flex-col pt-2 border-t-2
+	border-gray-200 dark:border-gray-600;
 }
 .icon .el-icon {
 	@apply text-base w-auto;

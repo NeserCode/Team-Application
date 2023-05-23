@@ -22,7 +22,7 @@ import Navigation from "@/components/Frameworks/Navigation/index.vue"
 import Controller from "@/views/Controller.vue"
 const { ipcRenderer } = window.require("electron")
 import { ref, onBeforeMount, inject, nextTick, provide } from "vue"
-import { AnnouncementKey, HostKey, SettingKey } from "@/tokens"
+import { AnnouncementKey, HostKey, SettingKey, UserStatusKey } from "@/tokens"
 
 const $conf = inject("$conf")
 const $public = inject("$public")
@@ -35,11 +35,17 @@ const statusReal = ref({
 const isSettingCloseDirect = ref(false)
 const setting = ref(null),
 	announcement = ref(null),
-	host = ref(null)
+	host = ref(null),
+	userStatus = ref({
+		isSuper: false,
+		isHost: false,
+		isLogined: false,
+	})
 
 provide(HostKey, host)
 provide(SettingKey, setting)
 provide(AnnouncementKey, announcement)
+provide(UserStatusKey, userStatus)
 
 //listen public response $public.on('',()=>{})
 $public.on("update-footer-status-upto-app", (status) => {
@@ -53,7 +59,7 @@ $public.on("update-header-need-close-direct", (symbol) => {
 	isSettingCloseDirect.value = symbol
 })
 
-$conf.getConfPromise().then((data) => {
+$conf.getConfPromise().then(async (data) => {
 	setting.value = data.data
 	$conf.getHost().then((res) => {
 		host.value = res
@@ -61,8 +67,17 @@ $conf.getConfPromise().then((data) => {
 			.allAnnouncement({
 				host: res.host,
 			})
-			.then((res) => {
+			.then(async (res) => {
 				announcement.value = res.data
+				const { isHost, isSuper } = await ensureHostorSuperUser(
+					data.data.userInfo
+				)
+				userStatus.value.isHost = isHost
+				userStatus.value.isSuper = isSuper
+				userStatus.value.isLogined = !(
+					localStorage.getItem("checkKey") == (undefined || null)
+				)
+
 				nextTick(() => {
 					initApp()
 					$public.emit("app-provided")
@@ -70,6 +85,21 @@ $conf.getConfPromise().then((data) => {
 			})
 	})
 })
+
+async function ensureHostorSuperUser(info, cb) {
+	let superUser = !!info.super
+	let hostUser = false
+
+	const { data } = await $conf.queryHostOrganizationById({
+		host: host.value.host,
+		id: info.id,
+	})
+
+	hostUser = data.length > 0
+
+	cb && cb()
+	return { isSuper: superUser, isHost: hostUser }
+}
 
 onBeforeMount(() => {
 	// document.onmousedown = (e) => {

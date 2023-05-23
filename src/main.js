@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import { useRoute } from 'vue-router'
 import './assets/tailwind.css'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -25,6 +26,7 @@ app.config.globalProperties.$conf = appConfig
 app.config.globalProperties.$leetcode = leetcode
 app.config.globalProperties.$public = new mitt()
 app.config.globalProperties.$router = router
+app.config.globalProperties.$route = useRoute()
 
 app.provide('$axios', Axios)
 app.provide('$utils', utils)
@@ -32,6 +34,7 @@ app.provide('$conf', appConfig)
 app.provide('$leetcode', leetcode)
 app.provide('$public', new mitt())
 app.provide('$router', router)
+app.provide('$route', useRoute())
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

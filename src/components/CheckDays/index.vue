@@ -32,7 +32,7 @@
 
 <script>
 import { _debounce } from "@/plugins/utils.js"
-import { SettingKey, HostKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 // @ is an alias to /src
 
@@ -46,6 +46,9 @@ export default {
 		setting: {
 			from: SettingKey,
 		},
+		userStatus: {
+			from: UserStatusKey,
+		},
 	},
 	data() {
 		return {
@@ -58,15 +61,32 @@ export default {
 				isLoading: false,
 				timeStamp: null,
 			},
-			userStatus: false,
+			isLogined: false,
 		}
+	},
+	watch: {
+		setting: {
+			handler: function () {
+				this.initCheckDay()
+			},
+			deep: true,
+			immediate: true,
+		},
+		userStatus: {
+			handler: function (val) {
+				this.isLogined = val.isLogined
+				this.initCheckDay()
+			},
+			deep: true,
+			immediate: true,
+		},
 	},
 	beforeCreate() {
 		this.$public.on("update-check-day", () => {
 			this.initCheckDay()
 		})
 		this.$public.on("clear-user-sign-status", () => {
-			this.userStatus = false
+			// this.isLogined = false
 		})
 
 		this.$public.on("app-provided", () => {
@@ -74,7 +94,6 @@ export default {
 		})
 	},
 	mounted() {},
-
 	methods: {
 		//this.getMonthDays(T.getFullYear(), T.getMonth(), 0) 某月天数
 		getMonthDays: (year, month) => new Date(year, month, 0).getDate(),
@@ -130,7 +149,6 @@ export default {
 					})
 			}
 			this.checkDays = days
-			this.userStatus = this.getUserStatus()
 			this.getCheckedDay()
 		},
 		handleCheckDay: _debounce(function () {
@@ -189,7 +207,7 @@ export default {
 		getCheckedDay: function () {
 			let checkedDays = []
 
-			if (this.getUserStatus())
+			if (this.isLogined)
 				this.$conf
 					.getCheckDay({
 						host: this.host.host,
@@ -230,7 +248,6 @@ export default {
 						})
 					})
 		},
-		getUserStatus: () => localStorage.getItem("username"),
 	},
 }
 </script>

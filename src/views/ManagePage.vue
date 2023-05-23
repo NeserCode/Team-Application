@@ -2,7 +2,7 @@
 import { _debounce } from "@/plugins/utils"
 import Organization from "@/components/Manage/organization.vue"
 import Announcement from "@/components/Manage/announcement.vue"
-import { SettingKey, HostKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Manage",
@@ -21,6 +21,25 @@ export default {
 		},
 		setting: {
 			from: SettingKey,
+		},
+		userStatus: {
+			from: UserStatusKey,
+		},
+	},
+	watch: {
+		userStatus: {
+			handler: function () {
+				this.superUser = this.userStatus.isSuper
+				this.hostUser = this.userStatus.isHost
+
+				if (this.setting.userInfo.organization)
+					this.getOrganizationInfo(this.setting.userInfo.organization)
+				this.$nextTick(() => {
+					this.getAllOrganization()
+				})
+			},
+			deep: true,
+			immediate: true,
 		},
 	},
 	data() {
@@ -43,12 +62,7 @@ export default {
 
 		this.$public.on("app-provided", () => {})
 	},
-	created() {
-		const conf = this.setting
-		this.getAllOrganization()
-
-		this.ensureHostorSuperUser(conf.userInfo, conf.userInfo.id)
-	},
+	created() {},
 	mounted() {},
 	methods: {
 		getOrganizationInfo: _debounce(function (id) {
@@ -70,23 +84,6 @@ export default {
 				})
 				.then((res) => {
 					this.allOrganization = res.data
-				})
-		},
-		ensureHostorSuperUser: function (info, id, cb) {
-			this.superUser = !!info.super
-
-			this.$conf
-				.queryHostOrganizationById({
-					host: this.host.host,
-					id,
-				})
-				.then((res) => {
-					this.hostUser = res.data.length > 0
-					if (this.hostUser)
-						this.getOrganizationInfo(
-							this.setting.userInfo.organization
-						)
-					cb && cb()
 				})
 		},
 		updatePageData() {
@@ -121,8 +118,6 @@ export default {
 			</span>
 		</div>
 		<Organization
-			:superUser="superUser"
-			:hostUser="hostUser"
 			:selectedOrganizationInfo="selectedOrganizationInfo"
 			@update:info="updatePageData"
 		/>

@@ -4,7 +4,7 @@ import joinOrganization from "@/components/Dialogs/joinOrganization.vue"
 
 import { ElMessageBox } from "element-plus"
 import { _debounce } from "@/plugins/utils"
-import { SettingKey, HostKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Organization",
@@ -14,6 +14,9 @@ export default {
 		},
 		setting: {
 			from: SettingKey,
+		},
+		userStatus: {
+			from: UserStatusKey,
 		},
 	},
 	components: {
@@ -36,6 +39,29 @@ export default {
 			},
 		}
 	},
+	watch: {
+		userStatus: {
+			handler: function () {
+				this.superUser = this.userStatus.isSuper
+			},
+			deep: true,
+		},
+		setting: {
+			handler: function () {
+				const conf = this.setting
+				this.getOrganizationInfo(conf.userInfo.organization)
+				this.getMembersInfo(conf.userInfo.organization)
+			},
+			deep: true,
+		},
+		host: {
+			handler: function () {
+				console.log(this.host.host)
+				this.getAllOrganization()
+			},
+			deep: true,
+		},
+	},
 	beforeCreate() {
 		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
 			this.getOrganizationInfo(detail.access_team)
@@ -52,16 +78,14 @@ export default {
 			this.getAllOrganization()
 		})
 	},
-	created() {
+	created() {},
+	mounted() {
 		const conf = this.setting
 		this.getOrganizationInfo(conf.userInfo.organization)
 		this.getMembersInfo(conf.userInfo.organization)
 
-		this.superUser = conf.userInfo.super
-
 		this.getAllOrganization()
 	},
-	mounted() {},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
 		computedOwnOgnizationClass: (item) => {

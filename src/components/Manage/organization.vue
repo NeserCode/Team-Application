@@ -2,7 +2,7 @@
 // import { _debounce } from "@/plugins/utils"
 import { ElMessageBox } from "element-plus"
 import renameOrganization from "@/components/Dialogs/renameOrganization.vue"
-import { SettingKey, HostKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Manage-Organization",
@@ -10,14 +10,6 @@ export default {
 		selectedOrganizationInfo: {
 			type: Object,
 			default: () => ({}),
-		},
-		hostUser: {
-			type: Boolean,
-			default: false,
-		},
-		superUser: {
-			type: Boolean,
-			default: false,
 		},
 	},
 	inject: {
@@ -27,19 +19,11 @@ export default {
 		setting: {
 			from: SettingKey,
 		},
+		userStatus: {
+			from: UserStatusKey,
+		},
 	},
 	emits: ["update:info"],
-	data() {
-		return {
-			membersInfo: {},
-			visible: {
-				rename: false,
-				renameFn: (val) => {
-					this.visible.rename = val
-				},
-			},
-		}
-	},
 	computed: {
 		detailVisible: function () {
 			return (
@@ -49,16 +33,41 @@ export default {
 		},
 	},
 	watch: {
-		"selectedOrganizationInfo.id": {
+		selectedOrganizationInfo: {
 			handler: function (val) {
-				this.getMembersInfo(val)
+				this.getMembersInfo(val.id)
 			},
+			deep: true,
+		},
+		userStatus: {
+			handler: function () {
+				this.superUser = this.userStatus.isSuper
+				this.hostUser = this.userStatus.isHost
+			},
+			deep: true,
+			immediate: true,
 		},
 	},
 	components: { renameOrganization },
+	data() {
+		return {
+			membersInfo: {},
+			superUser: false,
+			hostUser: false,
+			visible: {
+				rename: false,
+				renameFn: (val) => {
+					this.visible.rename = val
+				},
+			},
+		}
+	},
 	beforeCreate() {
 		this.$public.on("app-provided", () => {
-			this.getMembersInfo(this.selectedOrganizationInfo.id)
+			// this.getMembersInfo(this.selectedOrganizationInfo.id)
+			setTimeout(() => {
+				console.log(this.selectedOrganizationInfo)
+			}, 3000)
 		})
 	},
 	methods: {
@@ -97,6 +106,7 @@ export default {
 		},
 		updatePageData: function (msg) {
 			this.getMembersInfo(this.selectedOrganizationInfo.id)
+
 			this.$emit("update:info")
 			this.$public.emit("notice", {
 				type: "success",

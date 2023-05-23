@@ -61,11 +61,11 @@ function initConfig() {
     return {
         appInfo: {
             name: "Team Beta",
-            version: "v1.0.0 Beta",
+            version: "v1.5.0 Beta",
             key: getRandomKey(16),
-            host: null,
-            port: null,
-            domain: null,
+            host: "",
+            port: "",
+            domain: "",
             organization: null,
         },
         userInfo: {
@@ -88,8 +88,8 @@ function initConfig() {
         },
         userAccount: {
             cookie_leetcode: {
-                'x-csrftoken': null,
-                LEETCODE_SESSION: null,
+                'x-csrftoken': "",
+                LEETCODE_SESSION: "",
             }
         }
     }

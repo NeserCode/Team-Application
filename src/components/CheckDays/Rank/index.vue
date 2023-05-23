@@ -39,6 +39,7 @@ export default {
 				this.initRankers()
 			},
 			deep: true,
+			immediate: true,
 		},
 	},
 	data() {
