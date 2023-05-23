@@ -30,7 +30,7 @@ const $public = inject("$public")
 const appTitle = ref("Team Application")
 const statusReal = ref({
 	status: "success",
-	text: "😀 Thank your usage for Team Application",
+	text: "Thank your usage for Team Application",
 })
 const isSettingCloseDirect = ref(false)
 const setting = ref(null),

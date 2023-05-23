@@ -101,11 +101,11 @@ function getTimeComputed(timeStamp) {
 
 	// is recent days?
 	if (year === now.getFullYear() && month === now.getMonth() + 1) {
-		if (day === now.getDate()) return `${hour}:${minute}:${second}`
+		if (day === now.getDate()) return `今天 [${hour}:${minute}:${second}]`
 		else if (day === now.getDate() - 1)
-			return `昨天 ${hour}:${minute}:${second}`
+			return `昨天 [${hour}:${minute}:${second}]`
 		else if (day === now.getDate() - 2)
-			return `前天 ${hour}:${minute}:${second}`
+			return `前天 [${hour}:${minute}:${second}]`
 		else return `${now.getDate() - day}天前 [${hour}:${minute}:${second}]`
 	} else if (year === now.getFullYear())
 		return `${month}/${day} [${hour}:${minute}:${second}]`
@@ -176,11 +176,11 @@ function getTimeComputed(timeStamp) {
 }
 
 .announcements {
-	@apply mt-4 border-t-2 border-gray-200 pt-2;
+	@apply mt-4;
 }
 .title {
-	@apply inline-flex justify-start w-full max-w-sm items-center mb-1
-	text-xl font-semibold;
+	@apply inline-flex justify-start w-full max-w-sm items-center mb-1 pt-2
+	text-xl font-semibold border-t-2 border-gray-200;
 }
 .announcement-list {
 	@apply flex flex-col max-w-sm max-h-32 overflow-auto;

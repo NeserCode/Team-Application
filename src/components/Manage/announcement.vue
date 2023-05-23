@@ -77,11 +77,12 @@ export default {
 
 			// is recent days?
 			if (year === now.getFullYear() && month === now.getMonth() + 1) {
-				if (day === now.getDate()) return `${hour}:${minute}:${second}`
+				if (day === now.getDate())
+					return `今天 [${hour}:${minute}:${second}]`
 				else if (day === now.getDate() - 1)
-					return `昨天 ${hour}:${minute}:${second}`
+					return `昨天 [${hour}:${minute}:${second}]`
 				else if (day === now.getDate() - 2)
-					return `前天 ${hour}:${minute}:${second}`
+					return `前天 [${hour}:${minute}:${second}]`
 				else
 					return `${
 						now.getDate() - day

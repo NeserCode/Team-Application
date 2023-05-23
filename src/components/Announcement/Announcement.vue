@@ -18,12 +18,17 @@ const sorted = ref({
 	openAnnouncement: [],
 	ogAnnouncement: [],
 })
+const isOpenEye = ref(false)
+const tip = computed(
+	() => `${!isOpenEye.value ? "只看非公开" : "查看全部"}内容`
+)
 
 watch(
 	announcement,
 	() => {
 		const { openAnnouncement, ogAnnouncement } = useSortAnnouncement(
-			announcement.value
+			announcement.value,
+			!isOpenEye.value
 		)
 
 		sorted.value = { openAnnouncement, ogAnnouncement }
@@ -34,21 +39,32 @@ watch(
 	}
 )
 
-function useSortAnnouncement(array) {
+function useSortAnnouncement(array, open = false) {
 	const sorterByTime = (a, b) => {
 		return new Date(b.time) - new Date(a.time)
 	}
 	const ogFilter = (item) => item.oid === setting.value.userInfo.organization
+	const openFilter = open ? (item) => !!item.oid : (item) => !item.open
+
 	if (!array) return reactive({ openAnnouncement: [], ogAnnouncement: [] })
 	const openAnnouncement = array
 		.filter((item) => !!item.open)
 		.sort(sorterByTime)
 	const ogAnnouncement = array
 		.filter(ogFilter)
-		.filter((item) => !!item.oid)
+		.filter(openFilter)
 		.sort(sorterByTime)
 
 	return reactive({ openAnnouncement, ogAnnouncement })
+}
+
+function updateAnnouncement(odata = announcement.value) {
+	const { openAnnouncement, ogAnnouncement } = useSortAnnouncement(
+		odata,
+		!isOpenEye.value
+	)
+
+	sorted.value = { openAnnouncement, ogAnnouncement }
 }
 
 function getTimeComputed(timeStamp) {
@@ -63,22 +79,35 @@ function getTimeComputed(timeStamp) {
 
 	// is recent days?
 	if (year === now.getFullYear() && month === now.getMonth() + 1) {
-		if (day === now.getDate()) return `${hour}:${minute}:${second}`
+		if (day === now.getDate()) return `今天 [${hour}:${minute}:${second}]`
 		else if (day === now.getDate() - 1)
-			return `昨天 ${hour}:${minute}:${second}`
+			return `昨天 [${hour}:${minute}:${second}]`
 		else if (day === now.getDate() - 2)
-			return `前天 ${hour}:${minute}:${second}`
+			return `前天 [${hour}:${minute}:${second}]`
 		else return `${now.getDate() - day}天前 [${hour}:${minute}:${second}]`
 	} else if (year === now.getFullYear())
 		return `${month}/${day} [${hour}:${minute}:${second}]`
 	else return `${year}/${month}/${day} [${hour}:${minute}:${second}]`
+}
+
+function toggleOpenEye() {
+	isOpenEye.value = !isOpenEye.value
+	updateAnnouncement()
 }
 </script>
 
 <template>
 	<div class="announcement-main">
 		<div class="og-announcement" v-if="showOgAnnouncement">
-			<span class="title">组织公告</span>
+			<span class="title">
+				<span>组织公告</span>
+				<button class="btn view" :title="tip" @click="toggleOpenEye">
+					<el-icon>
+						<View v-if="isOpenEye" />
+						<Hide v-else />
+					</el-icon>
+				</button>
+			</span>
 			<div class="announcement-list">
 				<div
 					class="announcement-item"
@@ -99,6 +128,9 @@ function getTimeComputed(timeStamp) {
 					</span>
 				</div>
 			</div>
+			<div class="null" v-if="!sorted.ogAnnouncement.length">
+				<el-empty description="暂时还没有内容"></el-empty>
+			</div>
 		</div>
 		<div class="open-announcement">
 			<span class="title">软件公告</span>
@@ -116,6 +148,9 @@ function getTimeComputed(timeStamp) {
 					</span>
 				</div>
 			</div>
+			<div class="null" v-if="!sorted.openAnnouncement.length">
+				<el-empty description="暂时还没有内容"></el-empty>
+			</div>
 		</div>
 	</div>
 </template>
@@ -127,9 +162,12 @@ function getTimeComputed(timeStamp) {
 }
 
 .title {
-	@apply sticky inline-block w-full h-full top-0 py-4 text-lg font-extralight text-left border-b-2
+	@apply sticky inline-flex items-center justify-between w-full h-full top-0 py-4 text-lg font-extralight text-left border-b-2
 	border-gray-200 dark:border-gray-600;
 	z-index: 2001;
+}
+.title .btn {
+	@apply rounded-full px-2;
 }
 
 .announcement-item {
