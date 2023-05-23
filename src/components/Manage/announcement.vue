@@ -2,6 +2,8 @@
 // import { _debounce } from "@/plugins/utils"
 // import { ElMessageBox } from "element-plus"
 import createAnnouncement from "@/components/Dialogs/createAnnouncement.vue"
+import { reactive } from "vue"
+import { AnnouncementKey, SettingKey } from "@/tokens"
 
 export default {
 	name: "Manage-Announcement",
@@ -12,9 +14,29 @@ export default {
 		},
 	},
 	emits: ["update:info"],
+	inject: {
+		announcement: {
+			from: AnnouncementKey,
+		},
+		setting: {
+			from: SettingKey,
+		},
+	},
+	watch: {
+		selectedOrganizationInfo: {
+			handler: function () {
+				const { ogAnnouncement } = this.useAnnouncement(
+					this.announcement
+				)
+				this.announcementInfo = ogAnnouncement
+			},
+			deep: true,
+		},
+	},
+	components: { createAnnouncement },
 	data() {
 		return {
-			announcementInfo: {},
+			announcementInfo: [],
 			visible: {
 				create: false,
 				createFn: (val) => {
@@ -27,14 +49,6 @@ export default {
 			},
 		}
 	},
-	// watch: {
-	// 	"selectedOrganizationInfo.id": {
-	// 		handler: function (val) {
-	// 			this.getMembersInfo(val)
-	// 		},
-	// 	},
-	// },
-	components: { createAnnouncement },
 	beforeCreate() {
 		this.$public.on("app-provided", () => {
 			// this.getMembersInfo(this.selectedOrganizationInfo.id)
@@ -44,6 +58,38 @@ export default {
 		handleCreateAnnouncement: function () {
 			this.visible.create = true
 		},
+		useAnnouncement: function (data) {
+			const ogFilter = (item) =>
+				item.oid === this.selectedOrganizationInfo.id
+			const ogAnnouncement = data.filter(ogFilter)
+
+			return reactive({ ogAnnouncement })
+		},
+		getTimeComputed: function (timeStamp) {
+			const now = new Date()
+			const time = new Date(parseInt(timeStamp))
+			const year = time.getFullYear()
+			const month = time.getMonth() + 1
+			const day = time.getDate()
+			const hour = time.getHours()
+			const minute = time.getMinutes()
+			const second = time.getSeconds()
+
+			// is recent days?
+			if (year === now.getFullYear() && month === now.getMonth() + 1) {
+				if (day === now.getDate()) return `${hour}:${minute}:${second}`
+				else if (day === now.getDate() - 1)
+					return `昨天 ${hour}:${minute}:${second}`
+				else if (day === now.getDate() - 2)
+					return `前天 ${hour}:${minute}:${second}`
+				else
+					return `${
+						now.getDate() - day
+					}天前 [${hour}:${minute}:${second}]`
+			} else if (year === now.getFullYear())
+				return `${month}/${day} [${hour}:${minute}:${second}]`
+			else return `${year}/${month}/${day} [${hour}:${minute}:${second}]`
+		},
 	},
 }
 </script>
@@ -52,17 +98,43 @@ export default {
 	<div class="announcement">
 		<div class="announcement-info">
 			<span class="title">
-				<span>公告</span>
+				<span>公告管理</span>
 				<button class="btn" @click="handleCreateAnnouncement">
 					<el-icon><Plus /></el-icon>
 				</button>
 			</span>
 			<div class="announcement-list">
-				<div class="announcement-item">
-					<span class="details"> these are some details </span>
-					<span class="content"> here contents </span>
+				<div
+					class="announcement-item item"
+					v-for="item in announcementInfo"
+					:key="item.id"
+				>
+					<span class="details">
+						<span class="time" v-if="item.timeStamp">{{
+							getTimeComputed(item.timeStamp)
+						}}</span>
+						<span class="open icon">
+							<el-icon title="是否公开">
+								<View v-if="item.open" />
+								<Hide v-else />
+							</el-icon>
+						</span>
+					</span>
+					<span class="content">{{ item.content }}</span>
+					<span class="op">
+						<button class="btn">
+							<el-icon><Edit /></el-icon>
+						</button>
+						<button class="btn danger">
+							<el-icon><Delete /></el-icon>
+						</button>
+					</span>
 				</div>
 			</div>
+			<el-empty
+				description="暂时还没有发布过公告"
+				v-if="!this.announcementInfo.length"
+			></el-empty>
 		</div>
 		<createAnnouncement
 			:visible="visible.create"
@@ -83,16 +155,15 @@ export default {
 	text-3xl font-semibold;
 }
 
+.announcement-info {
+	@apply flex flex-col w-full max-w-2xl my-8 justify-center;
+}
 .item {
-	@apply flex items-center justify-between w-full my-1 px-4 py-2 text-base border-2 rounded-md
+	@apply flex flex-col justify-between w-full my-1 px-4 py-2 text-base border-2 rounded-md
 	border-gray-200 dark:border-gray-700
 	hover:border-gray-300 dark:hover:border-gray-500
 	hover:shadow
 	hover:bg-gray-50 dark:hover:bg-gray-600 transition-all;
-}
-.item.own,
-.item.self {
-	@apply bg-green-100 dark:bg-green-800;
 }
 
 .btn {
@@ -104,17 +175,20 @@ export default {
 .title > .btn {
 	@apply mx-2 text-base rounded-full p-1.5;
 }
+.op {
+	@apply inline-flex items-center justify-end;
+}
 .op > .btn {
 	@apply mx-1 text-base;
 }
 
-.position {
-	@apply inline-flex justify-center items-center px-1 py-0.5 mx-2 rounded
-	text-gray-50 dark:text-gray-800 bg-gray-400 dark:bg-gray-500
-	transition-all shadow;
+.details {
+	@apply inline-flex items-center;
 }
-.position.HOST,
-.position.JOIN {
-	@apply bg-green-400 dark:bg-green-500;
+.details .icon {
+	@apply inline-flex items-center px-2 text-lg;
+}
+.content {
+	@apply max-h-40 overflow-auto whitespace-pre-wrap;
 }
 </style>

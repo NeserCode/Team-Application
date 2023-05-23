@@ -26,11 +26,11 @@ export default {
 	data() {
 		return {
 			organizationInfo: {},
-			hasOrganization: false,
 			allOrganization: [],
 			willJoinOrganization: {},
 			membersInfo: {},
 			superUser: false,
+			hasOrganization: false,
 			uid: null,
 			uType: null,
 			visible: {
@@ -56,7 +56,6 @@ export default {
 		},
 		host: {
 			handler: function () {
-				console.log(this.host.host)
 				this.getAllOrganization()
 			},
 			deep: true,
@@ -106,6 +105,7 @@ export default {
 				.then((res) => {
 					// Save the organization information
 					this.organizationInfo = res.data[0] || {}
+					this.hasOrganization = !!this.organizationInfo.id
 				})
 		},
 		getMembersInfo: function (oid) {
@@ -144,7 +144,7 @@ export default {
 				})
 
 			// Update the user's access status
-			this.updateUserAccessStatus(oid)
+			this.hasOrganization = !!oid
 		},
 		getAllOrganization() {
 			this.$conf
@@ -158,9 +158,6 @@ export default {
 					if (i !== -1) res.data[i].own = true
 					this.allOrganization = res.data
 				})
-		},
-		updateUserAccessStatus: function (bool) {
-			this.hasOrganization = !!bool
 		},
 		handleCreateOrganization: _debounce(function () {
 			if (this.hasOrganization) {
@@ -205,10 +202,7 @@ export default {
 						this.getMembersInfo(oid)
 
 						this.getAllOrganization()
-						this.$public.emit("user-created-organization", {
-							super: this.superUser,
-							id: uid,
-						})
+						this.$public.emit("user-created-organization", { oid })
 					})
 			} else if (type === "JOIN") {
 				this.hasOrganization = !!oid
@@ -218,6 +212,7 @@ export default {
 				this.getMembersInfo(oid)
 
 				this.getAllOrganization()
+				this.$public.emit("user-joined-organization", { oid })
 			}
 		},
 		updatePageData: function (msg) {
@@ -260,12 +255,16 @@ export default {
 							})
 							.then((res) => {
 								if (res.data.affectedRows) {
+									this.organizationInfo = {}
 									this.updatePageData(
 										`${
 											this.uType === "JOIN"
 												? "退出组织"
 												: "撤销申请"
 										}成功`
+									)
+									this.$public.emit(
+										"user-leaved-organization"
 									)
 								}
 							})
@@ -305,6 +304,7 @@ export default {
 						.then((res) => {
 							if (res.data.affectedRows) {
 								this.updatePageData("解散组织成功")
+								this.$public.emit("user-deleted-organization")
 							}
 						})
 				})

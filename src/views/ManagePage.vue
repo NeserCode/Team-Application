@@ -32,6 +32,7 @@ export default {
 				this.superUser = this.userStatus.isSuper
 				this.hostUser = this.userStatus.isHost
 
+				console.log("host changed")
 				if (this.setting.userInfo.organization)
 					this.getOrganizationInfo(this.setting.userInfo.organization)
 				this.$nextTick(() => {
@@ -57,6 +58,15 @@ export default {
 		})
 
 		this.$public.on("update-from-keys-failed", () => {
+			if (this.hostUser)
+				this.getOrganizationInfo(this.setting.userInfo.organization)
+			this.getAllOrganization()
+		})
+
+		this.$public.on("user-created-organization", () => {
+			console.log("user-created-organization")
+			if (this.hostUser)
+				this.getOrganizationInfo(this.setting.userInfo.organization)
 			this.getAllOrganization()
 		})
 
@@ -175,7 +185,7 @@ export default {
 	@apply flex flex-col w-full max-w-2xl justify-center;
 }
 .organization-list .title {
-	@apply text-4xl mb-4 font-bold;
+	@apply text-3xl mb-4 font-bold;
 }
 .organization-list .item .info {
 	@apply inline-flex items-center;

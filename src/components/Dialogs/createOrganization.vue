@@ -8,10 +8,8 @@ const $props = defineProps({
 const $emit = defineEmits(["update:visible", "create:success"])
 const $conf = inject("$conf")
 const $utils = inject("$utils")
-const INJECTION = {
-	setting: inject(SettingKey, undefined),
-	host: inject(HostKey, undefined),
-}
+const setting = inject(SettingKey, undefined),
+	host = inject(HostKey, undefined)
 
 const dialogFormVisible = ref(false)
 
@@ -46,7 +44,7 @@ const checkOrganizationName = $utils._debounce(async (string) => {
 	$conf
 		.checkOrganizationName({
 			// Get the host address
-			host: INJECTION.host.host,
+			host: host.value.host,
 			// Get the name parameter
 			name: string,
 		})
@@ -88,13 +86,13 @@ const createOrganization = async () => {
 		return
 	}
 
-	form.appKey = INJECTION.setting.appInfo.key
-	form.hostId = INJECTION.setting.userInfo.id
+	form.appKey = setting.value.appInfo.key
+	form.hostId = setting.value.userInfo.id
 	form.organizationKey = $conf.getRandomKey(16)
 
 	$conf
 		.handleCreateOrganization({
-			host: INJECTION.host.host,
+			host: host.value.host,
 			appKey: form.appKey,
 			hostId: form.hostId,
 			name: form.name,

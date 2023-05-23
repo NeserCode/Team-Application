@@ -17,6 +17,7 @@ import 'element-plus/dist/index.css'
 Axios.defaults.withCredentials = true;
 
 const app = createApp(App)
+const mitter = new mitt()
 
 app.config.unwrapInjectedRef = true
 
@@ -24,7 +25,7 @@ app.config.globalProperties.$axios = Axios
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$conf = appConfig
 app.config.globalProperties.$leetcode = leetcode
-app.config.globalProperties.$public = new mitt()
+app.config.globalProperties.$public = mitter
 app.config.globalProperties.$router = router
 app.config.globalProperties.$route = useRoute()
 
@@ -32,7 +33,7 @@ app.provide('$axios', Axios)
 app.provide('$utils', utils)
 app.provide('$conf', appConfig)
 app.provide('$leetcode', leetcode)
-app.provide('$public', new mitt())
+app.provide('$public', mitter)
 app.provide('$router', router)
 app.provide('$route', useRoute())
 

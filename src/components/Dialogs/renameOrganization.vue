@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, computed, defineProps, defineEmits, inject } from "vue"
-import { SettingKey, HostKey } from "@/tokens"
+import { HostKey } from "@/tokens"
 
 const $props = defineProps({
 	visible: Boolean,
@@ -12,7 +12,6 @@ const $props = defineProps({
 const $emit = defineEmits(["update:visible", "rename:success"])
 const $conf = inject("$conf")
 const INJECTION = {
-	setting: inject(SettingKey, undefined),
 	host: inject(HostKey, undefined),
 }
 
@@ -45,7 +44,7 @@ watch(
 const renameOrganization = () => {
 	$conf
 		.handleRenameOrganization({
-			host: INJECTION.host.host,
+			host: INJECTION.host.value.host,
 			name: typeContent.value,
 			id: $props.organization.id,
 		})

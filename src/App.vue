@@ -59,6 +59,22 @@ $public.on("update-header-need-close-direct", (symbol) => {
 	isSettingCloseDirect.value = symbol
 })
 
+// organization
+$public.on("user-deleted-organization", () => {
+	userStatus.value.isHost = false
+	setting.value.userInfo.organization = null
+})
+$public.on("user-created-organization", ({ oid }) => {
+	userStatus.value.isHost = true
+	setting.value.userInfo.organization = oid
+})
+$public.on("user-joined-organization", ({ oid }) => {
+	setting.value.userInfo.organization = oid
+})
+$public.on("user-leaved-organization", () => {
+	setting.value.userInfo.organization = null
+})
+
 $conf.getConfPromise().then(async (data) => {
 	setting.value = data.data
 	$conf.getHost().then((res) => {

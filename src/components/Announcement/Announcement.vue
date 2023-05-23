@@ -27,7 +27,6 @@ watch(
 		)
 
 		sorted.value = { openAnnouncement, ogAnnouncement }
-		console.log(sorted.value)
 	},
 	{
 		deep: true,
@@ -39,10 +38,15 @@ function useSortAnnouncement(array) {
 	const sorterByTime = (a, b) => {
 		return new Date(b.time) - new Date(a.time)
 	}
+	const ogFilter = (item) => item.oid === setting.value.userInfo.organization
+	if (!array) return reactive({ openAnnouncement: [], ogAnnouncement: [] })
 	const openAnnouncement = array
 		.filter((item) => !!item.open)
 		.sort(sorterByTime)
-	const ogAnnouncement = array.filter((item) => !!item.oid).sort(sorterByTime)
+	const ogAnnouncement = array
+		.filter(ogFilter)
+		.filter((item) => !!item.oid)
+		.sort(sorterByTime)
 
 	return reactive({ openAnnouncement, ogAnnouncement })
 }
