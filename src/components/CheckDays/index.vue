@@ -65,13 +65,6 @@ export default {
 		}
 	},
 	watch: {
-		setting: {
-			handler: function () {
-				this.initCheckDay()
-			},
-			deep: true,
-			immediate: true,
-		},
 		userStatus: {
 			handler: function (val) {
 				this.isLogined = val.isLogined
@@ -90,7 +83,9 @@ export default {
 		})
 
 		this.$public.on("app-provided", () => {
-			this.initCheckDay()
+			// this.$nextTick(() => {
+			// 	this.initCheckDay()
+			// })
 		})
 	},
 	mounted() {},

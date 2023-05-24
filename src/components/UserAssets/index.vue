@@ -96,11 +96,20 @@ export default {
 		"$route.name"() {
 			this.popoverSwitch = false
 		},
+		setting: {
+			handler() {
+				this.userImage = this.setting.userInfo.avatar ?? null
+				localStorage.setItem("avatar", this.userImage)
+			},
+			deep: true,
+		},
 	},
 	mounted() {
 		this.$public.on("app-provided", () => {
-			this.userImage = this.setting.userInfo.avatar ?? null
-			localStorage.setItem("avatar", this.userImage)
+			// this.$nextTick(() => {
+			// 	this.userImage = this.setting.userInfo.avatar ?? null
+			// 	localStorage.setItem("avatar", this.userImage)
+			// })
 		})
 		this.$public.on("update-main-user-info-upto-app", (data) => {
 			this.userImage = data.detail.avatar ?? null

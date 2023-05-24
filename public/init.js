@@ -18,7 +18,7 @@ function readMain() {
     fs.readFile(
         initPath(),
         (err, data) => {
-            if (err) {
+            if (err || !JSON.parse(data) || JSON.parse(data) == null) {
                 handleLog(`读取设置时发生错误 ${err}`)
                 fs.writeFile(
                     initPath(),

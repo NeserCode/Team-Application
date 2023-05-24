@@ -34,8 +34,8 @@ export default {
 		},
 	},
 	watch: {
-		setting: {
-			handler: function () {
+		host: {
+			handler() {
 				this.initRankers()
 			},
 			deep: true,
@@ -55,8 +55,13 @@ export default {
 		this.$public.on("clear-user-sign-status", () => {
 			this.initRankers()
 		})
-		this.$public.on("app-provided", () => {})
+		this.$public.on("app-provided", () => {
+			// this.$nextTick(() => {
+			// 	this.initRankers()
+			// })
+		})
 	},
+	mounted() {},
 	methods: {
 		initRankers: function () {
 			this.isLoading = true

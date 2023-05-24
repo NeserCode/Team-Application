@@ -4,7 +4,7 @@ import joinOrganization from "@/components/Dialogs/joinOrganization.vue"
 
 import { ElMessageBox } from "element-plus"
 import { _debounce } from "@/plugins/utils"
-import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
+import { SettingKey, HostKey, UserStatusKey, AnnouncementKey } from "@/tokens"
 
 export default {
 	name: "Organization",
@@ -18,6 +18,9 @@ export default {
 		userStatus: {
 			from: UserStatusKey,
 		},
+		announcement: {
+			from: AnnouncementKey,
+		},
 	},
 	components: {
 		createOrganization,
@@ -26,6 +29,7 @@ export default {
 	data() {
 		return {
 			organizationInfo: {},
+			announcementInfo: [],
 			allOrganization: [],
 			willJoinOrganization: {},
 			membersInfo: {},
@@ -60,6 +64,14 @@ export default {
 			},
 			deep: true,
 		},
+		announcement: {
+			handler: function () {
+				this.announcementInfo = this.announcement.filter(
+					(item) => item.oid === this.setting.userInfo.organization
+				)
+			},
+			deep: true,
+		},
 	},
 	beforeCreate() {
 		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
@@ -84,6 +96,9 @@ export default {
 		this.getMembersInfo(conf.userInfo.organization)
 
 		this.getAllOrganization()
+		this.announcementInfo = this.announcement.filter(
+			(item) => item.oid === this.setting.userInfo.organization
+		)
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
@@ -314,6 +329,36 @@ export default {
 					})
 				})
 		},
+		getTimeComputed: function (timeStamp) {
+			const addZero = (num) => (num < 10 ? `0${num}` : num)
+			const now = new Date()
+			const time = new Date(parseInt(timeStamp))
+			const year = addZero(time.getFullYear())
+			const month = addZero(time.getMonth() + 1)
+			const day = addZero(time.getDate())
+			const hour = addZero(time.getHours())
+			const minute = addZero(time.getMinutes())
+			const second = addZero(time.getSeconds())
+
+			// is recent days?
+			if (
+				time.getFullYear() === now.getFullYear() &&
+				time.getMonth() + 1 === now.getMonth() + 1
+			) {
+				if (time.getDate() === now.getDate())
+					return `今天 [${hour}:${minute}:${second}]`
+				else if (time.getDate() === now.getDate() - 1)
+					return `昨天 [${hour}:${minute}:${second}]`
+				else if (time.getDate() === now.getDate() - 2)
+					return `前天 [${hour}:${minute}:${second}]`
+				else
+					return `${
+						now.getDate() - time.getDate()
+					}天前 [${hour}:${minute}:${second}]`
+			} else if (year === now.getFullYear())
+				return `${month}/${day} [${hour}:${minute}:${second}]`
+			else return `${year}/${month}/${day} [${hour}:${minute}:${second}]`
+		},
 	},
 }
 </script>
@@ -333,6 +378,13 @@ export default {
 				>
 				<button class="btn" @click="quitOrganization()">
 					<el-icon><Minus /></el-icon>
+				</button>
+				<button
+					class="btn"
+					@click="$router.push('/manage')"
+					v-if="userStatus.isHost || userStatus.isSuper"
+				>
+					<el-icon><Setting /></el-icon>
 				</button>
 			</span>
 			<div class="member-list">
@@ -382,6 +434,42 @@ export default {
 					<el-icon><Promotion /></el-icon>
 				</button>
 			</span>
+		</div>
+		<div class="announcement-info">
+			<span class="title">
+				<span>公告列表</span>
+				<button
+					class="btn"
+					@click="$router.push('/manage')"
+					v-if="userStatus.isHost || userStatus.isSuper"
+				>
+					<el-icon><Setting /></el-icon>
+				</button>
+			</span>
+			<div class="announcement-list">
+				<div
+					class="announcement-item item"
+					v-for="item in announcementInfo"
+					:key="item.id"
+				>
+					<span class="details">
+						<span class="time" v-if="item.timeStamp">{{
+							getTimeComputed(item.timeStamp)
+						}}</span>
+						<span class="open icon">
+							<el-icon title="是否公开">
+								<View v-if="item.open" />
+								<Hide v-else />
+							</el-icon>
+						</span>
+					</span>
+					<span class="content">{{ item.content }}</span>
+				</div>
+			</div>
+			<el-empty
+				description="暂时还没有发布过公告"
+				v-if="!this.announcementInfo.length"
+			></el-empty>
 		</div>
 		<create-organization
 			:visible="visible.createOrganization"
@@ -461,5 +549,29 @@ export default {
 }
 .title .btn {
 	@apply mx-2 text-base rounded-full p-1.5;
+}
+
+.announcement-info {
+	@apply flex flex-col w-full max-w-2xl my-8 justify-center;
+}
+.announcement-info .title {
+	@apply text-4xl mb-4 font-bold;
+}
+.announcement-list .item {
+	@apply flex-col items-start;
+}
+
+.btn.danger {
+	@apply text-red-500 dark:text-red-400;
+}
+
+.details {
+	@apply inline-flex items-center;
+}
+.details .icon {
+	@apply inline-flex items-center px-2 text-lg;
+}
+.content {
+	@apply max-h-40 overflow-auto whitespace-pre-wrap;
 }
 </style>

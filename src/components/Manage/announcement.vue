@@ -1,9 +1,10 @@
 <script>
-// import { _debounce } from "@/plugins/utils"
-// import { ElMessageBox } from "element-plus"
+import { _debounce } from "@/plugins/utils"
+import { ElMessageBox } from "element-plus"
 import createAnnouncement from "@/components/Dialogs/createAnnouncement.vue"
+import editAnnouncement from "@/components/Dialogs/editAnnouncement.vue"
 import { reactive } from "vue"
-import { AnnouncementKey, SettingKey } from "@/tokens"
+import { AnnouncementKey, SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Manage-Announcement",
@@ -15,6 +16,9 @@ export default {
 	},
 	emits: ["update:info"],
 	inject: {
+		host: {
+			from: HostKey,
+		},
 		announcement: {
 			from: AnnouncementKey,
 		},
@@ -25,18 +29,16 @@ export default {
 	watch: {
 		selectedOrganizationInfo: {
 			handler: function () {
-				const { ogAnnouncement } = this.useAnnouncement(
-					this.announcement
-				)
-				this.announcementInfo = ogAnnouncement
+				this.updatePageData("更新公告成功", false)
 			},
 			deep: true,
 		},
 	},
-	components: { createAnnouncement },
+	components: { createAnnouncement, editAnnouncement },
 	data() {
 		return {
 			announcementInfo: [],
+			willEditAnnouncement: {},
 			visible: {
 				create: false,
 				createFn: (val) => {
@@ -51,7 +53,9 @@ export default {
 	},
 	beforeCreate() {
 		this.$public.on("app-provided", () => {
-			// this.getMembersInfo(this.selectedOrganizationInfo.id)
+			// this.$nextTick(() => {
+			// 	this.updatePageData("更新公告成功", false)
+			// })
 		})
 	},
 	methods: {
@@ -65,31 +69,125 @@ export default {
 
 			return reactive({ ogAnnouncement })
 		},
+		updatePageData: _debounce(function (msg, emit = true) {
+			const { ogAnnouncement } = this.useAnnouncement(this.announcement)
+			this.announcementInfo = ogAnnouncement
+
+			emit && this.$emit("update:info")
+			this.$public.emit("notice", {
+				type: "success",
+				msg,
+			})
+		}, 500),
+		createEmitter: function () {
+			this.updatePageData("创建公告成功")
+			this.$public.emit("user-updated-announcement")
+		},
+		updateEmitter: function () {
+			this.updatePageData("更新公告成功")
+			this.$public.emit("user-updated-announcement")
+		},
 		getTimeComputed: function (timeStamp) {
+			const addZero = (num) => (num < 10 ? `0${num}` : num)
 			const now = new Date()
 			const time = new Date(parseInt(timeStamp))
-			const year = time.getFullYear()
-			const month = time.getMonth() + 1
-			const day = time.getDate()
-			const hour = time.getHours()
-			const minute = time.getMinutes()
-			const second = time.getSeconds()
+			const year = addZero(time.getFullYear())
+			const month = addZero(time.getMonth() + 1)
+			const day = addZero(time.getDate())
+			const hour = addZero(time.getHours())
+			const minute = addZero(time.getMinutes())
+			const second = addZero(time.getSeconds())
 
 			// is recent days?
-			if (year === now.getFullYear() && month === now.getMonth() + 1) {
-				if (day === now.getDate())
+			if (
+				time.getFullYear() === now.getFullYear() &&
+				time.getMonth() + 1 === now.getMonth() + 1
+			) {
+				if (time.getDate() === now.getDate())
 					return `今天 [${hour}:${minute}:${second}]`
-				else if (day === now.getDate() - 1)
+				else if (time.getDate() === now.getDate() - 1)
 					return `昨天 [${hour}:${minute}:${second}]`
-				else if (day === now.getDate() - 2)
+				else if (time.getDate() === now.getDate() - 2)
 					return `前天 [${hour}:${minute}:${second}]`
 				else
 					return `${
-						now.getDate() - day
+						now.getDate() - time.getDate()
 					}天前 [${hour}:${minute}:${second}]`
 			} else if (year === now.getFullYear())
 				return `${month}/${day} [${hour}:${minute}:${second}]`
 			else return `${year}/${month}/${day} [${hour}:${minute}:${second}]`
+		},
+		editAnnouncement: function (selectedAnnouncement) {
+			this.willEditAnnouncement = selectedAnnouncement
+			this.visible.edit = true
+		},
+		deleteAnnouncement: function (selectedID) {
+			ElMessageBox.confirm(
+				"您正在尝试删除一则公告，本操作不可撤回",
+				"请确认",
+				{
+					confirmButtonText: "确认",
+					cancelButtonText: "取消",
+					type: "warning",
+				}
+			)
+				.then(() => {
+					this.$public.emit("notice", {
+						msg: `正在删除公告`,
+					})
+
+					this.$conf
+						.handleDeleteAnnouncement({
+							host: this.host.host,
+							id: selectedID,
+						})
+						.then((res) => {
+							if (res.data.affectedRows) {
+								this.updatePageData("删除公告成功")
+								this.$public.emit("user-updated-announcement")
+							}
+						})
+				})
+				.catch((e) => {
+					console.log(e)
+					this.$public.emit("notice", {
+						msg: `取消删除公告`,
+					})
+				})
+		},
+		changeAnnouncementVisible: function (selectedID) {
+			ElMessageBox.confirm(
+				`您正在尝试将本公告改为公开状态，本操作不可撤回`,
+				"请确认",
+				{
+					confirmButtonText: "确认",
+					cancelButtonText: "取消",
+					type: "info",
+				}
+			)
+				.then(() => {
+					this.$public.emit("notice", {
+						msg: `正在公开公告`,
+					})
+
+					this.$conf
+						.handleUpdateAnnouncementToOpen({
+							host: this.host.host,
+							id: selectedID,
+						})
+						.then((res) => {
+							if (res.data.affectedRows) {
+								this.updatePageData("公开成功")
+								this.$public.emit("user-updated-announcement")
+							}
+						})
+				})
+				.catch((e) => {
+					console.log(e)
+					this.$public.emit("notice", {
+						msg: `取消公开`,
+					})
+				})
 		},
 	},
 }
@@ -123,10 +221,20 @@ export default {
 					</span>
 					<span class="content">{{ item.content }}</span>
 					<span class="op">
-						<button class="btn">
+						<button class="btn" @click="editAnnouncement(item)">
 							<el-icon><Edit /></el-icon>
 						</button>
-						<button class="btn danger">
+						<button
+							class="btn"
+							v-if="!item.open"
+							@click="changeAnnouncementVisible(item.id)"
+						>
+							<el-icon><View /></el-icon>
+						</button>
+						<button
+							class="btn danger"
+							@click="deleteAnnouncement(item.id)"
+						>
 							<el-icon><Delete /></el-icon>
 						</button>
 					</span>
@@ -140,6 +248,14 @@ export default {
 		<createAnnouncement
 			:visible="visible.create"
 			@update:visible="visible.createFn"
+			@create:success="createEmitter"
+			:selectedOrganizationInfo="selectedOrganizationInfo"
+		/>
+		<editAnnouncement
+			:visible="visible.edit"
+			@update:visible="visible.editFn"
+			@update:success="updateEmitter"
+			:selectedAnnouncement="willEditAnnouncement"
 			:selectedOrganizationInfo="selectedOrganizationInfo"
 		/>
 	</div>

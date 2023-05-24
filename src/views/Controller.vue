@@ -7,14 +7,6 @@ import { SettingKey, HostKey } from "@/tokens"
 
 export default {
 	name: "Controller",
-	watch: {
-		"$route.name"(val) {
-			this.$public.emit("update-app-title", val)
-		},
-		host() {
-			this.initController()
-		},
-	},
 	inject: {
 		host: {
 			from: HostKey,
@@ -23,18 +15,22 @@ export default {
 			from: SettingKey,
 		},
 	},
+	watch: {
+		"$route.name"(val) {
+			this.$public.emit("update-app-title", val)
+		},
+		setting: {
+			handler() {
+				this.initController()
+			},
+			deep: true,
+		},
+	},
 	data() {
 		return {}
 	},
 	created() {},
 	beforeCreate() {
-		this.$public.on(
-			"update-main-user-info-upto-app",
-			({ info, detail }) => {
-				this.updateConfig({ info, detail })
-			}
-		)
-
 		this.$public.on("notice", ({ title, msg, type, time, fn }) => {
 			let duration = 3000,
 				position = "bottom-right"

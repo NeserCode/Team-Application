@@ -32,10 +32,11 @@ export default {
 				this.superUser = this.userStatus.isSuper
 				this.hostUser = this.userStatus.isHost
 
-				console.log("host changed")
-				if (this.setting.userInfo.organization)
-					this.getOrganizationInfo(this.setting.userInfo.organization)
 				this.$nextTick(() => {
+					if (this.setting.userInfo.organization)
+						this.getOrganizationInfo(
+							this.setting.userInfo.organization
+						)
 					this.getAllOrganization()
 				})
 			},
@@ -64,7 +65,6 @@ export default {
 		})
 
 		this.$public.on("user-created-organization", () => {
-			console.log("user-created-organization")
 			if (this.hostUser)
 				this.getOrganizationInfo(this.setting.userInfo.organization)
 			this.getAllOrganization()

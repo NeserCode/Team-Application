@@ -8,8 +8,12 @@ const $props = defineProps({
 		type: Object,
 		default: () => ({}),
 	},
+	selectedAnnouncement: {
+		type: Object,
+		default: () => ({}),
+	},
 })
-const $emit = defineEmits(["update:visible", "create:success"])
+const $emit = defineEmits(["update:visible", "update:success"])
 const $conf = inject("$conf")
 const INJECTION = {
 	host: inject(HostKey, undefined),
@@ -19,7 +23,6 @@ const dialogFormVisible = ref(false)
 
 const form = reactive({
 	content: "",
-	public: false,
 })
 
 // visible
@@ -33,44 +36,41 @@ watch(
 	() => dialogFormVisible.value,
 	(val) => {
 		$emit("update:visible", val)
-	}
-)
-
-watch(
-	() => dialogFormVisible.value,
-	(val) => {
 		if (!val) {
 			clickable.value = false
-			form.content = ""
-			form.public = false
+			form.content = $props.selectedAnnouncement.content
 		}
+	}
+)
+watch(
+	() => $props.selectedAnnouncement,
+	(val) => {
+		form.content = val.content
 	}
 )
 
 watch(
 	() => form.content,
 	(val) => {
-		clickable.value = !(val.length === 0)
+		clickable.value = !(val === $props.selectedAnnouncement.content)
 	}
 )
 
 // create organization
 const clickable = ref(false)
-const createAnnouncement = async () => {
+const editAnnouncement = async () => {
 	clickable.value = false
 
 	$conf
-		.handleCreateAnnouncement({
+		.handleUpdateAnnouncementContent({
 			host: INJECTION.host.value.host,
-			oid: $props.selectedOrganizationInfo.id,
-			open: form.public === true ? 1 : 0,
+			id: $props.selectedAnnouncement.id,
 			content: form.content,
-			timeStamp: new Date().getTime(),
 		})
 		.then((res) => {
 			dialogFormVisible.value = false
 			clickable.value = true
-			res.data.affectedRows && $emit("create:success")
+			res.data.affectedRows && $emit("update:success")
 		})
 		.catch((err) => {
 			clickable.value = true
@@ -88,13 +88,10 @@ const createAnnouncement = async () => {
 					readonly
 				/>
 			</el-form-item>
-			<el-form-item label="是否公开">
-				<el-switch v-model="form.public" />
-			</el-form-item>
 			<el-form-item label="内容">
 				<el-input
 					v-model="form.content"
-					placeholder="请输入公告内容"
+					placeholder="请输入新的公告内容"
 					:rows="3"
 					type="textarea"
 				/>
@@ -105,7 +102,7 @@ const createAnnouncement = async () => {
 				<el-button @click="dialogFormVisible = false">取消</el-button>
 				<el-button
 					type="primary"
-					@click="createAnnouncement"
+					@click="editAnnouncement"
 					:disabled="!clickable"
 				>
 					<span v-if="clickable">确定</span>

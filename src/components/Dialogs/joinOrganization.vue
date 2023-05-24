@@ -90,23 +90,31 @@ watch(organization, () => {
 })
 
 function getTimeComputed(timeStamp) {
+	const addZero = (num) => (num < 10 ? `0${num}` : num)
 	const now = new Date()
 	const time = new Date(parseInt(timeStamp))
-	const year = time.getFullYear()
-	const month = time.getMonth() + 1
-	const day = time.getDate()
-	const hour = time.getHours()
-	const minute = time.getMinutes()
-	const second = time.getSeconds()
+	const year = addZero(time.getFullYear())
+	const month = addZero(time.getMonth() + 1)
+	const day = addZero(time.getDate())
+	const hour = addZero(time.getHours())
+	const minute = addZero(time.getMinutes())
+	const second = addZero(time.getSeconds())
 
 	// is recent days?
-	if (year === now.getFullYear() && month === now.getMonth() + 1) {
-		if (day === now.getDate()) return `今天 [${hour}:${minute}:${second}]`
-		else if (day === now.getDate() - 1)
+	if (
+		time.getFullYear() === now.getFullYear() &&
+		time.getMonth() + 1 === now.getMonth() + 1
+	) {
+		if (time.getDate() === now.getDate())
+			return `今天 [${hour}:${minute}:${second}]`
+		else if (time.getDate() === now.getDate() - 1)
 			return `昨天 [${hour}:${minute}:${second}]`
-		else if (day === now.getDate() - 2)
+		else if (time.getDate() === now.getDate() - 2)
 			return `前天 [${hour}:${minute}:${second}]`
-		else return `${now.getDate() - day}天前 [${hour}:${minute}:${second}]`
+		else
+			return `${
+				now.getDate() - time.getDate()
+			}天前 [${hour}:${minute}:${second}]`
 	} else if (year === now.getFullYear())
 		return `${month}/${day} [${hour}:${minute}:${second}]`
 	else return `${year}/${month}/${day} [${hour}:${minute}:${second}]`

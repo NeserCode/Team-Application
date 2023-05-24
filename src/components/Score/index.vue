@@ -88,6 +88,13 @@ export default {
 		submitPage: function () {
 			this.getSubmitArr()
 		},
+		host: {
+			handler() {
+				this.initTables()
+			},
+			deep: true,
+			immediate: true,
+		},
 	},
 	beforeCreate() {
 		this.$public.on("clear-user-sign-status", () => {
@@ -96,10 +103,11 @@ export default {
 		this.$public.on("leetcode-local-submit", () => {
 			this.initTables()
 		})
-		this.$public.on("app-provided", () => {})
-	},
-	created() {
-		this.initTables()
+		this.$public.on("app-provided", () => {
+			// this.$nextTick(() => {
+			// 	this.initTables()
+			// })
+		})
 	},
 	mounted() {},
 	methods: {

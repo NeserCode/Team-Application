@@ -47,6 +47,30 @@ provide(SettingKey, setting)
 provide(AnnouncementKey, announcement)
 provide(UserStatusKey, userStatus)
 
+const setAsyncAnnouncement = async () => {
+	announcement.value = await $conf
+		.allAnnouncement({
+			host: host.value.host,
+		})
+		.then((res) => res.data)
+}
+const setAsyncSetting = async () => {
+	setting.value = await $conf.getConfPromise().then((data) => data.data)
+}
+const setAsyncHost = async () => {
+	host.value = await $conf.getHost().then((res) => res)
+}
+const setAsyncUserStatus = async () => {
+	const { isHost, isSuper } = await ensureHostorSuperUser(
+		setting.value.userInfo
+	)
+	userStatus.value.isHost = isHost
+	userStatus.value.isSuper = isSuper
+	userStatus.value.isLogined = !(
+		localStorage.getItem("checkKey") == (undefined || null)
+	)
+}
+
 //listen public response $public.on('',()=>{})
 $public.on("update-footer-status-upto-app", (status) => {
 	statusReal.value.status = status.status
@@ -75,30 +99,22 @@ $public.on("user-leaved-organization", () => {
 	setting.value.userInfo.organization = null
 })
 
-$conf.getConfPromise().then(async (data) => {
-	setting.value = data.data
-	$conf.getHost().then((res) => {
-		host.value = res
-		$conf
-			.allAnnouncement({
-				host: res.host,
-			})
-			.then(async (res) => {
-				announcement.value = res.data
-				const { isHost, isSuper } = await ensureHostorSuperUser(
-					data.data.userInfo
-				)
-				userStatus.value.isHost = isHost
-				userStatus.value.isSuper = isSuper
-				userStatus.value.isLogined = !(
-					localStorage.getItem("checkKey") == (undefined || null)
-				)
+// announcement
+$public.on("user-updated-announcement", () => {
+	setAsyncAnnouncement()
+})
 
-				nextTick(() => {
-					initApp()
-					$public.emit("app-provided")
-				})
-			})
+nextTick(async () => {
+	console.time("provide")
+	await setAsyncHost()
+	await setAsyncSetting()
+	await setAsyncAnnouncement()
+	await setAsyncUserStatus()
+
+	nextTick(() => {
+		initApp()
+		$public.emit("app-provided")
+		console.timeEnd("Provide")
 	})
 })
 

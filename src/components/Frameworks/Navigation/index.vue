@@ -93,17 +93,14 @@ export default {
 		},
 	},
 	watch: {
-		setting: {
-			handler: function () {
-				this.initColorMode()
-			},
-			deep: true,
-		},
 		userStatus: {
 			handler: function () {
 				this.isLogined = this.userStatus.isLogined
 				this.superUser = this.userStatus.isSuper
 				this.hostUser = this.userStatus.isHost
+
+				this.initColorMode()
+				this.initUserAvatar()
 			},
 			deep: true,
 		},
@@ -140,7 +137,10 @@ export default {
 			this.colorMode = mode
 		})
 		this.$public.on("app-provided", () => {
-			this.initUserAvatar()
+			// this.$nextTick(() => {
+			// 	this.initColorMode()
+			// 	this.initUserAvatar()
+			// })
 		})
 	},
 

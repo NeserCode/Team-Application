@@ -1,5 +1,5 @@
 <script>
-// import { _debounce } from "@/plugins/utils"
+import { _debounce } from "@/plugins/utils"
 import { ElMessageBox } from "element-plus"
 import renameOrganization from "@/components/Dialogs/renameOrganization.vue"
 import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
@@ -64,15 +64,14 @@ export default {
 	},
 	beforeCreate() {
 		this.$public.on("app-provided", () => {
-			// this.getMembersInfo(this.selectedOrganizationInfo.id)
-			setTimeout(() => {
-				console.log(this.selectedOrganizationInfo)
-			}, 3000)
+			// this.$nextTick(() => {
+			// 	this.getMembersInfo(this.selectedOrganizationInfo.id)
+			// })
 		})
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
-		getMembersInfo: function (oid) {
+		getMembersInfo: _debounce(function (oid) {
 			this.$conf
 				.getMembersByOrganizationId({
 					host: this.host.host,
@@ -103,7 +102,7 @@ export default {
 
 					this.membersInfo.members = members
 				})
-		},
+		}, 500),
 		updatePageData: function (msg) {
 			this.getMembersInfo(this.selectedOrganizationInfo.id)
 
