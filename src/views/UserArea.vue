@@ -6,30 +6,17 @@
 
 <script>
 import userDetail from "@/components/UserDetail/index.vue"
+import { SettingKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Setting",
-	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", () => {
-			this.isUserLogined = true
-		})
-		this.$public.on("clear-user-sign-status", () => {
-			localStorage.removeItem("userKey")
-			localStorage.removeItem("username")
-			localStorage.removeItem("checkKey")
-			localStorage.removeItem("avatar")
-			this.isUserLogined = false
-		})
-	},
-	mounted() {
-		this.isUserLogined =
-			localStorage.getItem("checkKey") == (undefined || null)
-				? false
-				: true
-
-		if (!this.isUserLogined) {
-			this.$router.push("/sign")
-		}
+	inject: {
+		setting: {
+			from: SettingKey,
+		},
+		userStatus: {
+			from: UserStatusKey,
+		},
 	},
 	components: {
 		userDetail,
@@ -40,13 +27,31 @@ export default {
 		}
 	},
 	watch: {
-		isUserLogined: function (val) {
-			if (!val) {
-				this.$router.push("/sign")
-			}
+		userStatus: {
+			handler: function () {
+				this.isUserLogined = this.userStatus.isLogined
+			},
+			deep: true,
+			immediate: true,
 		},
 	},
 	methods: {},
+	beforeCreate() {
+		this.$public.on("clear-user-sign-status", () => {
+			localStorage.removeItem("userKey")
+			localStorage.removeItem("username")
+			localStorage.removeItem("checkKey")
+			localStorage.removeItem("avatar")
+		})
+		this.$public.on("controller-sign-in", () => {
+			this.isUserLogined = true
+		})
+	},
+	mounted() {
+		if (!this.isUserLogined) {
+			this.$router.push("/sign")
+		}
+	},
 }
 </script>
 

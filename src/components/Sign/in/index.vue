@@ -210,13 +210,10 @@ export default {
 								msg: `欢迎您，${info.username}`,
 								time: 3000,
 								fn: () => {
-									this.$public.emit(
-										"update-main-user-info-upto-app",
-										{
-											info,
-											detail,
-										}
-									)
+									this.$public.emit("user-sign-in", {
+										info,
+										detail,
+									})
 
 									this.signIn.username = ""
 									this.signIn.password = ""

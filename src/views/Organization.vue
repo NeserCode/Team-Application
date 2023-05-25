@@ -74,7 +74,7 @@ export default {
 		},
 	},
 	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
+		this.$public.on("uuser-sign-in", ({ detail }) => {
 			this.getOrganizationInfo(detail.access_team)
 			this.getMembersInfo(detail.access_team)
 

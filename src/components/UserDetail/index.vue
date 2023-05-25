@@ -126,12 +126,9 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on(
-			"update-main-user-info-upto-app",
-			({ detail, info }) => {
-				this.initComponentFromData({ detail, info })
-			}
-		)
+		this.$public.on("controller-sign-in", () => {
+			this.initComponentFromData()
+		})
 	},
 	mounted() {
 		// console.log(this.$conf.getUserPath("userData"));
@@ -177,11 +174,12 @@ export default {
 		cancelConfirmOut: function () {
 			this.isConfirmOut = false
 		},
-		initComponentFromData: function ({ detail, info }) {
-			this.accessOgz.access = !!detail.access_status
+		initComponentFromData: function () {
+			const { userInfo } = this.setting
 
-			this.accessOgz.ogz = detail.access_team
-			this.accessOgz.position = detail.access_position
+			this.accessOgz.access = !!userInfo.access
+			this.accessOgz.ogz = userInfo.organization
+			this.accessOgz.position = userInfo.oPosition
 
 			this.accessObj.text = `${
 				this.accessOgz.access ? "已" : "未"
@@ -189,19 +187,18 @@ export default {
 
 			// 处理性别条目
 			this.sexObj.text =
-				(detail.sex == "m" ? "男" : detail.sex == "w" ? "女" : null) ??
-				"Unknow"
-			this.radioTemp = detail.sex == "w" ? 1 : 0
+				(userInfo.sex == "m"
+					? "男"
+					: userInfo.sex == "w"
+					? "女"
+					: null) ?? "Unknow"
+			this.radioTemp = userInfo.sex == "w" ? 1 : 0
 			// 处理绑定条目
-			this.boundObj.text = detail.bound ?? "Unknow"
+			this.boundObj.text = userInfo.bound ?? "Unknow"
 			// 处理键值条目
-			this.keyObj.text = info.userKey ?? "No Such Key"
+			this.keyObj.text = userInfo.key ?? "No Such Key"
 			// 处理用户名
-			this.thisUsername = info.username
-
-			this.$router.currentRoute.value.path === "/userArea" &&
-				!this.isMe &&
-				this.$router.go(0)
+			this.thisUsername = userInfo.name
 		},
 		initComponentLocal: function () {
 			const { userInfo } = this.setting

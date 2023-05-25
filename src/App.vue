@@ -83,6 +83,22 @@ $public.on("update-header-need-close-direct", (symbol) => {
 	isSettingCloseDirect.value = symbol
 })
 
+// config update
+$public.on("config-updated", async () => {
+	await setAsyncSetting()
+	nextTick(() => {
+		$public.emit("app-provided")
+	})
+})
+
+// user
+$public.on("controller-sign-in", async () => {
+	await setAsyncUserStatus()
+	nextTick(() => {
+		$public.emit("app-provided")
+	})
+})
+
 // organization
 $public.on("user-deleted-organization", () => {
 	userStatus.value.isHost = false
@@ -105,7 +121,7 @@ $public.on("user-updated-announcement", () => {
 })
 
 nextTick(async () => {
-	console.time("provide")
+	console.time("Provide")
 	await setAsyncHost()
 	await setAsyncSetting()
 	await setAsyncAnnouncement()

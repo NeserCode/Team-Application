@@ -111,7 +111,7 @@ export default {
 			// 	localStorage.setItem("avatar", this.userImage)
 			// })
 		})
-		this.$public.on("update-main-user-info-upto-app", (data) => {
+		this.$public.on("user-sign-in", (data) => {
 			this.userImage = data.detail.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})

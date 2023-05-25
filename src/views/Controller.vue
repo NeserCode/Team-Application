@@ -19,12 +19,6 @@ export default {
 		"$route.name"(val) {
 			this.$public.emit("update-app-title", val)
 		},
-		setting: {
-			handler() {
-				this.initController()
-			},
-			deep: true,
-		},
 	},
 	data() {
 		return {}
@@ -58,11 +52,13 @@ export default {
 			this.handleCheckKey()
 		})
 
-		this.$public.on("app-provided", () => {})
+		this.$public.on("app-provided", () => {
+			this.initController()
+		})
 
 		this.$conf.setConfigListener(() => {
 			// console.log(prev, curr)
-			console.log("Config Changed")
+			this.$public.emit("config-updated")
 		})
 	},
 	methods: {
@@ -98,25 +94,17 @@ export default {
 		},
 		handleSaveAppkey: function (key) {
 			localStorage.setItem("appKey", key)
-			this.$public
-				.emit("notice", {
-					type: "warning",
-					time: 5000,
-					msg: `检测到新生成的应用键值 正在为您挂载`,
-					fn: () => {
-						this.$public.emit("notice", {
-							type: "success",
-							msg: `键值挂载完毕`,
-						})
-					},
-				})
-				.catch((err) => {
+			this.$public.emit("notice", {
+				type: "warning",
+				time: 5000,
+				msg: `检测到新生成的应用键值 正在为您挂载`,
+				fn: () => {
 					this.$public.emit("notice", {
-						type: "error",
-						time: 5000,
-						msg: `键值挂载失败 ${err}`,
+						type: "success",
+						msg: `键值挂载完毕`,
 					})
-				})
+				},
+			})
 		},
 		handleCheckKey: function () {
 			if (
@@ -146,7 +134,7 @@ export default {
 						const { detail, info } = res.data
 
 						console.log("Auto CheckKey to Update Datails")
-						this.$public.emit("update-main-user-info-upto-app", {
+						this.$public.emit("user-sign-in", {
 							detail,
 							info,
 						})
@@ -201,6 +189,7 @@ export default {
 					localStorage.setItem("username", info.username)
 					this.$public.emit("update-check-day")
 					this.$public.emit("update-username")
+					this.$public.emit("controller-sign-in")
 				})
 				.catch((e) => {
 					console.log(e.message)

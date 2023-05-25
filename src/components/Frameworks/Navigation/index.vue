@@ -116,8 +116,7 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			this.isLogined = true
+		this.$public.on("user-sign-in", ({ detail }) => {
 			this.avatarUrl =
 				detail.avatar ??
 				(localStorage.getItem("avatar") === "null"

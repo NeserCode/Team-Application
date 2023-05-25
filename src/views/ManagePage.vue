@@ -53,8 +53,9 @@ export default {
 		}
 	},
 	beforeCreate() {
-		this.$public.on("update-main-user-info-upto-app", ({ detail }) => {
-			if (this.hostUser) this.getOrganizationInfo(detail.access_team)
+		this.$public.on("controller-sign-in", () => {
+			if (this.hostUser)
+				this.getOrganizationInfo(this.setting.userInfo.organization)
 			this.getAllOrganization()
 		})
 
@@ -70,7 +71,9 @@ export default {
 			this.getAllOrganization()
 		})
 
-		this.$public.on("app-provided", () => {})
+		this.$public.on("app-provided", () => {
+			this.getAllOrganization()
+		})
 	},
 	created() {},
 	mounted() {},
