@@ -221,19 +221,27 @@ export default {
 									this.options.isShowPassword = false
 
 									this.clickable = true
-									this.$router.push("/userArea")
+									this.$router.push("UserArea")
 								},
 							})
 						})
 						.catch((e) => {
-							console.log(e.message)
-							this.$public.emit("notice", {
-								type: "error",
-								msg: "登陆错误, 请检查您输入的用户名和密码",
-								fn: () => {
-									this.clickable = true
-								},
-							})
+							if (e.response.status == 502)
+								this.$public.emit("notice", {
+									type: "error",
+									msg: "登陆错误, 请检查您的应用状态配置",
+									fn: () => {
+										this.clickable = true
+									},
+								})
+							else
+								this.$public.emit("notice", {
+									type: "error",
+									msg: "登陆错误, 请检查您输入的用户名和密码",
+									fn: () => {
+										this.clickable = true
+									},
+								})
 						})
 				}
 			}

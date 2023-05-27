@@ -104,19 +104,22 @@ export default {
 			deep: true,
 		},
 	},
-	mounted() {
+	beforeCreate() {
 		this.$public.on("app-provided", () => {
 			// this.$nextTick(() => {
 			// 	this.userImage = this.setting.userInfo.avatar ?? null
 			// 	localStorage.setItem("avatar", this.userImage)
 			// })
 		})
-		this.$public.on("user-sign-in", (data) => {
+		this.$public.on("controller-sign-in", (data) => {
 			this.userImage = data.detail.avatar ?? null
 			localStorage.setItem("avatar", this.userImage)
 		})
 	},
-	activated() {},
+	mounted() {
+		this.userImage = this.setting.userInfo.avatar ?? null
+		localStorage.setItem("avatar", this.userImage)
+	},
 	methods: {
 		keepDragPicture: () => false,
 		handleConfirmSrc: function () {

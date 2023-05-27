@@ -52,7 +52,7 @@ export default {
 		this.$public.on("update-user-check", () => {
 			this.initRankers()
 		})
-		this.$public.on("clear-user-sign-status", () => {
+		this.$public.on("user-sign-out", () => {
 			this.initRankers()
 		})
 		this.$public.on("app-provided", () => {

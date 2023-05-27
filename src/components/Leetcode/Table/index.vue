@@ -157,7 +157,7 @@ export default {
 		this.$public.on("update-username", () => {
 			this.initSubmission()
 		})
-		this.$public.on("clear-user-sign-status", () => {
+		this.$public.on("user-sign-out", () => {
 			this.idList = null
 			this.submissionDetail = {}
 		})

@@ -44,6 +44,19 @@ export default {
 				text: msg,
 			})
 		})
+		this.$public.on("user-sign-in", ({ info, detail }) => {
+			this.updateConfig({ info, detail })
+		})
+		this.$public.on("user-sign-out", () => {
+			localStorage.removeItem("userKey")
+			localStorage.removeItem("username")
+			localStorage.removeItem("checkKey")
+			localStorage.removeItem("avatar")
+
+			this.$nextTick(() => {
+				this.$router.push("/sign")
+			})
+		})
 
 		this.$public.on("rebuild-app-key", () => {
 			this.handleRebuildKey("appkey")
@@ -60,6 +73,32 @@ export default {
 			// console.log(prev, curr)
 			this.$public.emit("config-updated")
 		})
+	},
+	mounted() {
+		if (this.host)
+			this.$conf
+				.getDetailByKeys({
+					host: this.host.host,
+					userKey: localStorage.getItem("userKey"),
+					checkKey: localStorage.getItem("checkKey"),
+				})
+				.then((res) => {
+					if (res.status !== 200) {
+						this.$public.emit("notice", {
+							type: "info",
+							msg: `自动信息更新失败 ${res.data.message}`,
+						})
+						this.$public.emit("update-from-keys-failed")
+					} else {
+						const { detail, info } = res.data
+
+						console.log("Auto CheckKey to Update Datails")
+						this.$public.emit("user-sign-in", {
+							detail,
+							info,
+						})
+					}
+				})
 	},
 	methods: {
 		handleRebuildKey: function (...option) {
@@ -116,34 +155,11 @@ export default {
 				this.handleRebuildKey("appkey")
 			else if (this.setting.userInfo.key == (null || ""))
 				this.handleRebuildKey("userkey")
-
-			this.$conf
-				.getDetailByKeys({
-					host: this.host.host,
-					userKey: localStorage.getItem("userKey"),
-					checkKey: localStorage.getItem("checkKey"),
-				})
-				.then((res) => {
-					if (res.status !== 200) {
-						this.$public.emit("notice", {
-							type: "info",
-							msg: `自动信息更新失败 ${res.data.message}`,
-						})
-						this.$public.emit("update-from-keys-failed")
-					} else {
-						const { detail, info } = res.data
-
-						console.log("Auto CheckKey to Update Datails")
-						this.$public.emit("user-sign-in", {
-							detail,
-							info,
-						})
-					}
-				})
 		},
 		initUser: function () {
 			if (localStorage.getItem("checkKey") != (null || undefined))
 				console.log(`#checkKey [${localStorage.getItem("checkKey")}]`)
+			localStorage.setItem("appKey", this.setting.appInfo.key)
 		},
 		initController: function () {
 			this.initUser()
@@ -185,8 +201,8 @@ export default {
 					})
 
 					localStorage.setItem("userKey", info.userKey)
-					localStorage.setItem("appKey", tempSetting.appInfo.key)
 					localStorage.setItem("username", info.username)
+
 					this.$public.emit("update-check-day")
 					this.$public.emit("update-username")
 					this.$public.emit("controller-sign-in")

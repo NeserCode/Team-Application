@@ -97,7 +97,7 @@ export default {
 		},
 	},
 	beforeCreate() {
-		this.$public.on("clear-user-sign-status", () => {
+		this.$public.on("user-sign-out", () => {
 			this.initTables()
 		})
 		this.$public.on("leetcode-local-submit", () => {

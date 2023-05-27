@@ -37,15 +37,7 @@ export default {
 	},
 	methods: {},
 	beforeCreate() {
-		this.$public.on("clear-user-sign-status", () => {
-			localStorage.removeItem("userKey")
-			localStorage.removeItem("username")
-			localStorage.removeItem("checkKey")
-			localStorage.removeItem("avatar")
-		})
-		this.$public.on("controller-sign-in", () => {
-			this.isUserLogined = true
-		})
+		this.$public.on("controller-sign-in", () => {})
 	},
 	mounted() {
 		if (!this.isUserLogined) {

@@ -47,6 +47,10 @@ provide(SettingKey, setting)
 provide(AnnouncementKey, announcement)
 provide(UserStatusKey, userStatus)
 
+function logined() {
+	return localStorage.getItem("userKey") && localStorage.getItem("username")
+}
+
 const setAsyncAnnouncement = async () => {
 	announcement.value = await $conf
 		.allAnnouncement({
@@ -66,9 +70,7 @@ const setAsyncUserStatus = async () => {
 	)
 	userStatus.value.isHost = isHost
 	userStatus.value.isSuper = isSuper
-	userStatus.value.isLogined = !(
-		localStorage.getItem("checkKey") == (undefined || null)
-	)
+	userStatus.value.isLogined = logined()
 }
 
 //listen public response $public.on('',()=>{})
@@ -93,6 +95,12 @@ $public.on("config-updated", async () => {
 
 // user
 $public.on("controller-sign-in", async () => {
+	await setAsyncUserStatus()
+	nextTick(() => {
+		$public.emit("app-provided")
+	})
+})
+$public.on("user-sign-out", async () => {
 	await setAsyncUserStatus()
 	nextTick(() => {
 		$public.emit("app-provided")
@@ -135,6 +143,7 @@ nextTick(async () => {
 })
 
 async function ensureHostorSuperUser(info, cb) {
+	if (!logined()) return { isSuper: false, isHost: false }
 	let superUser = !!info.super
 	let hostUser = false
 

@@ -3,13 +3,18 @@
 		<UserAvatar
 			class="avatar comp"
 			@click="handleOpenUserArea"
-			v-show="isLogined"
+			v-show="userStatus.isLogined"
 			:image="avatarUrl"
 			:isDot="false"
 			:isMe="true"
 			v-if="!!avatarUrl"
 		/>
-		<span class="avatar icon" @click="handleOpenUserArea" v-else>
+		<span
+			class="avatar icon"
+			@click="handleOpenUserArea"
+			v-else
+			v-show="userStatus.isLogined"
+		>
 			<el-icon><User /></el-icon
 		></span>
 		<div class="shiftOperations">
@@ -126,9 +131,7 @@ export default {
 		this.$public.on("update-avatar", (avatar) => {
 			this.avatarUrl = avatar
 		})
-		this.$public.on("clear-user-sign-status", () => {
-			this.isLogined = false
-		})
+		this.$public.on("user-sign-out", () => {})
 		this.$public.on("change-login-or-register-view", (bool) => {
 			this.signText = bool ? "登录" : "注册"
 		})

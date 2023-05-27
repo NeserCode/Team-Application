@@ -1,7 +1,7 @@
 <template>
 	<div class="checkContainer">
 		<span class="title">签到</span>
-		<div class="checkDays" v-show="userStatus">
+		<div class="checkDays" v-show="userStatus.isLogined">
 			<span
 				:class="[
 					'day',
@@ -24,7 +24,7 @@
 				/></el-icon>
 			</a>
 		</div>
-		<div class="checkDays" v-show="!userStatus">
+		<div class="checkDays" v-show="!userStatus.isLogined">
 			<span class="notSignSpan">请先登录</span>
 		</div>
 	</div>
@@ -78,7 +78,7 @@ export default {
 		this.$public.on("update-check-day", () => {
 			this.initCheckDay()
 		})
-		this.$public.on("clear-user-sign-status", () => {
+		this.$public.on("user-sign-out", () => {
 			// this.isLogined = false
 		})
 

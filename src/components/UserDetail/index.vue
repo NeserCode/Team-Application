@@ -127,7 +127,7 @@ export default {
 	},
 	beforeCreate() {
 		this.$public.on("controller-sign-in", () => {
-			this.initComponentFromData()
+			this.initComponentLocal()
 		})
 	},
 	mounted() {
@@ -165,7 +165,7 @@ export default {
 			}
 		},
 		handleSignOut: function () {
-			this.$public.emit("clear-user-sign-status")
+			this.$public.emit("user-sign-out")
 			this.cancelConfirmOut()
 		},
 		handleConfirmOut: function () {
@@ -173,32 +173,6 @@ export default {
 		},
 		cancelConfirmOut: function () {
 			this.isConfirmOut = false
-		},
-		initComponentFromData: function () {
-			const { userInfo } = this.setting
-
-			this.accessOgz.access = !!userInfo.access
-			this.accessOgz.ogz = userInfo.organization
-			this.accessOgz.position = userInfo.oPosition
-
-			this.accessObj.text = `${
-				this.accessOgz.access ? "已" : "未"
-			}认证 #${this.accessOgz.ogz} ${this.accessOgz.position}`
-
-			// 处理性别条目
-			this.sexObj.text =
-				(userInfo.sex == "m"
-					? "男"
-					: userInfo.sex == "w"
-					? "女"
-					: null) ?? "Unknow"
-			this.radioTemp = userInfo.sex == "w" ? 1 : 0
-			// 处理绑定条目
-			this.boundObj.text = userInfo.bound ?? "Unknow"
-			// 处理键值条目
-			this.keyObj.text = userInfo.key ?? "No Such Key"
-			// 处理用户名
-			this.thisUsername = userInfo.name
 		},
 		initComponentLocal: function () {
 			const { userInfo } = this.setting

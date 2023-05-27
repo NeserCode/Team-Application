@@ -185,6 +185,7 @@ async function createLoadingWindow() {
 
   loadingWindow.show()
   loadingWindow.focus()
+  // loadingWindow.webContents.openDevTools()
   createWindow()
   loadingWindow.setAlwaysOnTop(!loadingWindow.isAlwaysOnTop())
   mainWindow.hide()
