@@ -1,5 +1,9 @@
 var sqlMap = {
     user: {
+        all: {
+            info: "select * from team_user_info ORDER BY id ASC",
+            detail: "select * from team_user_detail ORDER BY id ASC",
+        },
         register: {
             init: {
                 info: "insert into team_user_info(username,password,appKey,userKey) values (?,?,?,?)",
@@ -13,9 +17,15 @@ var sqlMap = {
             },
             detail: "select * from team_user_detail where id = ?"
         },
+        info: {
+            update: {
+                password: 'update team_user_info set password = ? where id = ?',
+                status: 'update team_user_info set status = ? where id = ?',
+            }
+        },
         detail: {
             update: {
-                all: 'update team_user_detail set nickname = ?, avatar = ?, introduce = ?, sex = ? where id = ?',
+                all: 'update team_user_detail set avatar = ?, bound = ?, introduce = ?, nickname = ?, sex = ? where id = ?',
                 nickname: 'update team_user_detail set nickname = ? where id = ?',
                 avatar: 'update team_user_detail set avatar = ? where id = ?',
                 introduce: 'update team_user_detail set introduce = ? where id = ?',

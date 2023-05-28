@@ -3,6 +3,7 @@
 		<div class="iContainer">
 			<SignInput
 				ref="iact"
+				:readonly="!clickable"
 				@keep-input="handleIAccount"
 				@keyup.enter="handleSignin"
 				:iModel="signIn.username"
@@ -14,6 +15,7 @@
 			/>
 			<SignInput
 				ref="ipwd"
+				:readonly="!clickable"
 				@keep-input="handleIPassword"
 				@keyup.enter="handleSignin"
 				:iModel="signIn.password"
@@ -185,6 +187,14 @@ export default {
 							checkkey: ck,
 						})
 						.then((response) => {
+							if (response.data.length === 0)
+								return this.$public.emit("notice", {
+									type: "error",
+									msg: "登陆失败, 请检查您的输入数据",
+									fn: () => {
+										this.clickable = true
+									},
+								})
 							const { info, detail } = response.data
 							localStorage.setItem("checkKey", ck)
 							if (info.userKey.length < 16)

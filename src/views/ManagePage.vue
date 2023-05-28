@@ -2,11 +2,12 @@
 import { _debounce } from "@/plugins/utils"
 import Organization from "@/components/Manage/organization.vue"
 import Announcement from "@/components/Manage/announcement.vue"
+import Users from "../components/Manage/users.vue"
 import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Manage",
-	components: { Organization, Announcement },
+	components: { Organization, Announcement, Users },
 	computed: {
 		detailVisible: function () {
 			return (
@@ -138,6 +139,7 @@ export default {
 			:selectedOrganizationInfo="selectedOrganizationInfo"
 			@update:info="updatePageData"
 		/>
+		<Users v-if="superUser" />
 	</div>
 </template>
 

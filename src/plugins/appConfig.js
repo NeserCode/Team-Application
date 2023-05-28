@@ -64,6 +64,11 @@ const appConfig = {
             key: value
         })
     }
+    , updateAllDetail: async ({ host, avatar, bound, introduce, nickname, sex, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/detail/update/all`, {
+            avatar, bound, introduce, nickname, sex, id
+        })
+    }
     , updateCheckDay: async ({ host, username, appKey, timeStamp }) => {
         return Axios.post(`${appConfig.getHttpString(host)}/api/user/checkDay/check`, {
             username, appKey, timeStamp
@@ -182,6 +187,18 @@ const appConfig = {
     }
     , getNotOpenAnnouncement: ({ host }) => {
         return Axios.get(`${appConfig.getHttpString(host)}/api/user/announcement/get/not-open`)
+    }
+    , allUser: ({ host }) => {
+        return Axios.get(`${appConfig.getHttpString(host)}/api/user/all`)
+    }
+    , updateUserPassword: ({ host, password, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/info/password/update`, { password, id })
+    }
+    , banUser: ({ host, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/info/status/update`, { status: 1, id })
+    }
+    , unbanUser: ({ host, id }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/info/status/update`, { status: 0, id })
     }
 
 }

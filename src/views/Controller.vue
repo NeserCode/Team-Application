@@ -69,36 +69,19 @@ export default {
 			this.initController()
 		})
 
+		this.$public.on("need-update-user", () => {
+			this.autoKeyUpdateDetail()
+		})
+
 		this.$conf.setConfigListener(() => {
 			// console.log(prev, curr)
 			this.$public.emit("config-updated")
 		})
 	},
 	mounted() {
-		if (this.host)
-			this.$conf
-				.getDetailByKeys({
-					host: this.host.host,
-					userKey: localStorage.getItem("userKey"),
-					checkKey: localStorage.getItem("checkKey"),
-				})
-				.then((res) => {
-					if (res.status !== 200) {
-						this.$public.emit("notice", {
-							type: "info",
-							msg: `自动信息更新失败 ${res.data.message}`,
-						})
-						this.$public.emit("update-from-keys-failed")
-					} else {
-						const { detail, info } = res.data
-
-						console.log("Auto CheckKey to Update Datails")
-						this.$public.emit("user-sign-in", {
-							detail,
-							info,
-						})
-					}
-				})
+		this.$nextTick(() => {
+			this.$public.emit("need-update-user")
+		})
 	},
 	methods: {
 		handleRebuildKey: function (...option) {
@@ -164,6 +147,35 @@ export default {
 		initController: function () {
 			this.initUser()
 			this.handleCheckKey()
+		},
+		autoKeyUpdateDetail: function () {
+			this.$conf
+				.getDetailByKeys({
+					host: this.host.host,
+					userKey: localStorage.getItem("userKey"),
+					checkKey: localStorage.getItem("checkKey"),
+				})
+				.then((res) => {
+					if (res.status !== 200) {
+						this.$public.emit("notice", {
+							type: "info",
+							msg: `自动信息更新失败 ${res.data.message}`,
+						})
+						this.$public.emit("update-from-keys-failed")
+					} else {
+						const { detail, info } = res.data
+
+						this.$public.emit("notice", {
+							type: "success",
+							msg: `Auto CheckKey to Update Datails`,
+						})
+						this.$public.emit("update-avatar", detail.avatar)
+						this.updateConfig({
+							detail,
+							info,
+						})
+					}
+				})
 		},
 		updateConfig: function ({ info, detail }) {
 			let tempSetting = this.setting

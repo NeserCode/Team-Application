@@ -201,6 +201,28 @@ export default {
 			// 处理用户名
 			this.thisUsername = userInfo.name
 		},
+		initComponentFromData: function ({ detail, info }) {
+			// 处理认证条目
+			this.accessOgz.access = !!detail.access
+
+			this.accessOgz.ogz = detail.access_team
+			this.accessOgz.position = detail.access_position
+
+			this.accessObj.text = `${detail.access_status ? "已" : "未"}认证 #${
+				this.accessOgz.ogz
+			} ${this.accessOgz.position}`
+			// 处理性别条目
+			this.sexObj.text =
+				(detail.sex == "m" ? "男" : detail.sex == "w" ? "女" : null) ??
+				"Unknow"
+			this.radioTemp = detail.sex == "w" ? 1 : 0
+			// 处理绑定条目
+			this.boundObj.text = detail.bound ?? "Unknow"
+			// 处理键值条目
+			this.keyObj.text = info.userKey ?? "No Such Key"
+			// 处理用户名
+			this.thisUsername = info.username
+		},
 	},
 }
 </script>

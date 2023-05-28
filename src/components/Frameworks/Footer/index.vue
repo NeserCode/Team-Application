@@ -6,7 +6,7 @@
 				:style="{ '--status-color': `${statusLightColor.real}` }"
 			></div>
 			<div class="afterStatusText">
-				<span>{{ status }}</span>
+				<span>{{ userStatusString }}</span>
 			</div>
 		</div>
 		<div class="footStatusText showArea">
@@ -25,12 +25,18 @@
 // let path = require('path')
 // const fse = window.require('fs-extra')
 // const fs = window.require('fs')handleHoverColorChange
+import { UserStatusKey } from "@/tokens"
 
 export default {
 	name: "appViewFoot",
 	props: {
 		status: String,
 		statusText: String,
+	},
+	inject: {
+		userStatus: {
+			from: UserStatusKey,
+		},
 	},
 	watch: {
 		status() {
@@ -46,8 +52,15 @@ export default {
 					: "transparent"
 		},
 	},
-	mounted() {
-		this.initTime()
+	computed: {
+		userStatusString() {
+			let strs = []
+			if (this.userStatus.isSuper) strs.push("Super")
+			if (this.userStatus.isHost) strs.push("Host")
+			else strs.push("User")
+
+			return strs.join(" & ")
+		},
 	},
 	data() {
 		return {
@@ -66,6 +79,9 @@ export default {
 				isGetTime: false,
 			},
 		}
+	},
+	mounted() {
+		this.initTime()
 	},
 	methods: {
 		initTime: function () {
@@ -90,13 +106,14 @@ export default {
 	line-height: calc(1.5rem - 1px);
 }
 .footStatusLight {
-	@apply float-left border-r h-full border-gray-400;
+	@apply inline-flex items-center float-left border-r h-full border-gray-400;
 }
 .footStatusLight .light {
-	@apply float-left w-3 h-3 m-1.5 rounded-full border border-gray-400 box-border;
+	@apply float-left w-3 h-3 mx-1.5 rounded-full border border-gray-400 box-border;
 }
 .footStatusLight .afterStatusText {
-	@apply float-left mx-2 w-16;
+	@apply inline-flex items-center h-full float-left px-1 font-mono font-semibold text-xs border-l
+	border-gray-400;
 }
 .footStatusText {
 	@apply relative px-3 overflow-ellipsis whitespace-nowrap overflow-hidden;
@@ -113,6 +130,7 @@ export default {
 .footStatusLight .light {
 	--status-color: rgb(199, 233, 77);
 	background-color: var(--status-color);
+	transition: all 1s ease-in-out;
 }
 .footTime .sp {
 	animation: secondFlash 1.95s ease-in-out infinite;

@@ -74,7 +74,7 @@ export default {
 		},
 	},
 	beforeCreate() {
-		this.$public.on("uuser-sign-in", ({ detail }) => {
+		this.$public.on("user-sign-in", ({ detail }) => {
 			this.getOrganizationInfo(detail.access_team)
 			this.getMembersInfo(detail.access_team)
 
@@ -96,9 +96,11 @@ export default {
 		this.getMembersInfo(conf.userInfo.organization)
 
 		this.getAllOrganization()
-		this.announcementInfo = this.announcement.filter(
-			(item) => item.oid === this.setting.userInfo.organization
-		)
+		this.$nextTick(() => {
+			this.announcementInfo = this.announcement.filter(
+				(item) => item.oid === this.setting.userInfo.organization
+			)
+		})
 	},
 	methods: {
 		computedStatusClass: (status) => (status ? "access" : null),
@@ -167,11 +169,12 @@ export default {
 					host: this.host.host,
 				})
 				.then((res) => {
-					let i = res.data.findIndex(
+					let data = res.data
+					let i = data.findIndex(
 						(item) => item.id === this.organizationInfo.id
 					)
-					if (i !== -1) res.data[i].own = true
-					this.allOrganization = res.data
+					if (i !== -1) data[i].own = true
+					this.allOrganization = data
 				})
 		},
 		handleCreateOrganization: _debounce(function () {
@@ -435,7 +438,7 @@ export default {
 				</button>
 			</span>
 		</div>
-		<div class="announcement-info">
+		<div class="announcement-info" v-if="hasOrganization">
 			<span class="title">
 				<span>公告列表</span>
 				<button

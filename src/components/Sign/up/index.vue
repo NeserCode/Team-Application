@@ -3,6 +3,7 @@
 		<div class="iContainer">
 			<SignInput
 				ref="iun"
+				:readonly="!clickable"
 				@keep-input="handleIAccount"
 				@keyup.enter="handleSignUp"
 				:iModel="signUp.username"
@@ -14,6 +15,7 @@
 			/>
 			<SignInput
 				ref="ipwd"
+				:readonly="!clickable"
 				@keep-input="handleIPassword"
 				@keyup.enter="handleSignUp"
 				:iModel="signUp.password"
@@ -26,6 +28,7 @@
 			/>
 			<SignInput
 				ref="irpwd"
+				:readonly="!clickable"
 				@keep-input="handleIRPassword"
 				@keyup.enter="handleSignUp"
 				:iModel="signUp.repeat"
@@ -38,6 +41,7 @@
 			/>
 			<SignRadio
 				ref="isx"
+				:readonly="!clickable"
 				@keep-change="handleRSex"
 				:rList="sexList"
 				:rModel="signUp.sex"
@@ -47,6 +51,7 @@
 			/>
 			<SignInput
 				ref="ibd"
+				:readonly="!clickable"
 				@keep-input="handleRBound"
 				@keyup.enter="handleSignUp"
 				:iModel="signUp.bound"

@@ -74,19 +74,16 @@ router.post('/signin/username', (req, res) => {
 })
 
 //用户更新资料 |updateItem、username
-
 router.post('/detail/update/all', (req, res) => {
-    let sql = $sql.user.detail.update
+    let sql = $sql.user.detail.update.all
     let params = req.body
-    conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
-        if (iderr) return res.status(502).send({ message: iderr.sqlMessage, errorCode: iderr.errno })
-        else conn.query(sql.all, [params.nickname, params.avatar, params.introduce, params.sex, idresult[0].id], (err, result) => {
-            if (err) return res.status(502).send(err)
-            else {
-                console.log(`[${params.username} uid_${idresult[0].id} update all √]`);
-                res.status(200).send(result)
-            }
-        })
+
+    conn.query(sql, [params.avatar, params.bound, params.introduce, params.nickname, params.sex, params.id], (err, result) => {
+        if (err) return res.status(502).send(err)
+        else {
+            console.log(`[${params.username} uid_${params.id} update all √]`);
+            res.status(200).send(result)
+        }
     })
 })
 
@@ -635,6 +632,47 @@ router.post('/announcement/delete', (req, res) => {
     let params = req.body
 
     conn.query(sql, [params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+        else res.status(200).send(result)
+    })
+})
+
+// 所有用户
+router.get('/all', (req, res) => {
+    let dsql = $sql.user.all.detail
+    let isql = $sql.user.all.info
+
+    conn.query(dsql, (derr, dresult) => {
+        if (derr) return res.status(502).send({ message: derr.sqlMessage, errorCode: derr.errno })
+        else {
+            conn.query(isql, (ierr, iresult) => {
+                if (ierr) return res.status(502).send({ message: ierr.sqlMessage, errorCode: ierr.errno })
+                else {
+                    console.log(`[all users √]`);
+                    res.status(200).send({ detail: dresult, info: iresult })
+                }
+            })
+        }
+    })
+})
+
+// 修改密码
+router.post('/info/password/update', (req, res) => {
+    let sql = $sql.user.info.update.password
+    let params = req.body
+
+    conn.query(sql, [params.password, params.id], (err, result) => {
+        if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+        else res.status(200).send(result)
+    })
+})
+
+// 修改用户状态
+router.post('/info/status/update', (req, res) => {
+    let sql = $sql.user.info.update.status
+    let params = req.body
+
+    conn.query(sql, [params.status, params.id], (err, result) => {
         if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
         else res.status(200).send(result)
     })
