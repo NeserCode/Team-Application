@@ -78,7 +78,7 @@ export default {
 	mounted() {},
 	computed: {
 		questionContent() {
-			console.log(this.questions)
+			this.$log.log(this.questions)
 			return (
 				(this.isContentEng
 					? this.questions.content +
@@ -119,7 +119,7 @@ export default {
 						)
 					})
 					.catch((e) => {
-						console.log("e_request-submission-id", e)
+						this.$log.log("e_request-submission-id", e)
 						this.$public.emit("notice", {
 							time: 4500,
 							msg: `未登录 Leetcode 账户或 LeetCodeApi 发生迁移`,

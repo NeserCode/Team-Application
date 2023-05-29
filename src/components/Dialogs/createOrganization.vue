@@ -7,6 +7,7 @@ const $props = defineProps({
 })
 const $emit = defineEmits(["update:visible", "create:success"])
 const $conf = inject("$conf")
+const $log = inject("$log")
 const $utils = inject("$utils")
 const setting = inject(SettingKey, undefined),
 	host = inject(HostKey, undefined)
@@ -110,7 +111,7 @@ const createOrganization = async () => {
 		})
 		.catch((err) => {
 			clickable.value = true
-			console.log(err)
+			$log.log(err)
 		})
 }
 </script>

@@ -5,17 +5,19 @@
 				class="light"
 				:style="{ '--status-color': `${statusLightColor.real}` }"
 			></div>
+			<div class="footStatusText showArea">
+				<span>{{ statusText }}</span>
+			</div>
+		</div>
+		<div class="others">
 			<div class="afterStatusText">
 				<span>{{ userStatusString }}</span>
 			</div>
-		</div>
-		<div class="footStatusText showArea">
-			<span>{{ statusText }}</span>
-		</div>
-		<div class="footTime showArea" v-show="currTime.isGetTime">
-			<span class="h">{{ currTime.hour }} 时 </span>
-			<span class="sp">{{ currTime.minutes }}</span>
-			<span> 分</span>
+			<div class="footTime showArea" v-show="currTime.isGetTime">
+				<span class="h">{{ currTime.hour }}</span>
+				<span class="sp"> : </span>
+				<span class="min">{{ currTime.minutes }}</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -25,7 +27,7 @@
 // let path = require('path')
 // const fse = window.require('fs-extra')
 // const fs = window.require('fs')handleHoverColorChange
-import { UserStatusKey } from "@/tokens"
+import { UserStatusKey, SettingKey } from "@/tokens"
 
 export default {
 	name: "appViewFoot",
@@ -34,6 +36,9 @@ export default {
 		statusText: String,
 	},
 	inject: {
+		setting: {
+			from: SettingKey,
+		},
 		userStatus: {
 			from: UserStatusKey,
 		},
@@ -55,9 +60,16 @@ export default {
 	computed: {
 		userStatusString() {
 			let strs = []
-			if (this.userStatus.isSuper) strs.push("Super")
-			if (this.userStatus.isHost) strs.push("Host")
-			else strs.push("User")
+			if (!this.userStatus.isLogined) return "Need Login"
+			else
+				strs.push(
+					`#${this.setting.userInfo.id} ${this.setting.userInfo.name}`
+				)
+			if (this.userStatus.isSuper) strs.push(`Super`)
+			if (this.userStatus.isHost) {
+				strs.push(`Host`)
+				strs.push(`Organization#${this.setting.userInfo.organization}`)
+			} else strs.push(`User`)
 
 			return strs.join(" & ")
 		},
@@ -85,10 +97,14 @@ export default {
 	},
 	methods: {
 		initTime: function () {
+			function addZero(num) {
+				return num < 10 ? "0" + num : num
+			}
+
 			var t = new Date().toTimeString().substring(0, 8)
-			this.currTime.hour = parseInt(t.substring(0, 2))
-			this.currTime.minutes = parseInt(t.substring(3, 5))
-			this.currTime.seconds = parseInt(t.substring(6, 8))
+			this.currTime.hour = addZero(parseInt(t.substring(0, 2)))
+			this.currTime.minutes = addZero(parseInt(t.substring(3, 5)))
+			this.currTime.seconds = addZero(parseInt(t.substring(6, 8)))
 			this.timer = setTimeout(() => {
 				this.initTime()
 			})
@@ -100,27 +116,31 @@ export default {
 
 <style scoped lang="postcss">
 .appViewFoot {
-	@apply relative border-t box-border text-sm border-gray-400;
+	@apply relative flex items-center justify-between border-t border-gray-400;
 	width: calc(100vw - 2px);
 	height: calc(1.5rem - 1px);
-	line-height: calc(1.5rem - 1px);
 }
 .footStatusLight {
-	@apply inline-flex items-center float-left border-r h-full border-gray-400;
+	@apply inline-flex items-center float-left h-full pl-1.5 border-gray-400;
 }
 .footStatusLight .light {
-	@apply float-left w-3 h-3 mx-1.5 rounded-full border border-gray-400 box-border;
-}
-.footStatusLight .afterStatusText {
-	@apply inline-flex items-center h-full float-left px-1 font-mono font-semibold text-xs border-l
-	border-gray-400;
+	@apply inline-block w-3.5 h-3 rounded-full border border-gray-400 box-border;
 }
 .footStatusText {
-	@apply relative px-3 overflow-ellipsis whitespace-nowrap overflow-hidden;
-	width: calc(100vw - 12.5rem);
+	@apply inline-flex items-center w-full max-w-2xl h-full px-2 ml-1.5
+	text-xs overflow-ellipsis border-l whitespace-nowrap overflow-hidden
+	border-gray-400;
+}
+
+.others {
+	@apply inline-flex items-center float-right h-full;
+}
+.afterStatusText {
+	@apply inline-flex items-center h-full float-left px-1 font-mono font-semibold text-xs border-r border-l
+	border-gray-400;
 }
 .footTime {
-	@apply absolute right-0 w-24 -top-px text-xs text-right px-3;
+	@apply text-xs text-right px-3;
 	height: calc(1.5rem + 1px);
 	line-height: 1.5rem;
 }
@@ -133,7 +153,7 @@ export default {
 	transition: all 1s ease-in-out;
 }
 .footTime .sp {
-	animation: secondFlash 1.95s ease-in-out infinite;
+	animation: secondFlash 1.5s ease-in-out infinite;
 }
 
 @keyframes secondFlash {

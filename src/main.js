@@ -10,6 +10,7 @@ import mitt from 'mitt'
 import utils from './plugins/utils'
 import appConfig from "./plugins/appConfig"
 import leetcode from "./plugins/leetcode"
+import { Log } from './plugins/log'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -18,6 +19,12 @@ Axios.defaults.withCredentials = true;
 
 const app = createApp(App)
 const mitter = new mitt()
+const Loger = new Log()
+
+window &&
+    (window.onerror = (e) => {
+        Loger.error(e)
+    })
 
 app.config.unwrapInjectedRef = true
 
@@ -28,6 +35,7 @@ app.config.globalProperties.$leetcode = leetcode
 app.config.globalProperties.$public = mitter
 app.config.globalProperties.$router = router
 app.config.globalProperties.$route = useRoute()
+app.config.globalProperties.$log = Loger
 
 app.provide('$axios', Axios)
 app.provide('$utils', utils)
@@ -36,6 +44,7 @@ app.provide('$leetcode', leetcode)
 app.provide('$public', mitter)
 app.provide('$router', router)
 app.provide('$route', useRoute())
+app.provide('$log', Loger)
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

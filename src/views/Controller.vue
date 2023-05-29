@@ -14,6 +14,9 @@ export default {
 		setting: {
 			from: SettingKey,
 		},
+		$log: {
+			from: "$log",
+		},
 	},
 	watch: {
 		"$route.name"(val) {
@@ -39,6 +42,25 @@ export default {
 				showClose: false,
 				offset: 25,
 			})
+
+			switch (type) {
+				case "success":
+					this.$log.log(`${title ?? "<NoTitle>"}:${msg}`)
+					break
+				case "info":
+					this.$log.log(`${title ?? "<NoTitle>"}:${msg}`)
+					break
+				case "warning":
+					this.$log.warn(`${title ?? "<NoTitle>"}:${msg}`)
+					break
+				case "error":
+					this.$log.error(`${title ?? "<NoTitle>"}:${msg}`)
+					break
+				default:
+					this.$log.log(`${title ?? "<NoTitle>"}:${msg}`)
+					break
+			}
+
 			this.$public.emit("update-footer-status-upto-app", {
 				status: type ?? "Loading",
 				text: msg,
@@ -74,7 +96,7 @@ export default {
 		})
 
 		this.$conf.setConfigListener(() => {
-			// console.log(prev, curr)
+			// this.$log.log(prev, curr)
 			this.$public.emit("config-updated")
 		})
 	},
@@ -141,7 +163,7 @@ export default {
 		},
 		initUser: function () {
 			if (localStorage.getItem("checkKey") != (null || undefined))
-				console.log(`#checkKey [${localStorage.getItem("checkKey")}]`)
+				this.$log.log(`#checkKey [${localStorage.getItem("checkKey")}]`)
 			localStorage.setItem("appKey", this.setting.appInfo.key)
 		},
 		initController: function () {
@@ -220,7 +242,7 @@ export default {
 					this.$public.emit("controller-sign-in")
 				})
 				.catch((e) => {
-					console.log(e.message)
+					this.$log.log(e.message)
 					this.$public.emit("notice", {
 						type: "error",
 						msg: "用户信息同步失败，您可能需要重新登录",

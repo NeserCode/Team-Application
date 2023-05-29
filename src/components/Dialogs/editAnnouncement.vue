@@ -15,6 +15,7 @@ const $props = defineProps({
 })
 const $emit = defineEmits(["update:visible", "update:success"])
 const $conf = inject("$conf")
+const $log = inject("$log")
 const INJECTION = {
 	host: inject(HostKey, undefined),
 }
@@ -74,7 +75,7 @@ const editAnnouncement = async () => {
 		})
 		.catch((err) => {
 			clickable.value = true
-			console.log(err)
+			$log.log(err)
 		})
 }
 </script>

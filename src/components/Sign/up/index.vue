@@ -249,7 +249,7 @@ export default {
 									},
 								})
 							else {
-								console.log(response.data)
+								this.$log.log(response.data)
 								this.$public.emit("notice", {
 									type: "success",
 									msg: `注册成功, 欢迎您!`,
@@ -262,7 +262,7 @@ export default {
 							}
 						})
 						.catch((e) => {
-							console.log(e)
+							this.$log.log(e)
 							this.$public.emit("notice", {
 								type: "error",
 								msg: "注册失败, 请检查输入选项和网络配置",

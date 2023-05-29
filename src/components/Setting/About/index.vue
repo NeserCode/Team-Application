@@ -42,7 +42,7 @@ export default {
 				" https://api.github.com/repos/nesercode/team-application/releases/latest"
 			)
 			.then((res) => {
-				console.log(res)
+				this.$log.log(res)
 				this.newestVersion = res.data.tag_name
 				this.versionTip += `\n当前版本：${app.getVersion()} 最新版本：${
 					this.newestVersion

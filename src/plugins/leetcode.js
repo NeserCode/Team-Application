@@ -67,7 +67,7 @@ const leetcode = {
     , clearCookie: (url, arr) => {
         for (let p = 0; p < arr.length; p++) {
             session.defaultSession.cookies.remove(url, arr[p].name)
-            console.log('CookieRemoved:', arr[p].name, `(${url})`);
+            this.$log.log('CookieRemoved:', arr[p].name, `(${url})`);
         }
     }
     , setBeforeSubmit: async (questionSlug, callbackFn) => {

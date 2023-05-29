@@ -68,7 +68,7 @@ export default {
 			this.isAppFullScreen = false
 			this.$public.emit("app-full-screen", false)
 		})
-		// console.log('自动清理已启用');
+		// this.$log.log('自动清理已启用');
 		// ipcRenderer.on("before-main-window-destory", () => {
 		//   localStorage.clear();
 		// });

@@ -131,7 +131,7 @@ export default {
 		})
 	},
 	mounted() {
-		// console.log(this.$conf.getUserPath("userData"));
+		// this.$log.log(this.$conf.getUserPath("userData"));
 		this.initComponentLocal()
 	},
 	methods: {

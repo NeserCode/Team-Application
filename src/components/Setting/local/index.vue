@@ -52,12 +52,19 @@
 			@opChange="handlePortChange"
 			ref="opPort"
 		/>
+		<SettingOption
+			opTitle="日志缓存"
+			opType="button"
+			:opTip="LogTip"
+			opBtnText="清除缓存"
+			:opCallbackFn="clearLog"
+		/>
 	</div>
 </template>
 
 <script>
 import SettingOption from "@/components/Setting/option/index.vue"
-import { nextTick } from "vue"
+import { nextTick, reactive } from "vue"
 const { ipcRenderer } = window.require("electron")
 import { SettingKey } from "@/tokens"
 
@@ -67,6 +74,9 @@ export default {
 	inject: {
 		setting: {
 			from: SettingKey,
+		},
+		$log: {
+			from: "$log",
 		},
 	},
 	data() {
@@ -125,7 +135,17 @@ export default {
 				value: " ",
 				tip: "服务器运行服务的端口 例如:5999",
 			},
+			LogTip: "清除本地所有的日志缓存",
+			LogSize: reactive(this.$log.AllLogSize),
 		}
+	},
+	watch: {
+		LogSize: {
+			handler(val) {
+				this.LogTip = `清除本地所有的日志缓存\n当前日志缓存大小：${val.size}(${val.rawSize})`
+			},
+			deep: true,
+		},
 	},
 	beforeMount() {
 		const { userSetting } = this.setting
@@ -163,8 +183,8 @@ export default {
 				temp.appInfo.host =
 					temp.appInfo.domain + ":" + temp.appInfo.port
 
-				if (temp.appInfo.port !== "")
-					this.handleChangeSettingAction(temp, () => {
+				this.handleChangeSettingAction(temp, () => {
+					if (temp.appInfo.port !== "") {
 						if (localStorage.getItem("username")) {
 							this.$router.push("/userArea")
 							this.$public.emit("notice", {
@@ -172,10 +192,12 @@ export default {
 								time: 3000,
 								fn: () => {
 									this.$public.emit("user-sign-out")
+									this.$router.push("/sign")
 								},
 							})
 						}
-					})
+					}
+				})
 			}
 		},
 		handlePortChange: function (e) {
@@ -188,8 +210,8 @@ export default {
 				temp.appInfo.host =
 					temp.appInfo.domain + ":" + temp.appInfo.port
 
-				if (temp.appInfo.domain !== "")
-					this.handleChangeSettingAction(temp, () => {
+				this.handleChangeSettingAction(temp, () => {
+					if (temp.appInfo.domain !== "") {
 						this.$router.push("UserArea")
 						this.$public.emit("notice", {
 							msg: "🎈 检测到服务主机端口更改，正在为您登出Team账号",
@@ -198,7 +220,8 @@ export default {
 								this.$public.emit("user-sign-out")
 							},
 						})
-					})
+					}
+				})
 			}
 		},
 		handleChangeAppOnTop: function () {
@@ -268,6 +291,13 @@ export default {
 					})
 				}
 			})
+		},
+		clearLog: function () {
+			this.$log.clearAllLog() &&
+				this.$public.emit("notice", {
+					msg: "清除日志缓存成功",
+					type: "success",
+				})
 		},
 	},
 }

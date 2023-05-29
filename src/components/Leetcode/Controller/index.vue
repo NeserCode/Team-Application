@@ -116,7 +116,7 @@ export default {
 					this.userStat.avatar = response.data.data.userStatus.avatar
 					this.userStat.username =
 						response.data.data.userStatus.realName
-					console.log(
+					this.$log.log(
 						response.status == 200
 							? `Leetcode User ${this.userStat.username} Logined`
 							: response

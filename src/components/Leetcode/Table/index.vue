@@ -218,7 +218,7 @@ export default {
 							msg: `获取提交状态 ${status_msg} 详细信息请于查询处查询本次提交`,
 							time: 5000,
 							fn: () => {
-								console.log(result)
+								this.$log.log(result)
 								this.addSubmission(
 									this.leetname,
 									id,
@@ -279,7 +279,7 @@ export default {
 						})
 					})
 					.catch((e) => {
-						console.log(e)
+						this.$log.log(e)
 					})
 		},
 	},

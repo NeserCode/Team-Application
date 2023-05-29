@@ -149,7 +149,7 @@ export default {
 						})
 				})
 				.catch((e) => {
-					console.log(e)
+					this.$log.log(e)
 					this.$public.emit("notice", {
 						msg: `取消删除公告`,
 					})
@@ -183,7 +183,7 @@ export default {
 						})
 				})
 				.catch((e) => {
-					console.log(e)
+					this.$log.log(e)
 					this.$public.emit("notice", {
 						msg: `取消公开`,
 					})

@@ -73,7 +73,7 @@ export default {
 				})
 				.then((res) => {
 					this.users = res.data
-					console.log(this.users)
+					this.$log.log(this.users)
 					res.data &&
 						this.$public.emit("notice", {
 							title: "获取所有用户",

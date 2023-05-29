@@ -118,7 +118,7 @@ export default {
 				.then((result) => {
 					const { submissionDetail } = result.data.data
 
-					console.log(submissionDetail, result)
+					this.$log.log(submissionDetail, result)
 
 					if (!submissionDetail) {
 						this.$public.emit("notice", {

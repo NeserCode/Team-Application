@@ -186,9 +186,9 @@ export default {
 				this.colorMode === "light" ? "dark" : "light"
 			)
 			this.$conf.updateLocalConfig(data, (err) => {
-				console.log(`Strorage Setting for ColorMode`)
+				this.$log.log(`Strorage Setting for ColorMode`)
 				if (err) {
-					console.log(err)
+					this.$log.log(err)
 				}
 				this.$nextTick(() => {
 					this.initColorMode()

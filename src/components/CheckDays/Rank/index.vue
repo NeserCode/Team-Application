@@ -76,7 +76,7 @@ export default {
 					this.isLoading = false
 				})
 				.catch((e) => {
-					console.log(e.messgae)
+					this.$log.log(e.messgae)
 				})
 		},
 		thString: function (i) {

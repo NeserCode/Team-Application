@@ -26,6 +26,7 @@ import { AnnouncementKey, HostKey, SettingKey, UserStatusKey } from "@/tokens"
 
 const $conf = inject("$conf")
 const $public = inject("$public")
+const $log = inject("$log")
 
 const appTitle = ref("Team Application")
 const statusReal = ref({
@@ -160,10 +161,10 @@ async function ensureHostorSuperUser(info, cb) {
 
 onBeforeMount(() => {
 	// document.onmousedown = (e) => {
-	//   if (e.button == 2) console.log("你按下了右键");
+	//   if (e.button == 2) this.$log.log("你按下了右键");
 	// };
 	// document.onmouseup = (e) => {
-	//   if (e.button == 2) console.log("你松开了右键");
+	//   if (e.button == 2) this.$log.log("你松开了右键");
 	// };
 })
 
@@ -175,9 +176,27 @@ function initSettings() {
 	else ipcRenderer.send("setting-always-not-top")
 }
 
+function getTimeString() {
+	// 数字
+	let date = new Date()
+	let year = date.getFullYear()
+	let month = date.getMonth() + 1
+	let day = date.getDate()
+	let hour = date.getHours()
+	let minute = date.getMinutes()
+	let second = date.getSeconds()
+	const addZero = (num) => (num < 10 ? `0${num}` : num)
+	// 字符串
+	return `${year}${addZero(month)}${addZero(day)} ${addZero(hour)}-${addZero(
+		minute
+	)}-${addZero(second)}`
+}
+
 function initApp() {
 	initSettings()
-	// console.log("Flush => Ctrl + M\nTools => Ctrl + Q");
+	// 获取日期-时间字符串
+	$log.createLog(`${getTimeString()}.txt`)
+	// this.$log.log("Flush => Ctrl + M\nTools => Ctrl + Q");
 }
 </script>
 
