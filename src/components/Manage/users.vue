@@ -35,11 +35,14 @@ export default {
 			},
 			selectedUserDetail: {},
 			isUpdate: false,
+			banFilter: false,
 		}
 	},
 	computed: {
 		allBannedUsers: function () {
-			return this.users.detail.filter((user) => !!user.status)
+			return this.users.info
+				? this.users.info.filter((user) => !!user.status)
+				: NaN
 		},
 	},
 	beforeCreate() {
@@ -55,16 +58,18 @@ export default {
 		})
 	},
 	methods: {
-		computedStatusClass: (status) => (status ? "access" : null),
+		computedStatusClass: (banned) => (banned ? "banned" : null),
 		handleRenameOrganization: function () {
 			this.visible.rename = true
 		},
 		getAllUsers: function () {
 			this.isUpdate = false
-			this.$public.emit("notice", {
-				title: "获取所有用户",
-				msg: "请耐心等待",
-				type: "info",
+			this.$nextTick(() => {
+				this.$public.emit("notice", {
+					title: "获取所有用户",
+					msg: "请耐心等待",
+					type: "info",
+				})
 			})
 
 			this.$conf
@@ -73,7 +78,17 @@ export default {
 				})
 				.then((res) => {
 					this.users = res.data
-					this.$log.log(this.users)
+					this.banFilter &&
+						(this.users.detail = this.users.detail.filter(
+							(item, index) => this.users.info[index].status === 1
+						))
+					this.banFilter &&
+						(this.users.info = this.users.info.filter(
+							(item, index) => {
+								if (this.users.info[index].status === 1)
+									return item
+							}
+						))
 					res.data &&
 						this.$public.emit("notice", {
 							title: "获取所有用户",
@@ -89,6 +104,53 @@ export default {
 			this.selectedUserDetail = user
 			this.visible.editUser = true
 		},
+		banThisUser: function (id) {
+			if (id === this.setting.userInfo.id)
+				return this.$public.emit("notice", {
+					title: "封禁",
+					msg: `不可以封禁自己`,
+					type: "error",
+				})
+			else
+				this.$conf
+					.banUser({
+						host: this.host.host,
+						id,
+					})
+					.then((result) => {
+						this.$nextTick(() => {
+							result.data.affectedRows &&
+								this.$public.emit("notice", {
+									title: "封禁",
+									msg: `封禁用户成功 ID#${id}`,
+									type: "success",
+								})
+							this.updateUserData()
+						})
+					})
+		},
+		unbanThisUser: function (id) {
+			this.$conf
+				.unbanUser({
+					host: this.host.host,
+					id,
+				})
+				.then((result) => {
+					this.$nextTick(() => {
+						result.data.affectedRows &&
+							this.$public.emit("notice", {
+								title: "解禁",
+								msg: `解禁用户成功 ID#${id}`,
+								type: "success",
+							})
+						this.updateUserData()
+					})
+				})
+		},
+		toggleBanFilter: function () {
+			this.banFilter = !this.banFilter
+			this.getAllUsers()
+		},
 		updateUserData: function () {
 			this.getAllUsers()
 			this.$public.emit("need-update-user")
@@ -101,11 +163,20 @@ export default {
 	<div class="users-main">
 		<div class="title">
 			<span class="name">用户列表</span>
-			<button class="btn" @click="getAllUsers">
-				<el-icon :class="{ 'is-loading': isUpdate }"
-					><Refresh
-				/></el-icon>
-			</button>
+			<div class="op">
+				<button
+					class="btn"
+					title="查看封禁用户"
+					@click="toggleBanFilter"
+				>
+					<el-icon><Filter /></el-icon>
+				</button>
+				<button class="btn" title="重新获取" @click="getAllUsers">
+					<el-icon :class="{ 'is-loading': isUpdate }"
+						><Refresh
+					/></el-icon>
+				</button>
+			</div>
 		</div>
 		<div class="users-list">
 			<span class="count"
@@ -113,7 +184,11 @@ export default {
 				{{ users.detail ? users.detail.length : NaN }} 已封禁用户数
 				{{ allBannedUsers.length }}
 			</span>
-			<span class="item" v-for="detail in users.detail" :key="detail.id">
+			<span
+				:class="['item', computedStatusClass(users.info[index].status)]"
+				v-for="(detail, index) in users.detail"
+				:key="detail.id"
+			>
 				<span class="info">
 					<span class="avatar">
 						<el-avatar
@@ -130,8 +205,21 @@ export default {
 					<button class="btn" @click="editThisUser(detail)">
 						<el-icon><Edit /></el-icon>
 					</button>
-					<button class="btn danger" title="移除该成员">
-						<el-icon><Delete /></el-icon>
+					<button
+						class="btn danger"
+						title="禁用该成员"
+						v-if="!banFilter && !users.info[index].status"
+						@click="banThisUser(detail.id)"
+					>
+						<el-icon><Lock /></el-icon>
+					</button>
+					<button
+						v-else-if="banFilter"
+						class="btn danger"
+						title="解禁该成员"
+						@click="unbanThisUser(detail.id)"
+					>
+						<el-icon><Unlock /></el-icon>
 					</button>
 				</span>
 			</span>
@@ -167,9 +255,8 @@ export default {
 	hover:shadow
 	hover:bg-gray-50 dark:hover:bg-gray-600 transition-all;
 }
-.item.own,
-.item.self {
-	@apply bg-green-100 dark:bg-green-800;
+.item.banned {
+	@apply bg-red-200 dark:bg-red-900 opacity-50;
 }
 
 .item .info {

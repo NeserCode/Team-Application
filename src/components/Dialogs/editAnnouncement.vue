@@ -81,9 +81,9 @@ const editAnnouncement = async () => {
 </script>
 
 <template>
-	<el-dialog v-model="dialogFormVisible" title="创建公告">
+	<el-dialog v-model="dialogFormVisible" title="编辑公告">
 		<el-form :model="form">
-			<el-form-item label="发起组织">
+			<el-form-item label="归属组织">
 				<el-input
 					:value="`#${selectedOrganizationInfo.id} ${selectedOrganizationInfo.name}`"
 					readonly
