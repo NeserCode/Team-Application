@@ -55,8 +55,9 @@ const appConfig = {
     , getMd5String: (string) => {
         return crypto.createHash("md5").update(string).digest("hex")
     }
-    , updateLocalConfig: async (obj, callback) => {
-        return fs.writeFile(appConfig.getPath(), JSON.stringify(obj), callback)
+    , updateLocalConfig: (obj, callback) => {
+        fs.writeFileSync(appConfig.getPath(), JSON.stringify(obj))
+        callback && callback()
     }
     , updateDBConfig: async (host, key, value, username) => {
         if (key != 'all') return Axios.post(`${appConfig.getHttpString(host)}/api/user/detail/update/${key}`, {

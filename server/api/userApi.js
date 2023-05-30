@@ -170,7 +170,7 @@ router.post('/checkDay/get', (req, res) => {
     let params = req.body
     conn.query($sql.user.get.uid, [params.username], (iderr, idresult) => {
         if (iderr) return res.status(502).send({ message: iderr.sqlMessage, errorCode: iderr.errno })
-        else conn.query(sql, [idresult[0].id], (err, result) => {
+        else if (idresult[0]) conn.query(sql, [idresult[0].id], (err, result) => {
             if (err) return res.status(502).send(err)
             else {
                 if (idresult[0])

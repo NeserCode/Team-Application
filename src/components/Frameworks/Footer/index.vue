@@ -5,7 +5,11 @@
 				class="light"
 				:style="{ '--status-color': `${statusLightColor.real}` }"
 			></div>
-			<div class="footStatusText showArea">
+			<div
+				class="footStatusText showArea"
+				title="双击状态栏文字可查看最近的日志"
+				@dblclick="$log.openLatestLog"
+			>
 				<span>{{ statusText }}</span>
 			</div>
 		</div>
@@ -41,6 +45,9 @@ export default {
 		},
 		userStatus: {
 			from: UserStatusKey,
+		},
+		$log: {
+			from: "$log",
 		},
 	},
 	watch: {
@@ -82,6 +89,7 @@ export default {
 				success: "rgb(27, 190, 68)",
 				error: "rgb(185, 29, 29)",
 				loading: "rgb(199, 233, 77)",
+				info: "rgb(199, 233, 77)",
 				real: "rgb(199, 233, 77)",
 			},
 			currTime: {

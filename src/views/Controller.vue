@@ -92,7 +92,9 @@ export default {
 		})
 
 		this.$public.on("need-update-user", () => {
-			this.autoKeyUpdateDetail()
+			this.$nextTick(() => {
+				this.autoKeyUpdateDetail()
+			})
 		})
 
 		this.$conf.setConfigListener(() => {
@@ -102,7 +104,9 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.$public.emit("need-update-user")
+			if (this.host) {
+				this.$public.emit("need-update-user")
+			}
 		})
 	},
 	methods: {
@@ -227,11 +231,13 @@ export default {
 			// Super User
 			tempSetting.userInfo.super = !!info.super
 
-			this.$conf
-				.updateLocalConfig(tempSetting, () => {
-					this.$public.emit("notice", {
-						type: "success",
-						msg: "用户信息同步成功",
+			try {
+				this.$conf.updateLocalConfig(tempSetting, () => {
+					this.$nextTick(() => {
+						this.$public.emit("notice", {
+							type: "success",
+							msg: "用户信息同步成功",
+						})
 					})
 
 					localStorage.setItem("userKey", info.userKey)
@@ -239,15 +245,16 @@ export default {
 
 					this.$public.emit("update-check-day")
 					this.$public.emit("update-username")
-					this.$public.emit("controller-sign-in")
+					this.$public.emit("controller-sign-in", { detail, info })
 				})
-				.catch((e) => {
-					this.$log.log(e.message)
-					this.$public.emit("notice", {
-						type: "error",
-						msg: "用户信息同步失败，您可能需要重新登录",
-					})
+			} catch (e) {
+				this.$log.warn(e.message)
+				console.log(e)
+				this.$public.emit("notice", {
+					type: "warning",
+					msg: "用户信息同步失败，您可能需要重新登录",
 				})
+			}
 		},
 	},
 }

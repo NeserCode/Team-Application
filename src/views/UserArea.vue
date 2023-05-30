@@ -37,7 +37,9 @@ export default {
 	},
 	methods: {},
 	beforeCreate() {
-		this.$public.on("controller-sign-in", () => {})
+		this.$public.on("controller-sign-in", () => {
+			this.$router.push("/userArea")
+		})
 	},
 	mounted() {
 		if (!this.isUserLogined) {

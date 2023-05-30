@@ -212,7 +212,7 @@ export default {
 
 				this.handleChangeSettingAction(temp, () => {
 					if (temp.appInfo.domain !== "") {
-						this.$router.push("UserArea")
+						this.$router.push("/userArea")
 						this.$public.emit("notice", {
 							msg: "🎈 检测到服务主机端口更改，正在为您登出Team账号",
 							time: 3000,

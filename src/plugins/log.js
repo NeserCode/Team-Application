@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 // 只处理渲染进程中的日志，在渲染进程中调用
 const app = require('electron').remote.app;
+const shell = require('electron').shell;
 const fs = require('fs');
 const path = require('path');
 
@@ -41,15 +42,23 @@ export class Log {
   }
 
   createLog(file, content = "") {
-    const logPath = path.join(app.getPath('userData'), 'logs', file);
     const logContent = content;
     if (!file) {
       fs.writeFileSync(path.join(app.getPath('userData'), 'logs', `${this.getTimeString()}.txt`), logContent);
       return;
-    } else
-      fs.writeFile(logPath, logContent, (err) => {
+    }
+    const logPath = path.join(app.getPath('userData'), 'logs', file);
+    if (!fs.existsSync(logPath))
+      fs.writeFileSync(logPath, logContent, (err) => {
         if (err) {
-          this.createLog
+          this.createLog(`${this.getTimeString()}.txt`, logContent)
+          this.error(err);
+        }
+      })
+    else
+      fs.appendFileSync(logPath, logContent, (err) => {
+        if (err) {
+          this.createLog(`${this.getTimeString()}.txt`, logContent)
           this.error(err);
         }
       })
@@ -57,10 +66,13 @@ export class Log {
 
   writeLog(content) {
     const logFile = this.getLatestLogFile();
-    const logContent = this.getLogContent(logFile);
 
-    const newLogContent = logContent + content;
-    this.createLog(logFile, newLogContent);
+    fs.appendFileSync(path.join(app.getPath('userData'), 'logs', logFile), content, (err) => {
+      if (err) {
+        this.createLog(`${this.getTimeString()}.txt`, content)
+        this.error(err);
+      }
+    })
   }
 
   getLatestLogFile() {
@@ -75,15 +87,11 @@ export class Log {
     return logFiles;
   }
 
-  getLogContent(file) {
-    if (!file) {
-      fs.writeFileSync(path.join(app.getPath('userData'), 'logs', `${this.getTimeString()}.txt`), "");
-      return;
-    } else {
-      const logPath = path.join(app.getPath('userData'), 'logs', file);
-      const logContent = fs.readFileSync(logPath, 'utf8');
-      return logContent;
-    }
+  openLatestLog() {
+    const logFile = this.getLatestLogFile();
+    const logPath = path.join(app.getPath('userData'), 'logs', logFile);
+
+    shell.openPath(logPath);
   }
 
   // 代替 console 方法
@@ -186,12 +194,12 @@ export class Log {
   }
 
   clearAllLog() {
-    // fs.unlinkSync
     const logFiles = this.getLogFiles();
     try {
       logFiles.forEach((file) => {
         fs.unlinkSync(path.join(app.getPath('userData'), 'logs', file));
       })
+      this.createLog();
     } catch (error) {
       this.error(error);
     }

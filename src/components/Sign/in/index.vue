@@ -231,7 +231,7 @@ export default {
 									this.options.isShowPassword = false
 
 									this.clickable = true
-									this.$router.push("UserArea")
+									this.$router.push("/userArea")
 								},
 							})
 						})

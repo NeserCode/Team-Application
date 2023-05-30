@@ -60,7 +60,9 @@ const setAsyncAnnouncement = async () => {
 		.then((res) => res.data)
 }
 const setAsyncSetting = async () => {
-	setting.value = await $conf.getConfPromise().then((data) => data.data)
+	setting.value = await $conf.getConfPromise().then((data) => {
+		return data.data
+	})
 }
 const setAsyncHost = async () => {
 	host.value = await $conf.getHost().then((res) => res)
@@ -138,10 +140,20 @@ nextTick(async () => {
 
 	nextTick(() => {
 		initApp()
+		clearStatusIfSettingNotExist(setting.value)
 		$public.emit("app-provided")
 		console.timeEnd("Provide")
 	})
 })
+
+function clearStatusIfSettingNotExist(setting) {
+	if (!setting.userInfo.key && !setting.userInfo.id) {
+		localStorage.removeItem("userKey")
+		localStorage.removeItem("username")
+		localStorage.removeItem("avatar")
+		localStorage.removeItem("checkKey")
+	}
+}
 
 async function ensureHostorSuperUser(info, cb) {
 	if (!logined()) return { isSuper: false, isHost: false }
