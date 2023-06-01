@@ -125,7 +125,7 @@ export default {
 									msg: `封禁用户成功 ID#${id}`,
 									type: "success",
 								})
-							this.updateUserData()
+							this.getAllUsers()
 						})
 					})
 		},
@@ -143,7 +143,7 @@ export default {
 								msg: `解禁用户成功 ID#${id}`,
 								type: "success",
 							})
-						this.updateUserData()
+						this.getAllUsers()
 					})
 				})
 		},
@@ -170,6 +170,7 @@ export default {
 					@click="toggleBanFilter"
 				>
 					<el-icon><Filter /></el-icon>
+					<span v-if="banFilter">封禁用户</span>
 				</button>
 				<button class="btn" title="重新获取" @click="getAllUsers">
 					<el-icon :class="{ 'is-loading': isUpdate }"
@@ -282,9 +283,13 @@ export default {
 	@apply text-red-500 dark:text-red-400;
 }
 .title > .btn {
-	@apply mx-2 text-base rounded-full p-1.5;
+	@apply mx-2 rounded-full p-1.5;
 }
 .op > .btn {
 	@apply mx-1 text-base;
+}
+
+.btn span {
+	@apply inline-block mx-1 text-sm;
 }
 </style>

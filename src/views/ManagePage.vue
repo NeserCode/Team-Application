@@ -3,11 +3,12 @@ import { _debounce } from "@/plugins/utils"
 import Organization from "@/components/Manage/organization.vue"
 import Announcement from "@/components/Manage/announcement.vue"
 import Users from "../components/Manage/users.vue"
+import userCheckdays from "../components/Manage/userCheckdays.vue"
 import { SettingKey, HostKey, UserStatusKey } from "@/tokens"
 
 export default {
 	name: "Manage",
-	components: { Organization, Announcement, Users },
+	components: { Organization, Announcement, Users, userCheckdays },
 	computed: {
 		detailVisible: function () {
 			return (
@@ -140,6 +141,7 @@ export default {
 			@update:info="updatePageData"
 		/>
 		<Users v-if="superUser" />
+		<userCheckdays />
 	</div>
 </template>
 

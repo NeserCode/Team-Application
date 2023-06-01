@@ -44,6 +44,7 @@ var sqlMap = {
             check: 'insert into team_user_checkday(userid,appKey,timestamp) values (?,?,?)',
             get: 'select * from team_user_checkday where userid = ?',
             order: 'select * from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC',
+            oid: 'select * from team_user_checkday where userid in (select id from team_user_detail where access_team = ?) ORDER BY timeStamp ASC',
             all: `select * from team_user_detail where id in (select userid from team_user_checkday where timeStamp > ? ORDER BY timeStamp ASC)`
         },
         get: {
@@ -53,7 +54,7 @@ var sqlMap = {
         },
         access: {
             update: "update team_user_detail set access_status = ?, access_team = ?, access_position = ? where id = ?"
-        }
+        },
     },
     organization: {
         create: {

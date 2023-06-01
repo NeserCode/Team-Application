@@ -7,7 +7,7 @@
 			</span>
 		</h1>
 		<!-- use div acheve a list to show subs data, do not use el-table -->
-		<div v-if="!loading || (subs.length && !loading)" class="sub-list">
+		<div v-if="!loading || subs.length" class="sub-list">
 			<div class="sub-item list-header">
 				<div class="sub-item-content">
 					<span class="no-wrap">
@@ -87,6 +87,7 @@ export default {
 	watch: {
 		submitPage: function () {
 			this.getSubmitArr()
+			console.log(this.submitPage)
 		},
 		host: {
 			handler() {

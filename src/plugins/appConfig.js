@@ -201,6 +201,12 @@ const appConfig = {
     , unbanUser: ({ host, id }) => {
         return Axios.post(`${appConfig.getHttpString(host)}/api/user/info/status/update`, { status: 0, id })
     }
+    , updatePassword: ({ host, username, userKey, bound, password }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/password/update`, { username, userKey, bound, password })
+    }
+    , getCheckdayByOid: ({ host, oid }) => {
+        return Axios.post(`${appConfig.getHttpString(host)}/api/user/checkDay/oid`, { oid })
+    }
 
 }
 

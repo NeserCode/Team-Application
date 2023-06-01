@@ -44,20 +44,27 @@
 						<Loading />
 					</el-icon>
 				</button>
+				<button @click="handleForgetPassword">忘记密码</button>
 				<button @click="toggleSignModeToUp">切换到注册</button>
 			</div>
 			<span :class="['signBar', !clickable ? 'loading' : '']"></span>
 		</div>
+		<forget-password
+			:visible="visible.forgetPassword"
+			@update:visible="visible.forgetPasswordFn"
+			@update:success="handleSuccessPassword"
+		/>
 	</div>
 </template>
 
 <script>
 import SignInput from "@/components/Sign/input/index.vue"
+import forgetPassword from "@/components/Dialogs/forgetPassword.vue"
 import { HostKey } from "@/tokens"
 
 export default {
 	name: "Login",
-	components: { SignInput },
+	components: { SignInput, forgetPassword },
 	watch: {
 		signIn: {
 			deep: true,
@@ -133,6 +140,12 @@ export default {
 			checkText: "",
 			clickable: true,
 			IpAddress: null,
+			visible: {
+				forgetPassword: false,
+				forgetPasswordFn: (val) => {
+					this.visible.forgetPassword = val
+				},
+			},
 		}
 	},
 	mounted() {
@@ -154,6 +167,16 @@ export default {
 			this.signIn.username = ""
 			this.signIn.password = ""
 			this.$public.emit("change-login-or-register-view", false)
+		},
+		handleForgetPassword: function () {
+			this.visible.forgetPassword = true
+		},
+		handleSuccessPassword: function () {
+			this.$public.emit("notice", {
+				type: "success",
+				msg: "密码修改成功",
+				time: 2000,
+			})
 		},
 		handleSignin: function () {
 			if (this.clickable) {
@@ -196,6 +219,14 @@ export default {
 									},
 								})
 							const { info, detail } = response.data
+							if (info.status)
+								return this.$public.emit("notice", {
+									type: "warning",
+									msg: "封禁用户暂时无法登录",
+									fn: () => {
+										this.clickable = true
+									},
+								})
 							localStorage.setItem("checkKey", ck)
 							if (info.userKey.length < 16)
 								this.$public.emit("notice", {
@@ -277,7 +308,7 @@ export default {
 }
 
 .btnContainer {
-	@apply inline-flex w-1/3 justify-between;
+	@apply inline-flex w-1/2 justify-between;
 }
 
 .signBar {

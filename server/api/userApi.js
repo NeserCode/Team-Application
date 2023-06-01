@@ -212,6 +212,19 @@ router.get('/checkDay/all', (req, res) => {
     })
 })
 
+router.post('/checkDay/oid', (req, res) => {
+    let sql = $sql.user.checkDay.oid
+    let params = req.body
+
+    conn.query(sql, [params.oid], (err, result) => {
+        if (err) res.status(502).send(err)
+        else {
+            console.log(`[checkDay oid ${params.oid} √]`);
+            res.status(200).send(result)
+        }
+    })
+})
+
 // leetcode提交id | username,leetName,appKey,submitId,submitDay,submitMonth
 
 router.post('/leetcode/add', (req, res) => {
@@ -678,6 +691,34 @@ router.post('/info/status/update', (req, res) => {
     })
 })
 
+// 修改用户密码
+router.post('/password/update', (req, res) => {
+    let sql = $sql.user.info.update.password
+    let getInfo = $sql.user.get.uid
+    let getDetail = $sql.user.detail.get
+    let ensure = $sql.user.get.all
+    let params = req.body
+
+    conn.query(getInfo, [params.username], (infoErr, infoResult) => {
+        if (infoErr) return res.status(502).send({ message: infoErr.sqlMessage, errorCode: infoErr.errno, sql: infoErr.sql })
+        else
+            conn.query(getDetail, [infoResult[0].id], (detailErr, detailResult) => {
+                if (detailErr) return res.status(502).send({ message: detailErr.sqlMessage, errorCode: detailErr.errno, sql: detailErr.sql })
+                else
+                    conn.query(ensure, [infoResult[0].id], (ensureErr, ensureResult) => {
+                        if (ensureErr) return res.status(502).send({ message: ensureErr.sqlMessage, errorCode: ensureErr.errno, sql: ensureErr.sql })
+                        else {
+                            if ((detailResult[0].bound == params.bound && ensureResult[0].userKey == params.userKey))
+                                conn.query(sql, [params.password, infoResult[0].id], (err, result) => {
+                                    if (err) return res.status(502).send({ message: err.sqlMessage, errorCode: err.errno, sql: err.sql })
+                                    else res.status(200).send(result)
+                                })
+                            else return res.status(201).send({ message: 'Wrong Bound or UserKey', errorCode: 201 })
+                        }
+                    })
+            })
+    })
+})
 
 
 module.exports = router
