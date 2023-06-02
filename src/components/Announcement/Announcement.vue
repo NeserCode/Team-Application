@@ -7,13 +7,15 @@ const announcement = inject(AnnouncementKey)
 const userStatus = inject(UserStatusKey)
 // const $public = inject("$public")
 
-const showOgAnnouncement = computed(() => {
+const showOgAnnouncement = ref(false)
+const initShow = () => {
 	if (setting.value)
 		return (
 			!!setting.value.userInfo.organization && userStatus.value.isLogined
 		)
 	else return false
-})
+}
+
 const sorted = ref({
 	openAnnouncement: [],
 	ogAnnouncement: [],
@@ -31,7 +33,9 @@ watch(
 			!isOpenEye.value
 		)
 
-		sorted.value = { openAnnouncement, ogAnnouncement }
+		initShow()
+
+		sorted.value = { openAnnouncement, ogAnnouncemnt }
 	},
 	{
 		deep: true,

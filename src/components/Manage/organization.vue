@@ -111,6 +111,7 @@ export default {
 				type: "success",
 				msg,
 			})
+			this.$public.emit("need-update-user")
 		},
 		updateOrganizationStatus: function (status) {
 			const cb = (res) => {
