@@ -34,11 +34,11 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.getAllUsers()
+			this.getUsers()
 		})
 	},
 	methods: {
-		getAllUsers: function () {
+		getUsers: function () {
 			this.isUpdate = false
 
 			this.$conf
@@ -51,6 +51,27 @@ export default {
 					res.data &&
 						this.$public.emit("notice", {
 							title: "计算组织用户考勤情况",
+							msg: "获取用户成功, 等待获取考勤记录",
+							type: "success",
+							fn: () => {
+								this.getCheckdaysByOid()
+								this.isUpdate = false
+							},
+						})
+				})
+		},
+		getAllUsers: function () {
+			this.isUpdate = false
+
+			this.$conf
+				.allUser({
+					host: this.host.host,
+				})
+				.then((res) => {
+					this.users = res.data
+					res.data &&
+						this.$public.emit("notice", {
+							title: "计算所有用户考勤情况",
 							msg: "获取用户成功, 等待获取考勤记录",
 							type: "success",
 							fn: () => {
@@ -139,6 +160,16 @@ export default {
 		<div class="title">
 			<span class="name">用户考勤</span>
 			<div class="op">
+				<button
+					class="btn"
+					title="全部用户"
+					v-if="userStatus.isSuper"
+					@click="getAllUsers"
+				>
+					<el-icon :class="{ 'is-loading': isUpdate }"
+						><Filter
+					/></el-icon>
+				</button>
 				<button class="btn" title="重新获取" @click="getAllUsers">
 					<el-icon :class="{ 'is-loading': isUpdate }"
 						><Refresh
