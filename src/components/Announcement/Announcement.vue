@@ -35,7 +35,7 @@ watch(
 
 		initShow()
 
-		sorted.value = { openAnnouncement, ogAnnouncemnt }
+		sorted.value = { openAnnouncement, ogAnnouncement }
 	},
 	{
 		deep: true,
